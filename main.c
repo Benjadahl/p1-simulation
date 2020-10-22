@@ -8,6 +8,7 @@
 void runEvent (void);
 
 int people[n];
+int newPeople[n];
 
 
 int main(void) {
@@ -19,9 +20,11 @@ int main(void) {
 
    for (i = 0; i < n; i++) {
       people[i] = 0;
+      newPeople[i] = 0;
    }
 
    people[45] = 1;
+   newPeople[45] = 1;
 
    for (event = 0; event < maxEvents; event++) {
       runEvent();
@@ -40,15 +43,19 @@ void runEvent (void) {
          for (j = neighbours * -1; j <= neighbours; j++) {
             if (j != 0) {
                int neighbour = i - j;
-               if ((rand() % 100) > 80) {
-                  people[neighbour] = 1;
+               if ((rand() % 100) > 85) {
+                  newPeople[neighbour] = 1;
                }
             }
          }
       }
       
-      printf("%d", people[i]);
+      printf("%d", newPeople[i]);
    }
    printf("\n");
+
+   for (i = 0; i < n; i++) {
+      people[i] = newPeople[i];
+   }
 
 }
