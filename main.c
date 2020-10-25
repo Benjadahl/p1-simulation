@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define amountOfAgents 100
+#define amountOfAgents 100000
 #define amountOfContacts 5
+#define infectionTime 4
+#define amountOfStartInfected 20
 
 struct agent {
   int succeptible;
@@ -17,10 +19,11 @@ void runEvent (void);
 
 struct agent agents[amountOfAgents];
 
+int tick = 0;
 
 int main(void) {
   int a = 0;
-  int maxEvents = 20;
+  int maxEvents = 100;
   int event = 0;
 
   srand(time(NULL));
@@ -28,8 +31,8 @@ int main(void) {
   for (a = 0; a < amountOfAgents; a++) {
     int c = 0;
 
-    agents[a].succeptible = 1;
-    agents[a].infectious = 0;
+    agents[a].succeptible = a >= amountOfStartInfected ? 1 : 0;
+    agents[a].infectious = a >= amountOfStartInfected ? 0 : 1;
     agents[a].removed = 0;
 
     for (c = 0; c < amountOfContacts; c++) {
@@ -37,13 +40,9 @@ int main(void) {
     }
   }
 
-  agents[amountOfAgents / 2].infectious = 1;
-  agents[amountOfAgents / 2].succeptible = 0;
-
-
   for ( event = 0; event < maxEvents; event++){
-    runEvent();
     printStats();
+    runEvent();
   }
   
 
@@ -71,30 +70,48 @@ void printStats (void) {
   int totalSucceptible = 0;
   int totalInfectious = 0;
   int totalRemoved = 0;
+  double percentSucceptible = 0;
+  double percentInfectious = 0;
+  double percentRemoved = 0;
 
   for (a = 0; a < amountOfAgents; a++) {
     totalSucceptible += agents[a].succeptible;
-    totalInfectious += agents[a].infectious;
-    totalRemoved += agents[a].removed;
+    totalInfectious += agents[a].infectious > 0;
+    totalRemoved += agents[a].removed > 0;
   }
 
-  printf("Total succeptible: %d\n", totalSucceptible);
-  printf("Total infectious: %d\n", totalInfectious);
-  printf("Total removed: %d\n", totalRemoved);
+  percentSucceptible = totalSucceptible * 100 / amountOfAgents;
+  percentInfectious = totalInfectious * 100 / amountOfAgents;
+  percentRemoved = totalRemoved * 100 / amountOfAgents;
+
+  printf("\nTick: %d\n", tick);
+  printf("Total succeptible: %d (%f%%)\n", totalSucceptible, percentSucceptible);
+  printf("Total infectious: %d (%f%%)\n", totalInfectious, percentInfectious);
+  printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 }
 
 void runEvent (void) {
   int a = 0;
+  tick++;
 
   for (a = 0; a < amountOfAgents; a++) {
-    if (agents[a].infectious) {
-      int c = 0;
-      for (c = 0; c < amountOfContacts; c++) {
-        if (rand() % 100 > 80) {
-          agents[agents[a].contacts[c]].infectious = 1;
-          agents[agents[a].contacts[c]].succeptible = 0;
+    if (agents[a].infectious != 0) {
+      if (agents[a].infectious > tick - infectionTime) {
+        int c = 0;
+        for (c = 0; c < amountOfContacts; c++) {
+          if (!agents[agents[a].contacts[c]].removed) {
+            if (rand() % 100 > 90) {
+              agents[agents[a].contacts[c]].infectious = tick;
+              agents[agents[a].contacts[c]].succeptible = 0;
+            }
+          }
+
         }
+      } else {
+        agents[a].infectious = 0;
+        agents[a].removed = tick;
       }
+
     }
   }
 }
