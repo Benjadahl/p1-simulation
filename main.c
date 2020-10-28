@@ -5,25 +5,26 @@
 #define amountOfContacts 5
 #define infectionTime 4
 #define amountOfStartInfected 20
+#define maxEvents 100
 
-struct agent {
+typedef struct agent {
   int succeptible;
   int infectious;
   int removed;
   int contacts[amountOfContacts];
-};
+} agent;
 
 void printAgent (struct agent agent);
-void printStats (void);
-void runEvent (void);
+void printStats (struct agent * agents, int *tick);
+void runEvent (struct agent * agents, int *tick);
 
-struct agent agents[amountOfAgents];
-
-int tick = 0;
 
 int main(void) {
+  agent agents[amountOfAgents];
+  agent *agents_ptr = agents;
+
+  int tick = 0;
   int a = 0;
-  int maxEvents = 100;
   int event = 0;
 
   srand(time(NULL));
@@ -40,13 +41,11 @@ int main(void) {
     }
   }
 
-  for ( event = 0; event < maxEvents; event++){
-    printStats();
-    runEvent();
+  for (event = 0; event < maxEvents; event++){
+    printStats(agents_ptr, &tick);
+    runEvent(agents_ptr, &tick);
   }
   
-
-
   return 0;
 }
 
@@ -65,7 +64,7 @@ void printAgent (struct agent agent) {
   printf("\n");
 }
 
-void printStats (void) {
+void printStats (agent * agents, int *tick) {
   int a = 0;
   int totalSucceptible = 0;
   int totalInfectious = 0;
@@ -84,24 +83,24 @@ void printStats (void) {
   percentInfectious = totalInfectious * 100 / amountOfAgents;
   percentRemoved = totalRemoved * 100 / amountOfAgents;
 
-  printf("\nTick: %d\n", tick);
+  printf("\nTick: %d\n", *tick);
   printf("Total succeptible: %d (%f%%)\n", totalSucceptible, percentSucceptible);
   printf("Total infectious: %d (%f%%)\n", totalInfectious, percentInfectious);
   printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 }
 
-void runEvent (void) {
+void runEvent (agent * agents, int *tick) {
   int a = 0;
-  tick++;
+  *tick += 1;
 
   for (a = 0; a < amountOfAgents; a++) {
     if (agents[a].infectious != 0) {
-      if (agents[a].infectious > tick - infectionTime) {
+      if (agents[a].infectious > *tick - infectionTime) {
         int c = 0;
         for (c = 0; c < amountOfContacts; c++) {
           if (!agents[agents[a].contacts[c]].removed) {
             if (rand() % 100 > 90) {
-              agents[agents[a].contacts[c]].infectious = tick;
+              agents[agents[a].contacts[c]].infectious = *tick;
               agents[agents[a].contacts[c]].succeptible = 0;
             }
           }
@@ -109,7 +108,7 @@ void runEvent (void) {
         }
       } else {
         agents[a].infectious = 0;
-        agents[a].removed = tick;
+        agents[a].removed = *tick;
       }
 
     }
