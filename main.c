@@ -31,7 +31,7 @@ int main(void) {
 
   initAgents(agents_ptr);
 
-  for (event = 0; event < maxEvents; event++){
+  for (event = 0; event < maxEvents; event++) {
     printStats(agents_ptr, &tick);
     runEvent(agents_ptr, &tick);
   }
@@ -95,27 +95,35 @@ void initAgents (agent * agents) {
   }
 }
 
+agent computeAgent (agent * agents, int tick, int agentID) {
+  agent theAgent = agents[agentID];
+
+  if (theAgent.infectious != 0) {
+    if (theAgent.infectious > tick - infectionTime) {
+      int c = 0;
+      for (c = 0; c < amountOfContacts; c++) {
+        int contact = theAgent.contacts[c];
+        if (!agents[contact].removed) {
+          if (rand() % 100 > 90) {
+            agents[contact].infectious = tick;
+            agents[contact].succeptible = 0;
+          }
+        }
+      }
+    } else {
+      theAgent.infectious = 0;
+      theAgent.removed = tick;
+    }
+  }
+
+  return theAgent;
+}
+
 void runEvent (agent * agents, int *tick) {
   int a = 0;
   *tick += 1;
 
   for (a = 0; a < amountOfAgents; a++) {
-    if (agents[a].infectious != 0) {
-      if (agents[a].infectious > *tick - infectionTime) {
-        int c = 0;
-        for (c = 0; c < amountOfContacts; c++) {
-          if (!agents[agents[a].contacts[c]].removed) {
-            if (rand() % 100 > 90) {
-              agents[agents[a].contacts[c]].infectious = *tick;
-              agents[agents[a].contacts[c]].succeptible = 0;
-            }
-          }
-
-        }
-      } else {
-        agents[a].infectious = 0;
-        agents[a].removed = *tick;
-      }
-    }
+    agents[a] = computeAgent(agents, *tick, a);
   }
 }
