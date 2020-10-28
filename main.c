@@ -16,6 +16,7 @@ typedef struct agent {
 
 void printAgent (struct agent agent);
 void printStats (struct agent * agents, int *tick);
+void initAgents (agent * agents);
 void runEvent (struct agent * agents, int *tick);
 
 
@@ -24,22 +25,11 @@ int main(void) {
   agent *agents_ptr = agents;
 
   int tick = 0;
-  int a = 0;
   int event = 0;
 
   srand(time(NULL));
 
-  for (a = 0; a < amountOfAgents; a++) {
-    int c = 0;
-
-    agents[a].succeptible = a >= amountOfStartInfected ? 1 : 0;
-    agents[a].infectious = a >= amountOfStartInfected ? 0 : 1;
-    agents[a].removed = 0;
-
-    for (c = 0; c < amountOfContacts; c++) {
-      agents[a].contacts[c] = rand() % amountOfAgents;
-    }
-  }
+  initAgents(agents_ptr);
 
   for (event = 0; event < maxEvents; event++){
     printStats(agents_ptr, &tick);
@@ -89,6 +79,22 @@ void printStats (agent * agents, int *tick) {
   printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 }
 
+void initAgents (agent * agents) {
+  int a = 0;
+
+  for (a = 0; a < amountOfAgents; a++) {
+    int c = 0;
+
+    agents[a].succeptible = a >= amountOfStartInfected ? 1 : 0;
+    agents[a].infectious = a >= amountOfStartInfected ? 0 : 1;
+    agents[a].removed = 0;
+
+    for (c = 0; c < amountOfContacts; c++) {
+      agents[a].contacts[c] = rand() % amountOfAgents;
+    }
+  }
+}
+
 void runEvent (agent * agents, int *tick) {
   int a = 0;
   *tick += 1;
@@ -110,7 +116,6 @@ void runEvent (agent * agents, int *tick) {
         agents[a].infectious = 0;
         agents[a].removed = *tick;
       }
-
     }
   }
 }
