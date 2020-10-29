@@ -37,6 +37,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Install GNU indent
+        run: sudo apt install indent
+
       - name: Run GNU indent
         run: indent -ts 2 -kr -nut main.c
 
