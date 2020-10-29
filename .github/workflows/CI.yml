@@ -28,7 +28,7 @@ jobs:
       - name: Run makefile
         run: make
 
-  build:
+  linting:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
