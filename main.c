@@ -16,7 +16,9 @@ typedef struct agent {
 
 void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
-void initAgents(agent * agents);
+void initAgents(agent * agents, int tick);
+agent infectAgent (agent agent, int tick);
+void infectRandomAgent (agent * agents, int tick);
 void runEvent(struct agent *agents, int *tick);
 
 
@@ -25,12 +27,12 @@ int main(void)
     agent agents[amountOfAgents];
     agent *agents_ptr = agents;
 
-    int tick = 0;
+    int tick = 1;
     int event = 0;
 
     srand(time(NULL));
 
-    initAgents(agents_ptr);
+    initAgents(agents_ptr, tick);
 
     for (event = 0; event < maxEvents; event++) {
         printStats(agents_ptr, &tick);
@@ -84,21 +86,48 @@ void printStats(agent * agents, int *tick)
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 }
 
-void initAgents(agent * agents)
+void initAgents(agent * agents, int tick)
 {
     int a = 0;
+    int i = 0;
 
     for (a = 0; a < amountOfAgents; a++) {
         int c = 0;
 
-        agents[a].succeptible = a >= amountOfStartInfected ? 1 : 0;
-        agents[a].infectious = a >= amountOfStartInfected ? 0 : 1;
+        agents[a].succeptible = 1;
+        agents[a].infectious = 0;
         agents[a].removed = 0;
 
         for (c = 0; c < amountOfContacts; c++) {
             agents[a].contacts[c] = rand() % amountOfAgents;
         }
     }
+
+    /* Infect random agents */
+    for (i = 0; i < amountOfStartInfected; i++)
+    {
+        infectRandomAgent(agents, tick);
+    }
+}
+
+agent infectAgent (agent agent, int tick)
+{
+    agent.succeptible = 0;
+    agent.infectious = tick;
+    return agent;
+}
+
+void infectRandomAgent (agent * agents, int tick)
+{
+    int randomID;
+    agent theAgent;
+
+    do {
+        randomID = rand() % amountOfAgents;
+        theAgent = agents[randomID];
+    } while (theAgent.infectious);
+
+    agents[randomID] = infectAgent(theAgent, tick);
 }
 
 agent computeAgent(agent * agents, int tick, int agentID)
@@ -112,8 +141,7 @@ agent computeAgent(agent * agents, int tick, int agentID)
                 int contact = theAgent.contacts[c];
                 if (!agents[contact].removed) {
                     if (rand() % 100 > 90) {
-                        agents[contact].infectious = tick;
-                        agents[contact].succeptible = 0;
+                        agents[contact] = infectAgent(agents[contact], tick);
                     }
                 }
             }
