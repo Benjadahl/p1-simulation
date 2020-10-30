@@ -46,6 +46,7 @@ jobs:
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v4.7.2
         with:
-          commit_message: Apply automatic linting
+          commit_message: (Auto) Apply Linting
           file_pattern: ./*.c
+          commit_user_name: LinterBot
 
