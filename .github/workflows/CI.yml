@@ -36,6 +36,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Install GNU indent
         run: sudo apt install indent
@@ -48,5 +50,4 @@ jobs:
         with:
           commit_message: (Auto) Apply Linting
           file_pattern: '*.c'
-          commit_user_name: LinterBot
-          ref: ${{ github.head_ref }}
+          commit_user_name: 'LinterBot'
