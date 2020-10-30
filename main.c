@@ -56,7 +56,7 @@ void printAgent(struct agent agent)
     printf("\n");
 }
 
-void printStats(agent * agents, int *tick) 
+void printStats(agent * agents, int *tick)
 {
     int a = 0;
     int totalSucceptible = 0;
