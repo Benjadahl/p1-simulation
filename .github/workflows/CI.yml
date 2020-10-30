@@ -27,3 +27,27 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run makefile
         run: make
+
+  linting:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install GNU indent
+        run: sudo apt install indent
+
+      - name: Run GNU indent
+        run: indent -ts 2 -kr -nut main.c
+
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v4.7.2
+        with:
+          commit_message: (Auto) Apply Linting
+          file_pattern: '*.c'
+          commit_user_name: 'LinterBot'
