@@ -6,12 +6,14 @@
 #define infectionTime 4
 #define amountOfStartInfected 20
 #define maxEvents 100
+#define primaryGroupSize 30
 
 typedef struct agent {
     int succeptible;
     int infectious;
     int removed;
     int contacts[amountOfContacts];
+    int primaryGroup;
 } agent;
 
 void printAgent(struct agent agent);
@@ -49,6 +51,8 @@ void printAgent(struct agent agent)
     printf("Succeptible: %d\n", agent.succeptible);
     printf("Infectious: %d\n", agent.infectious);
     printf("Removed: %d\n", agent.removed);
+
+    printf("Primary Group: %d\n", agent.primaryGroup);
 
     printf("Contacts: ");
 
@@ -101,6 +105,9 @@ void initAgents(agent * agents, int tick)
         for (c = 0; c < amountOfContacts; c++) {
             agents[a].contacts[c] = rand() % amountOfAgents;
         }
+
+        /* Add to group sequentially */
+        agents[a].primaryGroup = a % primaryGroupSize;
     }
 
     /* Infect random agents */
