@@ -17,8 +17,8 @@ typedef struct agent {
 void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents, int tick);
-agent infectAgent (agent agent, int tick);
-void infectRandomAgent (agent * agents, int tick);
+agent infectAgent(agent agent, int tick);
+void infectRandomAgent(agent * agents, int tick);
 void runEvent(struct agent *agents, int *tick);
 
 
@@ -104,20 +104,19 @@ void initAgents(agent * agents, int tick)
     }
 
     /* Infect random agents */
-    for (i = 0; i < amountOfStartInfected; i++)
-    {
+    for (i = 0; i < amountOfStartInfected; i++) {
         infectRandomAgent(agents, tick);
     }
 }
 
-agent infectAgent (agent agent, int tick)
+agent infectAgent(agent agent, int tick)
 {
     agent.succeptible = 0;
     agent.infectious = tick;
     return agent;
 }
 
-void infectRandomAgent (agent * agents, int tick)
+void infectRandomAgent(agent * agents, int tick)
 {
     int randomID;
     agent theAgent;
@@ -141,7 +140,8 @@ agent computeAgent(agent * agents, int tick, int agentID)
                 int contact = theAgent.contacts[c];
                 if (!agents[contact].removed) {
                     if (rand() % 100 > 90) {
-                        agents[contact] = infectAgent(agents[contact], tick);
+                        agents[contact] =
+                            infectAgent(agents[contact], tick);
                     }
                 }
             }
