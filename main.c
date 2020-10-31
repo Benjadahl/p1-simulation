@@ -141,7 +141,7 @@ void runEvent(agent * agents, int *tick)
 
 void PlotTest()
 {
-    double data[] = {5, 12, 24, 36, 100, 220, 400, 500};
+    double data[] = { 5, 12, 24, 36, 100, 220, 400, 500 };
     int dataSize = 8;
     PlotBarGraph(data, dataSize);
     PlotLineGraph(data, dataSize, data, dataSize);
