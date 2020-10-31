@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "plot.h"
 #define amountOfAgents 100000
 #define amountOfContacts 5
 #define infectionTime 4
@@ -18,10 +19,12 @@ void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents);
 void runEvent(struct agent *agents, int *tick);
+void PlotTest();
 
 
 int main(void)
 {
+    PlotTest();
     agent agents[amountOfAgents];
     agent *agents_ptr = agents;
 
@@ -134,4 +137,13 @@ void runEvent(agent * agents, int *tick)
     for (a = 0; a < amountOfAgents; a++) {
         agents[a] = computeAgent(agents, *tick, a);
     }
+}
+
+void PlotTest()
+{
+    double data[] = {5, 12, 24, 36, 100, 220, 400, 500};
+    int dataSize = 8;
+    PlotBarGraph(data, dataSize);
+    PlotLineGraph(data, dataSize, data, dataSize);
+    printf("test");
 }
