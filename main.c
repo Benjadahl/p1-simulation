@@ -23,7 +23,7 @@ void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents, int tick);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
-int trueChance (int percentage);
+int trueChance(int percentage);
 void runEvent(struct agent *agents, int *tick);
 
 
@@ -180,7 +180,8 @@ agent computeAgent(agent * agents, int tick, int agentID)
     return theAgent;
 }
 
-int trueChance (int percentage) {
+int trueChance(int percentage)
+{
     if (rand() % 100 < percentage) {
         return 1;
     } else {
