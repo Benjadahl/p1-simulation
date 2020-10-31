@@ -163,8 +163,7 @@ agent computeAgent(agent * agents, int tick, int agentID)
             }
 
             /* Compute primary group */
-            for (a = 0; a < primaryGroupSize; a++)
-            {
+            for (a = 0; a < primaryGroupSize; a++) {
                 int peerID = theAgent.primaryGroup * primaryGroupSize + a;
                 agent peerAgent = agents[peerID];
 
