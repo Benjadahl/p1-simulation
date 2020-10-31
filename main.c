@@ -7,6 +7,8 @@
 #define amountOfStartInfected 20
 #define maxEvents 100
 #define primaryGroupSize 30
+#define primaryGroupRisk 97
+#define contactsRisk 98
 
 typedef struct agent {
     int succeptible;
@@ -107,7 +109,7 @@ void initAgents(agent * agents, int tick)
         }
 
         /* Add to group sequentially */
-        agents[a].primaryGroup = a % primaryGroupSize;
+        agents[a].primaryGroup = a / primaryGroupSize;
     }
 
     /* Infect random agents */
@@ -118,8 +120,10 @@ void initAgents(agent * agents, int tick)
 
 agent infectAgent(agent agent, int tick)
 {
-    agent.succeptible = 0;
-    agent.infectious = tick;
+    if (agent.succeptible) {
+        agent.succeptible = 0;
+        agent.infectious = tick;
+    }
     return agent;
 }
 
@@ -142,14 +146,29 @@ agent computeAgent(agent * agents, int tick, int agentID)
 
     if (theAgent.infectious != 0) {
         if (theAgent.infectious > tick - infectionTime) {
+            /* Handle infectious agent */
+            int a = 0;
             int c = 0;
+
+            /* Compute contacts */
             for (c = 0; c < amountOfContacts; c++) {
                 int contact = theAgent.contacts[c];
                 if (!agents[contact].removed) {
-                    if (rand() % 100 > 90) {
+                    if (rand() % 100 > contactsRisk) {
                         agents[contact] =
                             infectAgent(agents[contact], tick);
                     }
+                }
+            }
+
+            /* Compute primary group */
+            for (a = 0; a < primaryGroupSize; a++)
+            {
+                int peerID = theAgent.primaryGroup * primaryGroupSize + a;
+                agent peerAgent = agents[peerID];
+
+                if (rand() % 100 > primaryGroupRisk) {
+                    agents[peerID] = infectAgent(peerAgent, tick);
                 }
             }
         } else {
