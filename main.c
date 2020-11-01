@@ -26,12 +26,13 @@ void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents, int tick);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
-int rndInt (int max);
+int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(struct agent *agents, int *tick);
 
-const int amountOfSecondaryGroups = amountOfAgents/secondaryGroupSize;
-int secondaryGroups[amountOfAgents/secondaryGroupSize][secondaryGroupSize];
+const int amountOfSecondaryGroups = amountOfAgents / secondaryGroupSize;
+int secondaryGroups[amountOfAgents /
+                    secondaryGroupSize][secondaryGroupSize];
 
 int main(void)
 {
@@ -107,16 +108,15 @@ void initAgents(agent * agents, int tick)
     int a = 0;
     int i = 0;
 
-    for (secondaryGroup = 0; secondaryGroup < amountOfSecondaryGroups; secondaryGroup++)
-    {
+    for (secondaryGroup = 0; secondaryGroup < amountOfSecondaryGroups;
+         secondaryGroup++) {
         int groupLevel = 0;
-        for (groupLevel = 0; groupLevel < secondaryGroupSize; groupLevel++)
-        {
+        for (groupLevel = 0; groupLevel < secondaryGroupSize; groupLevel++) {
             secondaryGroups[secondaryGroup][groupLevel] = -1;
         }
-        
+
     }
-    
+
 
     for (a = 0; a < amountOfAgents; a++) {
         int c = 0;
@@ -227,7 +227,8 @@ agent computeAgent(agent * agents, int tick, int agentID)
     return theAgent;
 }
 
-int rndInt (int max) {
+int rndInt(int max)
+{
     return rand() % max;
 }
 
