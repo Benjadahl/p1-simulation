@@ -7,7 +7,9 @@
 #define amountOfStartInfected 20
 #define maxEvents 100
 #define primaryGroupSize 30
-#define primaryGroupRisk 2
+#define secondaryGroupSize 20
+#define primaryGroupRisk 1
+#define secondaryGroupRisk 1
 #define contactsRisk 1
 
 typedef struct agent {
@@ -16,6 +18,7 @@ typedef struct agent {
     int removed;
     int contacts[amountOfContacts];
     int primaryGroup;
+    int secondaryGroup;
 } agent;
 
 void printAgent(struct agent agent);
@@ -23,9 +26,12 @@ void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents, int tick);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
+int rndInt (int max);
 int trueChance(int percentage);
 void runEvent(struct agent *agents, int *tick);
 
+const int amountOfSecondaryGroups = amountOfAgents/secondaryGroupSize;
+int secondaryGroups[amountOfAgents/secondaryGroupSize][secondaryGroupSize];
 
 int main(void)
 {
@@ -56,6 +62,8 @@ void printAgent(struct agent agent)
     printf("Removed: %d\n", agent.removed);
 
     printf("Primary Group: %d\n", agent.primaryGroup);
+    printf("Secondary Group: %d\n", agent.secondaryGroup);
+
 
     printf("Contacts: ");
 
@@ -95,11 +103,24 @@ void printStats(agent * agents, int *tick)
 
 void initAgents(agent * agents, int tick)
 {
+    int secondaryGroup = 0;
     int a = 0;
     int i = 0;
 
+    for (secondaryGroup = 0; secondaryGroup < amountOfSecondaryGroups; secondaryGroup++)
+    {
+        int groupLevel = 0;
+        for (groupLevel = 0; groupLevel < secondaryGroupSize; groupLevel++)
+        {
+            secondaryGroups[secondaryGroup][groupLevel] = -1;
+        }
+        
+    }
+    
+
     for (a = 0; a < amountOfAgents; a++) {
         int c = 0;
+        int g = rndInt(amountOfSecondaryGroups - 1);
 
         agents[a].succeptible = 1;
         agents[a].infectious = 0;
@@ -111,6 +132,19 @@ void initAgents(agent * agents, int tick)
 
         /* Add to group sequentially */
         agents[a].primaryGroup = a / primaryGroupSize;
+
+        /* Spread agents randomly in secondary groupss */
+        agents[a].secondaryGroup = -1;
+
+        while (agents[a].secondaryGroup == -1) {
+            int groupLevel = a / amountOfSecondaryGroups;
+            if (secondaryGroups[g][groupLevel] == -1) {
+                secondaryGroups[g][groupLevel] = a;
+                agents[a].secondaryGroup = g;
+            } else {
+                g = (g + 1) % amountOfSecondaryGroups;
+            }
+        }
     }
 
     /* Infect random agents */
@@ -134,7 +168,7 @@ void infectRandomAgent(agent * agents, int tick)
     agent theAgent;
 
     do {
-        randomID = rand() % amountOfAgents;
+        randomID = rndInt(amountOfAgents);
         theAgent = agents[randomID];
     } while (theAgent.infectious);
 
@@ -148,8 +182,9 @@ agent computeAgent(agent * agents, int tick, int agentID)
     if (theAgent.infectious != 0) {
         if (theAgent.infectious > tick - infectionTime) {
             /* Handle infectious agent */
-            int a = 0;
             int c = 0;
+            int a = 0;
+            int s = 0;
 
             /* Compute contacts */
             for (c = 0; c < amountOfContacts; c++) {
@@ -171,6 +206,18 @@ agent computeAgent(agent * agents, int tick, int agentID)
                     agents[peerID] = infectAgent(peerAgent, tick);
                 }
             }
+
+            /* Compute secondary group */
+            for (s = 0; s < secondaryGroupSize; s++) {
+                int peerID = secondaryGroups[theAgent.secondaryGroup][s];
+                agent peerAgent = agents[peerID];
+
+                if (peerID != agentID) {
+                    if (trueChance(secondaryGroupRisk)) {
+                        agents[peerID] = infectAgent(peerAgent, tick);
+                    }
+                }
+            }
         } else {
             theAgent.infectious = 0;
             theAgent.removed = tick;
@@ -178,6 +225,10 @@ agent computeAgent(agent * agents, int tick, int agentID)
     }
 
     return theAgent;
+}
+
+int rndInt (int max) {
+    return rand() % max;
 }
 
 int trueChance(int percentage)
