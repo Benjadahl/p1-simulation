@@ -23,7 +23,8 @@ void printStats(struct agent *agents, int *tick, int);
 void initAgents(agent * agents, int, int, int);
 void runEvent(struct agent *agents, int *tick, int, int, int);
 
-void rand_num_gen(int (*), int (*), int (*), int (*), int (*), int (*), char[]);
+void rand_num_gen(int (*), int (*), int (*), int (*), int (*), int (*),
+                  char[]);
 void print_val(int, int, int, int, int, int, int);
 
 
@@ -117,11 +118,10 @@ int main(int argc, char *argv[])
 
     }
 
-    
+
     rand_num_gen(&pp, &infected, &tick, &timeInfected, &contacts, &chance,
                  random);
-    print_val(pp, infected, tick, seed, timeInfected, contacts,
-              chance);
+    print_val(pp, infected, tick, seed, timeInfected, contacts, chance);
 
 
     agent agents[pp];
@@ -198,7 +198,8 @@ void initAgents(agent * agents, int pp, int infected, int contacts)
     }
 }
 
-agent computeAgent(agent * agents, int tick, int agentID, int timeInfected, int contacts)
+agent computeAgent(agent * agents, int tick, int agentID, int timeInfected,
+                   int contacts)
 {
     agent theAgent = agents[agentID];
 
@@ -223,7 +224,8 @@ agent computeAgent(agent * agents, int tick, int agentID, int timeInfected, int 
     return theAgent;
 }
 
-void runEvent(agent * agents, int *tick, int timeInfected, int contacts, int pp)
+void runEvent(agent * agents, int *tick, int timeInfected, int contacts,
+              int pp)
 {
     int a = 0;
     *tick += 1;
