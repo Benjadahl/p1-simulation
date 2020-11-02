@@ -1,22 +1,40 @@
 #include "pbPlots.h"
 #include "supportLib.h"
 
-void PlotLineGraph(double xAxis[], int xSize, double yAxis[], int ySize)
+RGBABitmapImageReference PlotLineGraph(double xAxis[], int xSize, double yAxis[], int ySize, wchar_t title[], wchar_t xLable[], wchar_t yLable[], int xMax, int yMax)
 {
-    RGBABitmapImageReference *imgRef = CreateRGBABitmapImageReference();
-	DrawScatterPlot(imgRef, 500, 500, xAxis, xSize, yAxis, ySize);
-    
-    size_t length;
-	double *pngdata = ConvertToPNG(&length, imgRef->image);
-	WriteToFile(pngdata, length, "linePlot.png");
-}
+	ScatterPlotSeries *series = GetDefaultScatterPlotSeriesSettings();
+	series->xs = xAxis;
+	series->xsLength = xSize;
+	series->ys = yAxis;
+	series->ysLength = ySize;
+	series->linearInterpolation = true;
+	series->lineType = L"solid";
+	series->lineTypeLength = wcslen(series->lineType);
+	series->lineThickness = 2;
+	series->color = GetGray(0.3);
 
-void PlotBarGraph(double data[], int dataSize)
-{
-    RGBABitmapImage *img = DrawBarPlot(500, 500, data, dataSize);
-    
-    size_t length;
-	double *pngdata = ConvertToPNG(&length, img);
-	WriteToFile(pngdata, length, "barPlot.png");
-}
+	ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
+	settings->width = 1000;
+	settings->height = 1000;
+	settings->autoBoundaries = false;
+    settings->xMin = 0;
+    settings->yMin = 0;
+    settings->xMax = xMax;
+    settings->yMax = yMax;
+	settings->autoPadding = true;
+    settings->title = title;
+    settings->titleLength = wcslen(settings->title);
+    settings->xLabel = xLable;
+    settings->xLabelLength = wcslen(settings->xLabel);
+    settings->yLabel = yLable;
+    settings->yLabelLength = wcslen(settings->yLabel);
+	ScatterPlotSeries *s [] = {series};
+	settings->scatterPlotSeries = s;
+	settings->scatterPlotSeriesLength = 1;
 
+	RGBABitmapImageReference *canvasReference = CreateRGBABitmapImageReference();
+	DrawScatterPlotFromSettings(canvasReference, settings);
+
+    return *canvasReference;
+}

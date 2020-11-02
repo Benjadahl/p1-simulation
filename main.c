@@ -19,14 +19,21 @@ void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents);
 void runEvent(struct agent *agents, int *tick);
-void PlotTest();
+void PlotData(agent *agents, double *succeptible_data, double *infectious_data, double *recovered_data, int event);
+void CreatePlot(double succeptible_data[], double infectious_data[], double recovered_data[]);
 
 
 int main(void)
 {
-    PlotTest();
     agent agents[amountOfAgents];
     agent *agents_ptr = agents;
+
+    double infectious_data[maxEvents];
+    double *infectious_plot_data_ptr = infectious_data;
+    double succeptible_data[maxEvents];
+    double *succeptible_data_ptr = succeptible_data;
+    double recovered_data[maxEvents];
+    double *recovered_data_ptr = recovered_data;
 
     int tick = 0;
     int event = 0;
@@ -38,9 +45,31 @@ int main(void)
     for (event = 0; event < maxEvents; event++) {
         printStats(agents_ptr, &tick);
         runEvent(agents_ptr, &tick);
+        PlotData(agents_ptr, succeptible_data_ptr, infectious_plot_data_ptr, recovered_data_ptr, event);
     }
+    
+    CreatePlot(succeptible_data, infectious_data, recovered_data);
 
     return 0;
+}
+
+void PlotData(agent *agents, double *succeptible_data, double *infectious_data, double *recovered_data, int event)
+{
+    double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
+    double total_succeptible = 0, total_infectious = 0, total_recovered= 0;
+    for (int i = 0; i < amountOfAgents; i++){
+        total_succeptible += agents[i].succeptible;
+        total_infectious += agents[i].infectious > 0;
+        total_recovered += agents[i].removed > 0;
+    }
+
+    succeptible_p = total_succeptible * 100 / amountOfAgents;
+    infectious_p = total_infectious * 100 / amountOfAgents;
+    recovered_p = total_recovered * 100 / amountOfAgents;
+
+    succeptible_data[event] = succeptible_p;
+    infectious_data[event] = infectious_p;
+    recovered_data[event] = recovered_p;
 }
 
 void printAgent(struct agent agent)
@@ -139,11 +168,36 @@ void runEvent(agent * agents, int *tick)
     }
 }
 
-void PlotTest()
+
+void CreatePlot(double succeptible_data[], double infectious_data[], double recovered_data[])
 {
-    double data[] = { 5, 12, 24, 36, 100, 220, 400, 500 };
-    int dataSize = 8;
-    PlotBarGraph(data, dataSize);
-    PlotLineGraph(data, dataSize, data, dataSize);
-    printf("test");
+    /*int xSize = 100, ySize = 100;
+    wchar_t title = L"Title", xLable = L"X", yLable = L"Y";*/
+
+
+    double timeSeries[maxEvents];
+    for (int i = 0; i < maxEvents; i++)
+        timeSeries[i] = (double)i + 1;
+
+    RGBABitmapImageReference canvasReference;
+    RGBABitmapImage *combined_plots = CreateImage(2000, 2000, GetWhite());
+    RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img;
+
+    canvasReference = PlotLineGraph(timeSeries, maxEvents, succeptible_data, 100, L"Succeptible (%)", L"Number of succeptible people (%)", L"Time (event)", maxEvents, 100);
+    succeptible_img = canvasReference.image;
+
+    canvasReference = PlotLineGraph(timeSeries, maxEvents, infectious_data, 100,  L"Infectious (%)", L"Number of infectious people (%)", L"Time (event)", maxEvents, 100);
+    infectious_img = canvasReference.image;
+
+    canvasReference = PlotLineGraph(timeSeries, maxEvents, recovered_data, 100, L"Recovered (%)", L"Number of recovered people (%)", L"Time (event)", maxEvents, 100);
+    recovered_img = canvasReference.image;
+
+    DrawImageOnImage(combined_plots, succeptible_img, 0, 0);
+    DrawImageOnImage(combined_plots, infectious_img, 0, 1000);
+    DrawImageOnImage(combined_plots, recovered_img, 1000, 0);
+
+    size_t length;
+	double *pngdata = ConvertToPNG(&length, combined_plots);
+	WriteToFile(pngdata, length, "LinePlot.png");
+
 }

@@ -1,5 +1,4 @@
 #include "pbPlots.h"
 #include "supportLib.h"
 
-void PlotLineGraph(double xAxis[], int xSize, double yAxis[], int ySize);
-void PlotBarGraph(double data[], int dataSize);
+RGBABitmapImageReference PlotLineGraph(double xAxis[], int xSize, double yAxis[], int ySize, wchar_t title[], wchar_t xLable[], wchar_t yLable[], int xMax, int yMax);
