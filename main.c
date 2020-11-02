@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <stdio.h> 
+#include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -22,8 +22,10 @@ void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents);
 void runEvent(struct agent *agents, int *tick);
-void rand_num_gen(int(*), int(*), int(*), int(*), int(*), int(*), char []);
-void print_val(int(*), int(*), int(*), int(*), int(*), int(*), int(*));
+void rand_num_gen(int (*), int (*), int (*), int (*), int (*), int (*),
+                  char[]);
+void print_val(int (*), int (*), int (*), int (*), int (*), int (*),
+               int (*));
 
 
 int main(int argc, char *argv[])
@@ -33,108 +35,91 @@ int main(int argc, char *argv[])
     int event = 0;
     int opt;
     int step = 0;
-    int pp = amountOfAgents; /*amount*/
-    int infected = amountOfStartInfected; /*antallet af infected*/
-    int timeInfected = infectionTime; /*infections tid*/
-    int contacts = amountOfContacts; /*antal kontakter*/
-    int chance = chanceForInfection; /*infections chance*/
+    int pp = amountOfAgents;    /*amount */
+    int infected = amountOfStartInfected; /*antallet af infected */
+    int timeInfected = infectionTime; /*infections tid */
+    int contacts = amountOfContacts;  /*antal kontakter */
+    int chance = chanceForInfection;  /*infections chance */
 
     char r[6] = "random";
     char random[6];
 
-    time_t t; seed = t;
+    time_t t;
+    seed = t;
 
-    while((opt = getopt(argc, argv, "a:c:p:t:i:s:k:x")) != -1) 
-	{ 
-	    switch(opt) 
-		    { 
-            case 'k': /*contact antallet*/
-                if(*optarg == r[0])
-                {
-                    random[step] = 'k';
-                    step++;
-                }
-                else
-                {
-                    contacts = atoi(optarg);
-                }
+    while ((opt = getopt(argc, argv, "a:c:p:t:i:s:k:x")) != -1) {
+        switch (opt) {
+        case 'k':              /*contact antallet */
+            if (*optarg == r[0]) {
+                random[step] = 'k';
+                step++;
+            } else {
+                contacts = atoi(optarg);
+            }
             break;
 
-            case 'a': /*infections tid input*/
-                if (*optarg == r[0])
-                {
-                    random[step] = 'a';
-                    step++;
-                }
-                else
-                {
-                    timeInfected = atoi(optarg);    
-                }
+        case 'a':              /*infections tid input */
+            if (*optarg == r[0]) {
+                random[step] = 'a';
+                step++;
+            } else {
+                timeInfected = atoi(optarg);
+            }
             break;
 
-            case 'c': /*infections chance*/
-                if (*optarg == r[0])
-                {
-                    random[step] = 'c';
-                    step++;
-                }
-                else
-                {
-                    chance = atoi(optarg);
-                }
+        case 'c':              /*infections chance */
+            if (*optarg == r[0]) {
+                random[step] = 'c';
+                step++;
+            } else {
+                chance = atoi(optarg);
+            }
             break;
 
-			case 'p': /*amount input*/
-                if (*optarg == r[0])
-                {
-                    random[step] = 'p';
-                    step++;
-                }
-                else
-                {
-                    pp = atoi(optarg);
-                }
+        case 'p':              /*amount input */
+            if (*optarg == r[0]) {
+                random[step] = 'p';
+                step++;
+            } else {
+                pp = atoi(optarg);
+            }
             break;
 
-            case 'i': /*infected fra start input*/ 
-                if (*optarg == r[0])
-                {
-                    random[step] = 'i';
-                    step++;
-                }
-                else
-                {
-                    infected= atoi(optarg);       
-                }
-		    break;
-
-		    case 't': /*tick input*/
-                if (*optarg == r[0])
-                {
-                    random[step] = 't';
-                    step++;
-                }
-                else
-                {
-                    tick = atoi(optarg);
-                }
-            break;
-			
-            case 's': /*seed input*/
-                seed = atoi(optarg);
-                t = seed;
+        case 'i':              /*infected fra start input */
+            if (*optarg == r[0]) {
+                random[step] = 'i';
+                step++;
+            } else {
+                infected = atoi(optarg);
+            }
             break;
 
-		    case '?': 
-		        printf("unknown option: %c\n", optopt); 
-		    break; 
-	    }
+        case 't':              /*tick input */
+            if (*optarg == r[0]) {
+                random[step] = 't';
+                step++;
+            } else {
+                tick = atoi(optarg);
+            }
+            break;
+
+        case 's':              /*seed input */
+            seed = atoi(optarg);
+            t = seed;
+            break;
+
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
+        }
     }
 
     srand(time(&t));
 
-	rand_num_gen(&pp, &infected, &tick, &timeInfected, &contacts, &chance, random);
-    print_val(&pp, &infected, &tick, &seed, &timeInfected, &contacts, &chance);
+    rand_num_gen(&pp, &infected, &tick, &timeInfected, &contacts, &chance,
+                 random);
+    print_val(&pp, &infected, &tick, &seed, &timeInfected, &contacts,
+              &chance);
 
     agent agents[pp];
     agent *agents_ptr = agents;
@@ -244,54 +229,55 @@ void runEvent(agent * agents, int *tick)
         agents[a] = computeAgent(agents, *tick, a);
     }
 }
-void rand_num_gen(int *amount, int *infc, int *tick, int *infected, int *contact, int *chance, char random[])
+
+void rand_num_gen(int *amount, int *infc, int *tick, int *infected,
+                  int *contact, int *chance, char random[])
 {
-  int count;
-  for(count = 0; count <= 6; count++)
-  {
+    int count;
+    for (count = 0; count <= 6; count++) {
 
-    switch (random[count])
-    {
-      case 'k': 
-      *contact = rand() % MaxIntValue;
-      break;
+        switch (random[count]) {
+        case 'k':
+            *contact = rand() % MaxIntValue;
+            break;
 
-      case 'a': 
-      *infected = rand() % MaxIntValue;
-      break;
+        case 'a':
+            *infected = rand() % MaxIntValue;
+            break;
 
-      case 'c': 
-      *chance = rand() % MaxIntValue;
-      break;
+        case 'c':
+            *chance = rand() % MaxIntValue;
+            break;
 
-      case 'p': 
-       *amount = rand() % MaxIntValue;
-      break;
+        case 'p':
+            *amount = rand() % MaxIntValue;
+            break;
 
-      case 'i':
-      *infc = rand() % MaxIntValue;
-      break;
+        case 'i':
+            *infc = rand() % MaxIntValue;
+            break;
 
-      case 't':
-      *tick = rand() % MaxIntValue;
-      break;
-      
-      default: break;
+        case 't':
+            *tick = rand() % MaxIntValue;
+            break;
+
+        default:
+            break;
+        }
+        if (*infc >= *amount) {
+            *infc = rand() % (*amount / 2);
+        }
     }
-    if (*infc >= *amount)
-    {
-      *infc = rand() % (*amount/2);
-    }
-  }
 }
 
-void print_val(int *pp, int *infected, int *tick, int *seed, int *timeInfected, int *contacts, int *chance)
+void print_val(int *pp, int *infected, int *tick, int *seed,
+               int *timeInfected, int *contacts, int *chance)
 {
-  printf("Seed:                         %d\n", *seed);
-  printf("Ticks:                        %d\n", *tick);
-  printf("Infection Time:               %d\n", *timeInfected);
-  printf("Infection chance:             %d\n", *chance);
-  printf("People pupolation:            %d\n", *pp);
-  printf("Amount of infected at begin:  %d\n", *infected);
-  printf("Contacs pr person:            %d\n", *contacts);
+    printf("Seed:                         %d\n", *seed);
+    printf("Ticks:                        %d\n", *tick);
+    printf("Infection Time:               %d\n", *timeInfected);
+    printf("Infection chance:             %d\n", *chance);
+    printf("People pupolation:            %d\n", *pp);
+    printf("Amount of infected at begin:  %d\n", *infected);
+    printf("Contacs pr person:            %d\n", *contacts);
 }
