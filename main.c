@@ -65,7 +65,7 @@ void printStats(agent * agents, int *tick)
     double percentSucceptible = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
-    double R0;
+    double R0 = 0;
     static int prevInfected;
 
 
