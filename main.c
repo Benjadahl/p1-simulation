@@ -68,7 +68,6 @@ void printStats(agent * agents, int *tick)
     double R0 = 0;
     static int prevInfected;
 
-
     for (a = 0; a < amountOfAgents; a++) {
         totalSucceptible += agents[a].succeptible;
         totalInfectious += agents[a].infectious > 0;
