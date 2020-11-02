@@ -9,7 +9,7 @@
 #define amountOfStartInfected 20
 #define maxEvents 100
 #define chanceForInfection 2
-#define MaxIntValue 200000000
+#define MaxIntValue 100000
 
 typedef struct agent {
     int succeptible;
@@ -18,15 +18,13 @@ typedef struct agent {
     int contacts[amountOfContacts];
 } agent;
 
-void printAgent(struct agent agent);
-void printStats(struct agent *agents, int *tick);
-void initAgents(agent * agents);
-void runEvent(struct agent *agents, int *tick);
+void printAgent(struct agent agent, int);
+void printStats(struct agent *agents, int *tick, int);
+void initAgents(agent * agents, int, int, int);
+void runEvent(struct agent *agents, int *tick, int, int, int);
 
-void rand_num_gen(int (*), int (*), int (*), int (*), int (*), int (*),
-                  char[]);
-void print_val(int (*), int (*), int (*), int (*), int (*), int (*),
-               int (*));
+void rand_num_gen(int (*), int (*), int (*), int (*), int (*), int (*), char[]);
+void print_val(int, int, int, int, int, int, int);
 
 
 
@@ -49,8 +47,7 @@ int main(int argc, char *argv[])
     char random[6];
 
 
-    time_t t;
-    seed = t;
+    srand(time(NULL));
 
     while ((opt = getopt(argc, argv, "a:c:p:t:i:s:k:x")) != -1) {
         switch (opt) {
@@ -110,7 +107,7 @@ int main(int argc, char *argv[])
 
         case 's':              /*seed input */
             seed = atoi(optarg);
-            t = seed;
+            srand(seed);
             break;
 
         case '?':
@@ -120,27 +117,27 @@ int main(int argc, char *argv[])
 
     }
 
-    srand(time(&t));
+    
     rand_num_gen(&pp, &infected, &tick, &timeInfected, &contacts, &chance,
                  random);
-    print_val(&pp, &infected, &tick, &seed, &timeInfected, &contacts,
-              &chance);
+    print_val(pp, infected, tick, seed, timeInfected, contacts,
+              chance);
 
 
     agent agents[pp];
     agent *agents_ptr = agents;
 
-    initAgents(agents_ptr);
+    initAgents(agents_ptr, pp, infected, contacts);
 
     for (event = 0; event < maxEvents; event++) {
-        printStats(agents_ptr, &tick);
-        runEvent(agents_ptr, &tick);
+        printStats(agents_ptr, &tick, pp);
+        runEvent(agents_ptr, &tick, timeInfected, contacts, pp);
     }
 
     return 0;
 }
 
-void printAgent(struct agent agent)
+void printAgent(struct agent agent, int pp)
 {
     int i = 0;
 
@@ -150,13 +147,13 @@ void printAgent(struct agent agent)
 
     printf("Contacts: ");
 
-    for (i = 0; i < amountOfContacts; i++) {
+    for (i = 0; i < pp; i++) {
         printf("%d ", agent.contacts[i]);
     }
     printf("\n");
 }
 
-void printStats(agent * agents, int *tick)
+void printStats(agent * agents, int *tick, int pp)
 {
     int a = 0;
     int totalSucceptible = 0;
@@ -166,15 +163,15 @@ void printStats(agent * agents, int *tick)
     double percentInfectious = 0;
     double percentRemoved = 0;
 
-    for (a = 0; a < amountOfAgents; a++) {
+    for (a = 0; a < pp; a++) {
         totalSucceptible += agents[a].succeptible;
         totalInfectious += agents[a].infectious > 0;
         totalRemoved += agents[a].removed > 0;
     }
 
-    percentSucceptible = totalSucceptible * 100 / amountOfAgents;
-    percentInfectious = totalInfectious * 100 / amountOfAgents;
-    percentRemoved = totalRemoved * 100 / amountOfAgents;
+    percentSucceptible = totalSucceptible * 100 / pp;
+    percentInfectious = totalInfectious * 100 / pp;
+    percentRemoved = totalRemoved * 100 / pp;
 
     printf("\nTick: %d\n", *tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
@@ -184,29 +181,29 @@ void printStats(agent * agents, int *tick)
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 }
 
-void initAgents(agent * agents)
+void initAgents(agent * agents, int pp, int infected, int contacts)
 {
     int a = 0;
 
-    for (a = 0; a < amountOfAgents; a++) {
+    for (a = 0; a < pp; a++) {
         int c = 0;
 
-        agents[a].succeptible = a >= amountOfStartInfected ? 1 : 0;
-        agents[a].infectious = a >= amountOfStartInfected ? 0 : 1;
+        agents[a].succeptible = a >= infected ? 1 : 0;
+        agents[a].infectious = a >= infected ? 0 : 1;
         agents[a].removed = 0;
 
         for (c = 0; c < amountOfContacts; c++) {
-            agents[a].contacts[c] = rand() % amountOfAgents;
+            agents[a].contacts[c] = rand() % pp;
         }
     }
 }
 
-agent computeAgent(agent * agents, int tick, int agentID)
+agent computeAgent(agent * agents, int tick, int agentID, int timeInfected, int contacts)
 {
     agent theAgent = agents[agentID];
 
     if (theAgent.infectious != 0) {
-        if (theAgent.infectious > tick - infectionTime) {
+        if (theAgent.infectious > tick - timeInfected) {
             int c = 0;
             for (c = 0; c < amountOfContacts; c++) {
                 int contact = theAgent.contacts[c];
@@ -226,13 +223,13 @@ agent computeAgent(agent * agents, int tick, int agentID)
     return theAgent;
 }
 
-void runEvent(agent * agents, int *tick)
+void runEvent(agent * agents, int *tick, int timeInfected, int contacts, int pp)
 {
     int a = 0;
     *tick += 1;
 
-    for (a = 0; a < amountOfAgents; a++) {
-        agents[a] = computeAgent(agents, *tick, a);
+    for (a = 0; a < pp; a++) {
+        agents[a] = computeAgent(agents, *tick, a, contacts, timeInfected);
     }
 }
 
@@ -276,14 +273,14 @@ void rand_num_gen(int *amount, int *infc, int *tick, int *infected,
     }
 }
 
-void print_val(int *pp, int *infected, int *tick, int *seed,
-               int *timeInfected, int *contacts, int *chance)
+void print_val(int pp, int infected, int tick, int seed,
+               int timeInfected, int contacts, int chance)
 {
-    printf("Seed:                         %d\n", *seed);
-    printf("Ticks:                        %d\n", *tick);
-    printf("Infection Time:               %d\n", *timeInfected);
-    printf("Infection chance:             %d\n", *chance);
-    printf("People pupolation:            %d\n", *pp);
-    printf("Amount of infected at begin:  %d\n", *infected);
-    printf("Contacs pr person:            %d\n", *contacts);
+    printf("Seed:                         %d\n", seed);
+    printf("Ticks:                        %d\n", tick);
+    printf("Infection Time:               %d\n", timeInfected);
+    printf("Infection chance:             %d\n", chance);
+    printf("People pupolation:            %d\n", pp);
+    printf("Amount of infected at begin:  %d\n", infected);
+    printf("Contacs pr person:            %d\n", contacts);
 }
