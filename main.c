@@ -84,7 +84,6 @@ void printStats(agent * agents, int *tick)
            percentSucceptible);
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
-
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 
     if (prevInfected != 0) {
