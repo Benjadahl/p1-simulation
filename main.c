@@ -83,6 +83,8 @@ void printStats(agent * agents, int *tick)
     double percentSucceptible = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
+    double R0 = 0;
+    static int prevInfected;
 
     for (a = 0; a < amountOfAgents; a++) {
         totalSucceptible += agents[a].succeptible;
@@ -100,6 +102,17 @@ void printStats(agent * agents, int *tick)
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
+
+    if (prevInfected != 0) {
+        R0 = (double) totalInfectious / (double) prevInfected;
+    } else {
+        R0 = 0;
+    }
+    if (*tick != 0) {
+        printf("R0 = %f\n", R0);
+    }
+
+    prevInfected = totalInfectious;
 }
 
 void initAgents(agent * agents, int tick)
