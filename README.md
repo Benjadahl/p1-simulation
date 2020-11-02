@@ -1,2 +1,2 @@
 # simulation
-Simulation code for the p1 project of group A131a
+Simulation code for the p1 project of group A313a
