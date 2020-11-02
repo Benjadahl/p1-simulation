@@ -85,13 +85,12 @@ void printStats(agent * agents, int *tick)
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
-    if (*tick > 1 && prevInfected != 0){
-        R0 = (double)totalInfectious / (double)prevInfected;
+    if (*tick > 1 && prevInfected != 0) {
+        R0 = (double) totalInfectious / (double) prevInfected;
         printf("R0 = %f\n", R0);
-    }
-    else if (prevInfected == 0){
+    } else if (prevInfected == 0) {
         R0 = 0;
-        printf("R0 = %f\n", R0); 
+        printf("R0 = %f\n", R0);
     }
     prevInfected = totalInfectious;
 }
