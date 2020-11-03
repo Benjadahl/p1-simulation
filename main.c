@@ -26,6 +26,7 @@ void printStats(struct agent *agents, int *tick);
 void initAgents(agent * agents, int * secondaryGroups, int amountOfSecondaryGroups, int tick);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
+agent computeAgent(agent * agents, int * secondaryGroups, int tick, int agentID);
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent * agents, int * secondaryGroups, int *tick);
