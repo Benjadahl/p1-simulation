@@ -30,14 +30,14 @@ int placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                             int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
-agent computeAgent(agent * agents, int *secondaryGroups, int tick,
+agent computeAgent(agent * agents, int *primaryGroups, int *secondaryGroups, int tick,
                    int agentID);
+void infectGroup(agent *agents, int groups[], int groupSize, int groupNr, int infectionRisk, int tick, int agentID);
 int rndInt(int max);
 int *getGroupMember(int groups[], int groupSize, int groupNr,
                     int memberNr);
 int trueChance(int percentage);
-void runEvent(agent * agents, int *secondaryGroups, int *tick);
-
+void runEvent(agent * agents, int *primaryGroups, int *secondaryGroups, int *tick);
 
 int main(void)
 {
@@ -64,7 +64,7 @@ int main(void)
 
     for (event = 0; event < maxEvents; event++) {
         printStats(agents_ptr, &tick);
-        runEvent(agents_ptr, sec_ptr, &tick);
+        runEvent(agents_ptr, pri_ptr, sec_ptr, &tick);
     }
 
     return 0;
@@ -207,7 +207,7 @@ void infectRandomAgent(agent * agents, int tick)
     agents[randomID] = infectAgent(theAgent, tick);
 }
 
-agent computeAgent(agent * agents, int *secondaryGroups, int tick,
+agent computeAgent(agent * agents, int *primaryGroups, int *secondaryGroups, int tick,
                    int agentID)
 {
     agent theAgent = agents[agentID];
@@ -229,30 +229,9 @@ agent computeAgent(agent * agents, int *secondaryGroups, int tick,
                     }
                 }
             }
-
-            /* Compute primary group */
-            for (a = 0; a < primaryGroupSize; a++) {
-                int peerID = theAgent.primaryGroup * primaryGroupSize + a;
-                agent peerAgent = agents[peerID];
-
-                if (trueChance(primaryGroupRisk)) {
-                    agents[peerID] = infectAgent(peerAgent, tick);
-                }
-            }
-
-            /* Compute secondary group */
-            for (s = 0; s < secondaryGroupSize; s++) {
-                int peerID =
-                    *getGroupMember(secondaryGroups, secondaryGroupSize,
-                                    theAgent.secondaryGroup, s);
-                agent peerAgent = agents[peerID];
-
-                if (peerID != agentID) {
-                    if (trueChance(secondaryGroupRisk)) {
-                        agents[peerID] = infectAgent(peerAgent, tick);
-                    }
-                }
-            }
+        
+            infectGroup(agents, primaryGroups, primaryGroupSize, theAgent.primaryGroup, primaryGroupRisk, tick, agentID);
+            infectGroup(agents, secondaryGroups, secondaryGroupSize, theAgent.secondaryGroup, secondaryGroupRisk, tick, agentID);
         } else {
             theAgent.infectious = 0;
             theAgent.removed = tick;
@@ -260,6 +239,22 @@ agent computeAgent(agent * agents, int *secondaryGroups, int tick,
     }
 
     return theAgent;
+}
+
+void infectGroup(agent *agents, int groups[], int groupSize, int groupNr, int infectionRisk, int tick, int agentID)
+{
+    int s = 0;
+
+    for (s = 0; s < groupSize; s++) {
+        int peerID = *getGroupMember(groups, groupSize, groupNr, s);
+        agent peerAgent = agents[peerID];
+
+        if (peerID != agentID) {
+            if (trueChance(infectionRisk)) {
+                agents[peerID] = infectAgent(peerAgent, tick);
+            }
+        }
+    }
 }
 
 int rndInt(int max)
@@ -281,12 +276,12 @@ int *getGroupMember(int groups[], int groupSize, int groupNr, int memberNr)
     return &groups[groupNr * groupSize + memberNr];
 }
 
-void runEvent(agent * agents, int *secondaryGroups, int *tick)
+void runEvent(agent * agents, int *primaryGroups, int *secondaryGroups, int *tick)
 {
     int a = 0;
     *tick += 1;
 
     for (a = 0; a < amountOfAgents; a++) {
-        agents[a] = computeAgent(agents, secondaryGroups, *tick, a);
+        agents[a] = computeAgent(agents, primaryGroups, secondaryGroups, *tick, a);
     }
 }
