@@ -23,13 +23,8 @@ typedef struct agent {
 
 void printAgent(struct agent agent);
 void printStats(struct agent *agents, int *tick);
-<<<<<<< HEAD
 void initAgents(agent * agents, int * primaryGroups, int amountOfPrimaryGroups, int * secondaryGroups, int amountOfSecondaryGroups, int tick);
 int placeAgentInRandomGroup (int groups[], int groupSize, int groupAmount, int agentID);
-=======
-void initAgents(agent * agents, int *secondaryGroups,
-                int amountOfSecondaryGroups, int tick);
->>>>>>> 2e9d36546d46d004d01323f93720b3531ec54a2b
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent * agents, int tick);
 agent computeAgent(agent * agents, int * secondaryGroups, int tick, int agentID);
@@ -131,29 +126,14 @@ void printStats(agent * agents, int *tick)
     prevInfected = totalInfectious;
 }
 
-<<<<<<< HEAD
 void initAgents(agent * agents, int * primaryGroups, int amountOfPrimaryGroups, int * secondaryGroups, int amountOfSecondaryGroups, int tick)
-=======
-void initAgents(agent * agents, int *secondaryGroups,
-                int amountOfSecondaryGroups, int tick)
->>>>>>> 2e9d36546d46d004d01323f93720b3531ec54a2b
 {
     int a = 0;
     int i = 0;
 
-<<<<<<< HEAD
     for (a = 0; a < amountOfAgents; a++) {
         primaryGroups[a] = -1;
         secondaryGroups[a] = -1;
-=======
-    for (secondaryGroup = 0; secondaryGroup < amountOfSecondaryGroups;
-         secondaryGroup++) {
-        int groupLevel = 0;
-        for (groupLevel = 0; groupLevel < secondaryGroupSize; groupLevel++) {
-            secondaryGroups[secondaryGroup * secondaryGroupSize +
-                            groupLevel] = -1;
-        }
->>>>>>> 2e9d36546d46d004d01323f93720b3531ec54a2b
     }
 
     for (a = 0; a < amountOfAgents; a++) {
@@ -249,13 +229,7 @@ agent computeAgent(agent * agents, int *secondaryGroups, int tick,
 
             /* Compute secondary group */
             for (s = 0; s < secondaryGroupSize; s++) {
-<<<<<<< HEAD
                 int peerID = *getGroupMember(secondaryGroups, secondaryGroupSize, theAgent.secondaryGroup, s);
-=======
-                int peerID =
-                    secondaryGroups[theAgent.secondaryGroup *
-                                    secondaryGroupSize + s];
->>>>>>> 2e9d36546d46d004d01323f93720b3531ec54a2b
                 agent peerAgent = agents[peerID];
 
                 if (peerID != agentID) {
@@ -287,15 +261,11 @@ int trueChance(int percentage)
     }
 }
 
-<<<<<<< HEAD
 int *getGroupMember (int groups[], int groupSize, int groupNr, int memberNr) {
     return &groups[groupNr * groupSize + memberNr];
 }
 
 void runEvent(agent * agents, int * secondaryGroups, int *tick)
-=======
-void runEvent(agent * agents, int *secondaryGroups, int *tick)
->>>>>>> 2e9d36546d46d004d01323f93720b3531ec54a2b
 {
     int a = 0;
     *tick += 1;
