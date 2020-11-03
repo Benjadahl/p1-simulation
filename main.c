@@ -216,8 +216,6 @@ agent computeAgent(agent * agents, int *primaryGroups, int *secondaryGroups, int
         if (theAgent.infectious > tick - infectionTime) {
             /* Handle infectious agent */
             int c = 0;
-            int a = 0;
-            int s = 0;
 
             /* Compute contacts */
             for (c = 0; c < amountOfContacts; c++) {
