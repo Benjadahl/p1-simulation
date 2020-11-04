@@ -84,7 +84,8 @@ int main(void)
 
     for (event = 0; event < config.maxEvents; event++) {
         printStats(agents, config, &tick);
-        runEvent(agents, contacts, primaryGroups, secondaryGroups, config, &tick);
+        runEvent(agents, contacts, primaryGroups, secondaryGroups, config,
+                 &tick);
     }
 
     return 0;
