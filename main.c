@@ -22,13 +22,13 @@ typedef struct simConfig {
     int primaryGroupRisk;
     int secondaryGroupRisk;
     int amountOfContacts;
+    int amountOfPrimaryGroups;
+    int amountOfSecondaryGroups;
 } simConfig;
 
 void printAgent(struct agent agent, int contacts[], simConfig config);
 void printStats(struct agent agents[], simConfig config, int *tick);
-void initAgents(agent agents[], int contacts[], int primaryGroups[],
-                int amountOfPrimaryGroups, int secondaryGroups[],
-                int amountOfSecondaryGroups, simConfig config, int tick);
+void initAgents(agent agents[], int contacts[], int primaryGroups[], int secondaryGroups[], simConfig config, int tick);
 int placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                             int agentID);
 agent infectAgent(agent agent, int tick);
@@ -58,15 +58,12 @@ int main(void)
     config.primaryGroupRisk = 1;
     config.secondaryGroupRisk = 1;
     config.amountOfContacts = 5;
+    config.amountOfPrimaryGroups = config.amountOfAgents / config.primaryGroupSize;
+    config.amountOfSecondaryGroups = config.amountOfAgents / config.secondaryGroupSize;
 
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
-    const int amountOfPrimaryGroups =
-        config.amountOfAgents / config.primaryGroupSize;
     int primaryGroups[config.amountOfAgents];
-
-    const int amountOfSecondaryGroups =
-        config.amountOfAgents / config.secondaryGroupSize;
 
     int secondaryGroups[config.amountOfAgents];
 
@@ -75,12 +72,10 @@ int main(void)
     int tick = 1;
     int event = 0;
 
-
-
     srand(time(NULL));
 
-    initAgents(agents, contacts, primaryGroups, amountOfPrimaryGroups,
-               secondaryGroups, amountOfSecondaryGroups, config, tick);
+    initAgents(agents, contacts, primaryGroups,
+               secondaryGroups, config, tick);
 
     for (event = 0; event < config.maxEvents; event++) {
         printStats(agents, config, &tick);
@@ -155,9 +150,7 @@ void printStats(agent agents[], simConfig config, int *tick)
     prevInfected = totalInfectious;
 }
 
-void initAgents(agent agents[], int contacts[], int primaryGroups[],
-                int amountOfPrimaryGroups, int secondaryGroups[],
-                int amountOfSecondaryGroups, simConfig config, int tick)
+void initAgents(agent agents[], int contacts[], int primaryGroups[], int secondaryGroups[], simConfig config, int tick)
 {
     int a = 0;
     int i = 0;
@@ -183,11 +176,11 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         /* Spread agents randomly in groups */
         agents[a].primaryGroup =
             placeAgentInRandomGroup(primaryGroups, config.primaryGroupSize,
-                                    amountOfPrimaryGroups, a);
+                                    config.amountOfPrimaryGroups, a);
         agents[a].secondaryGroup =
             placeAgentInRandomGroup(secondaryGroups,
                                     config.secondaryGroupSize,
-                                    amountOfSecondaryGroups, a);
+                                    config.amountOfSecondaryGroups, a);
     }
 
     /* Infect random agents */
