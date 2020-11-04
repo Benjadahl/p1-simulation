@@ -27,7 +27,7 @@ typedef struct simConfig {
 } simConfig;
 
 void printAgent(struct agent agent, int contacts[], simConfig config);
-void printStats(struct agent agents[], simConfig config, int *tick);
+void printStats(struct agent agents[], simConfig config, int tick);
 void initAgents(agent agents[], int contacts[], int primaryGroups[],
                 int secondaryGroups[], simConfig config, int tick);
 int placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
@@ -44,7 +44,7 @@ int *getGroupMember(int groups[], int groupSize, int groupNr,
                     int memberNr);
 int trueChance(int percentage);
 void runEvent(agent agents[], int contacts[], int primaryGroups[],
-              int secondaryGroups[], simConfig config, int *tick);
+              int secondaryGroups[], simConfig config, int tick);
 
 int main(void)
 {
@@ -81,9 +81,10 @@ int main(void)
                secondaryGroups, config, tick);
 
     for (event = 0; event < config.maxEvents; event++) {
-        printStats(agents, config, &tick);
+        printStats(agents, config, tick);
         runEvent(agents, contacts, primaryGroups, secondaryGroups, config,
-                 &tick);
+                 tick);
+        tick += 1;
     }
 
     return 0;
@@ -112,7 +113,7 @@ void printAgent(struct agent agent, int contacts[], simConfig config)
     printf("\n");
 }
 
-void printStats(agent agents[], simConfig config, int *tick)
+void printStats(agent agents[], simConfig config, int tick)
 {
     int a = 0;
     int totalSucceptible = 0;
@@ -134,7 +135,7 @@ void printStats(agent agents[], simConfig config, int *tick)
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
     percentRemoved = totalRemoved * 100 / config.amountOfAgents;
 
-    printf("\nTick: %d\n", *tick);
+    printf("\nTick: %d\n", tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
            percentSucceptible);
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
@@ -146,7 +147,7 @@ void printStats(agent agents[], simConfig config, int *tick)
     } else {
         R0 = 0;
     }
-    if (*tick != 0) {
+    if (tick != 0) {
         printf("R0 = %f\n", R0);
     }
 
@@ -294,14 +295,13 @@ int *getGroupMember(int groups[], int groupSize, int groupNr, int memberNr)
 }
 
 void runEvent(agent agents[], int contacts[], int primaryGroups[],
-              int secondaryGroups[], simConfig config, int *tick)
+              int secondaryGroups[], simConfig config, int tick)
 {
     int a = 0;
-    *tick += 1;
 
     for (a = 0; a < config.amountOfAgents; a++) {
         agents[a] =
             computeAgent(agents, contacts, primaryGroups, secondaryGroups,
-                         config, *tick, a);
+                         config, tick, a);
     }
 }
