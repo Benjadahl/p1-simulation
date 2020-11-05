@@ -25,7 +25,7 @@ void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event);
 void CreatePlot(double succeptible_data[], double infectious_data[],
                 double recovered_data[]);
-void ExportDataTest(double data[]);
+void ExportDataTest(double *data1, double *data2, double *data3);
 void ImportDataTest();
 
 int main(void)
@@ -55,26 +55,41 @@ int main(void)
     }
 
     CreatePlot(succeptible_data, infectious_data, recovered_data);
-    //ExportDataTest(succeptible_data);
+    //ExportDataTest(succeptible_data, infectious_data, recovered_data);
     ImportDataTest();
 
     return 0;
 }
 
-void ExportDataTest(double data[])
+void ExportDataTest(double *data1, double *data2, double *data3)
 {
-    WriteFile("Test.csv", data, maxEvents);
+    DataSet data_set1, data_set2, data_set3;
+    data_set1.data = data1;
+    data_set1.name = "Succeptible";
+    data_set2.data = data2;
+    data_set2.name = "Infectious";
+    data_set3.data = data3;
+    data_set3.name = "Recovered";
+    WriteFile("Test.csv", data_set1, data_set2, data_set3, maxEvents);
 }
 
 void ImportDataTest()
 {
     float data[100];
+    float data2[100];
+    float data3[100];
     int i;
-    ReadFile("Test.csv", data);    
+    ReadFile("Test.csv", data, data2, data3);    
+
+    printf("SET 1:\n");
     for (i = 0; i < 100; i++)
-    {
         printf("%.2f\n", data[i]);
-    }
+    printf("SET 2:\n");
+    for (i = 0; i < 100; i++)
+        printf("%.2f\n", data2[i]);
+    printf("SET 3:\n");
+    for (i = 0; i < 100; i++)
+        printf("%.2f\n", data3[i]);
     
 }
 

@@ -1,24 +1,24 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include"import.h"
+#include"export.h"
 
-void WriteFile(char *file_name, double *data, int data_size);
 FILE CreatFile(char *file_name);
-void ReadFile(char *file_name, float *data);
+void SplitLine(float *data1, float *data2, float *data3, char *t);
 
-
-void WriteFile(char *file_name, double *data, int data_size)
+void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2, DataSet data_set3, int data_size)
 {
     int i;
-    double data_num;
-    char data_print[7];
+    char data_print[50];
     FILE *file = fopen(file_name, "w");
     if(file == NULL)
         *file = CreatFile(file_name);
     
+    snprintf(data_print,50,"%s %s %s", data_set1.name, data_set2.name, data_set3.name);
+    fprintf(file, "\n%s", data_print);
     for (i = 0; i < data_size; i++){
-        data_num = data[i];
-        snprintf(data_print,7,"%f",data_num);
+        snprintf(data_print,50,"%f %f %f",data_set1.data[i], data_set2.data[i], data_set3.data[i]);
         fprintf(file, "\n%s", data_print);
     }
 
@@ -32,11 +32,11 @@ FILE CreatFile(char *file_name)
     return *new_file;
 }
 
-void ReadFile(char *file_name, float *data)
+void ReadFile(char *file_name, float *data1, float *data2, float *data3)
 {
     FILE *file = fopen(file_name, "r");
     char line[100];
-    int i = 0;
+    int i = 1;
     if(file == NULL)
     {
         printf("File %s not found.", file_name);
@@ -46,15 +46,40 @@ void ReadFile(char *file_name, float *data)
     while (fgets(line, sizeof(line), file))
     {
         char *token;
-        token = strtok(line, ";");
+        token = strtok(line, ",");
         while (token != NULL)
         {
-            char *token_token = strtok(token, "\n");
-            data[i] = atof(token_token);
+            char *token_token = strtok(token, "\n");          
+            if(i > 2)
+                SplitLine(&data1[i], &data2[i], &data3[i], token_token);
             i++;
-            token = strtok(NULL,";");
+            token = strtok(NULL,",");
         }
     }
 }
 
- 
+void SplitLine(float *data1, float *data2, float *data3, char *t)
+{
+    int data_set = 0;
+    char *token = strtok(t, " ");
+    while (token != NULL)
+    {
+        switch (data_set)
+        {
+        case 0:
+            *data1 = atof(token);
+            break;
+        case 1:
+            *data2 = atof(token);
+            break;
+        case 2:
+            *data3 = atof(token);
+            break;
+        default:
+            break;
+        }
+        data_set++;
+        token = strtok(NULL, " ");
+    }
+    
+}
