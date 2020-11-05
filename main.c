@@ -32,10 +32,11 @@ void printStats(struct agent agents[], simConfig config, int tick);
 void initAgents(agent agents[], int contacts[], int primaryGroups[],
                 int secondaryGroups[], simConfig config, int tick);
 int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
-                            int agentID);
+                             int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
-agent computeAgent(agent agents[], simConfig config, int tick, int agentID);
+agent computeAgent(agent agents[], simConfig config, int tick,
+                   int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
                  int infectionRisk, int tick, int agentID);
 int rndInt(int max);
@@ -97,16 +98,16 @@ void printAgent(struct agent agent, int contacts[], simConfig config)
 
     /* Needs to be rewritten for pointer style groups */
     /*printf("Primary Group: %d\n", agent.primaryGroup);
-    printf("Secondary Group: %d\n", agent.secondaryGroup);*/
+       printf("Secondary Group: %d\n", agent.secondaryGroup); */
 
 
     /*printf("Contacts: ");
 
-    for (i = 0; i < config.amountOfContacts; i++) {
-        printf("%d ",
-               *getGroupMember(contacts, config.amountOfContacts, agent.ID,
-                               i));
-    }*/
+       for (i = 0; i < config.amountOfContacts; i++) {
+       printf("%d ",
+       *getGroupMember(contacts, config.amountOfContacts, agent.ID,
+       i));
+       } */
 
     printf("\n");
 }
@@ -175,7 +176,8 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
 
-            agents[a].contacts = getGroupMember(contacts, config.amountOfContacts, a, 0);
+            agents[a].contacts =
+                getGroupMember(contacts, config.amountOfContacts, a, 0);
         }
 
         /* Spread agents randomly in groups */
@@ -195,7 +197,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 }
 
 int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
-                            int agentID)
+                             int agentID)
 {
     int g = rndInt(groupAmount - 1);
 
@@ -239,9 +241,14 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     if (theAgent.infectious != 0) {
         if (theAgent.infectious > tick - config.infectionTime) {
             /* Handle infectious agent */
-            infectGroup(agents, theAgent.primaryGroup, config.primaryGroupSize, config.primaryGroupRisk, tick, agentID);
-            infectGroup(agents, theAgent.secondaryGroup, config.secondaryGroupSize, config.secondaryGroupRisk, tick, agentID);
-            infectGroup(agents, theAgent.contacts, config.amountOfContacts, config.contactsRisk, tick, agentID);
+            infectGroup(agents, theAgent.primaryGroup,
+                        config.primaryGroupSize, config.primaryGroupRisk,
+                        tick, agentID);
+            infectGroup(agents, theAgent.secondaryGroup,
+                        config.secondaryGroupSize,
+                        config.secondaryGroupRisk, tick, agentID);
+            infectGroup(agents, theAgent.contacts, config.amountOfContacts,
+                        config.contactsRisk, tick, agentID);
         } else {
             theAgent.infectious = 0;
             theAgent.removed = tick;
@@ -292,7 +299,6 @@ void runEvent(agent agents[], simConfig config, int tick)
     int a = 0;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        agents[a] =
-            computeAgent(agents, config, tick, a);
+        agents[a] = computeAgent(agents, config, tick, a);
     }
 }
