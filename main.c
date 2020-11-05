@@ -79,7 +79,7 @@ void ImportDataTest()
     float data2[100];
     float data3[100];
     int i;
-    ReadFile("Test.csv", data, data2, data3);    
+    ReadFile("Test.csv", data, data2, data3);
 
     printf("SET 1:\n");
     for (i = 0; i < 100; i++)
@@ -90,7 +90,7 @@ void ImportDataTest()
     printf("SET 3:\n");
     for (i = 0; i < 100; i++)
         printf("%.2f\n", data3[i]);
-    
+
 }
 
 void PlotData(agent * agents, double *succeptible_data,
