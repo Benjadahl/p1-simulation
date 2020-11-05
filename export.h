@@ -1,0 +1,1 @@
+void WriteFile(char *file_name, double *data, int data_size);

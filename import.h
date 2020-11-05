@@ -1,0 +1,1 @@
+void ReadFile(char *file_name, float *data);

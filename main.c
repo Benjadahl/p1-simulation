@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include "plot.h"
+#include "export.h"
+#include "import.h"
 #define amountOfAgents 100000
 #define amountOfContacts 5
 #define infectionTime 4
@@ -23,7 +25,8 @@ void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event);
 void CreatePlot(double succeptible_data[], double infectious_data[],
                 double recovered_data[]);
-
+void ExportDataTest(double data[]);
+void ImportDataTest();
 
 int main(void)
 {
@@ -52,8 +55,27 @@ int main(void)
     }
 
     CreatePlot(succeptible_data, infectious_data, recovered_data);
+    //ExportDataTest(succeptible_data);
+    ImportDataTest();
 
     return 0;
+}
+
+void ExportDataTest(double data[])
+{
+    WriteFile("Test.csv", data, maxEvents);
+}
+
+void ImportDataTest()
+{
+    float data[100];
+    int i;
+    ReadFile("Test.csv", data);    
+    for (i = 0; i < 100; i++)
+    {
+        printf("%.2f\n", data[i]);
+    }
+    
 }
 
 void PlotData(agent * agents, double *succeptible_data,
