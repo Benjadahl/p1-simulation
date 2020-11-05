@@ -88,7 +88,7 @@ int main(void)
     return 0;
 }
 
-void printAgent(struct agent agent, int contacts[], simConfig config)
+void printAgent(agent agent, int contacts[], simConfig config)
 {
     int i = 0;
 
