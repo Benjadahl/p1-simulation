@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-ansi -pedantic -Wall -Wextra
+CFLAGS=-Wall -Wextra
 TARGET=main
 
 $(TARGET).out: $(TARGET).c

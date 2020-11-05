@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <time.h>
 
 typedef struct agent {
@@ -45,7 +46,7 @@ int *getGroupMember(int groups[], int groupSize, int groupNr,
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
 
-int main(void)
+int main(int argc, char *argv[])
 {
     simConfig config;
     config.contactsRisk = 1;
@@ -63,6 +64,50 @@ int main(void)
     config.amountOfSecondaryGroups =
         config.amountOfAgents / config.secondaryGroupSize;
 
+    int opt;
+    int seed;
+
+    srand(time(NULL));
+
+
+    while ((opt = getopt(argc, argv, "a:c:p:t:i:s:k:x")) != -1) {
+        switch (opt) {
+            case 'c':
+                config.contactsRisk = atoi(optarg);
+                break;
+
+            case 'k':
+                config.amountOfContacts = atoi(optarg);
+                break;
+
+            case 'a':
+                config.infectionTime = atoi(optarg);
+                break;
+
+            case 'p':
+                config.amountOfAgents = atoi(optarg);
+                break;
+
+            case 'i':
+                config.amountOfStartInfected = atoi(optarg);
+                break;
+
+            case 't':
+                config.maxEvents = atoi(optarg);
+                break;
+
+            case 's':
+                seed = atoi(optarg);
+                srand(seed);
+                break;
+
+            case '?':
+                printf("unknown option: %c\n", optopt);
+                break;
+        }
+
+    }
+
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
     int primaryGroups[config.amountOfAgents];
@@ -73,8 +118,6 @@ int main(void)
 
     int tick = 1;
     int event = 0;
-
-    srand(time(NULL));
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
