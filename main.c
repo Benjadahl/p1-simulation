@@ -27,8 +27,8 @@ typedef struct simConfig {
     int amountOfSecondaryGroups;
 } simConfig;
 
-void printAgent(struct agent agent, int contacts[], simConfig config);
-void printStats(struct agent agents[], simConfig config, int tick);
+void printAgent(agent agent, int contacts[], simConfig config);
+void printStats(agent agents[], simConfig config, int tick);
 void initAgents(agent agents[], int contacts[], int primaryGroups[],
                 int secondaryGroups[], simConfig config, int tick);
 int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
