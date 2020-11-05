@@ -72,38 +72,38 @@ int main(int argc, char *argv[])
 
     while ((opt = getopt(argc, argv, "a:c:p:t:i:s:k:x")) != -1) {
         switch (opt) {
-            case 'c':
-                config.contactsRisk = atoi(optarg);
-                break;
+        case 'c':
+            config.contactsRisk = atoi(optarg);
+            break;
 
-            case 'k':
-                config.amountOfContacts = atoi(optarg);
-                break;
+        case 'k':
+            config.amountOfContacts = atoi(optarg);
+            break;
 
-            case 'a':
-                config.infectionTime = atoi(optarg);
-                break;
+        case 'a':
+            config.infectionTime = atoi(optarg);
+            break;
 
-            case 'p':
-                config.amountOfAgents = atoi(optarg);
-                break;
+        case 'p':
+            config.amountOfAgents = atoi(optarg);
+            break;
 
-            case 'i':
-                config.amountOfStartInfected = atoi(optarg);
-                break;
+        case 'i':
+            config.amountOfStartInfected = atoi(optarg);
+            break;
 
-            case 't':
-                config.maxEvents = atoi(optarg);
-                break;
+        case 't':
+            config.maxEvents = atoi(optarg);
+            break;
 
-            case 's':
-                seed = atoi(optarg);
-                srand(seed);
-                break;
+        case 's':
+            seed = atoi(optarg);
+            srand(seed);
+            break;
 
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
 
     }
