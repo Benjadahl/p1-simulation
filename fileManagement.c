@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include <ctype.h>
 #include"import.h"
 #include"export.h"
 
@@ -35,8 +36,8 @@ FILE CreatFile(char *file_name)
 void ReadFile(char *file_name, float *data1, float *data2, float *data3)
 {
     FILE *file = fopen(file_name, "r");
-    char line[100];
-    int i = 1;
+    char line[200];
+    int i = 0;
     if(file == NULL)
     {
         printf("File %s not found.", file_name);
@@ -50,9 +51,11 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3)
         while (token != NULL)
         {
             char *token_token = strtok(token, "\n");          
-            if(i > 2)
+            if(isdigit(token[0]))
+            {
                 SplitLine(&data1[i], &data2[i], &data3[i], token_token);
-            i++;
+                i++;
+            }      
             token = strtok(NULL,",");
         }
     }
