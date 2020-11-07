@@ -7,6 +7,8 @@ typedef struct agent {
     int succeptible;
     int infectious;
     int removed;
+    int symptomatic;
+    int isolated;
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -172,6 +174,9 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         agents[a].infectious = 0;
         agents[a].removed = 0;
 
+        agents[a].symptomatic = trueChance(25);
+        agents[a].isolated = 0;
+
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
@@ -239,7 +244,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     agent theAgent = agents[agentID];
 
     if (theAgent.infectious != 0) {
-        if (theAgent.infectious > tick - config.infectionTime) {
+
+        if (theAgent.infectious > tick - config.infectionTime && !theAgent.symptomatic) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
