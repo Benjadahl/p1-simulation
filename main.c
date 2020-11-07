@@ -175,10 +175,10 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
-
-            agents[a].contacts =
-                getGroupMember(contacts, config.amountOfContacts, a, 0);
         }
+
+        agents[a].contacts =
+            getGroupMember(contacts, config.amountOfContacts, a, 0);
 
         /* Spread agents randomly in groups */
         agents[a].primaryGroup =
