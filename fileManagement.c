@@ -22,7 +22,7 @@ void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2, DataSet da
         snprintf(data_print,50,"%f %f %f",data_set1.data[i], data_set2.data[i], data_set3.data[i]);
         fprintf(file, "\n%s", data_print);
     }
-
+    fclose(file);
     return;    
 }
 
@@ -59,6 +59,7 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3)
             token = strtok(NULL,",");
         }
     }
+    fclose(file);
 }
 
 void SplitLine(float *data1, float *data2, float *data3, char *t)

@@ -52,7 +52,7 @@ int main(void)
                  infectious_plot_data_ptr, recovered_data_ptr, event);
     }
     ExportData(succeptible_data, infectious_data, recovered_data);
-    //CreatePlotFromCVS("out.csv");
+    CreatePlotFromCVS("out.csv");
 
     return 0;
 }
