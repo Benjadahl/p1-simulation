@@ -249,28 +249,30 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             /* Handle infectious agent */
             if (tick % 7 != 0 || 6) {
                 infectGroup(agents, theAgent.primaryGroup,
-                        config.primaryGroupSize, config.primaryGroupRisk,
-                        tick, agentID);
+                            config.primaryGroupSize,
+                            config.primaryGroupRisk, tick, agentID);
             }
-            
-            if (tick % 7 == 2 || 4 ) {
+
+            if (tick % 7 == 2 || 4) {
                 infectGroup(agents, theAgent.secondaryGroup,
-                        config.secondaryGroupSize,
-                        config.secondaryGroupRisk, tick, agentID);
+                            config.secondaryGroupSize,
+                            config.secondaryGroupRisk, tick, agentID);
             }
-            
+
             if ((rndInt(30) >= 25)) {
                 if (tick % 7 == 0 || 6) {
                     int highRisk = 2 * config.contactsRisk;
-                    infectGroup(agents, theAgent.contacts, config.amountOfContacts,
-                        highRisk, tick, agentID);
+                    infectGroup(agents, theAgent.contacts,
+                                config.amountOfContacts, highRisk, tick,
+                                agentID);
                 } else {
-                infectGroup(agents, theAgent.contacts, config.amountOfContacts,
-                        config.contactsRisk, tick, agentID);
+                    infectGroup(agents, theAgent.contacts,
+                                config.amountOfContacts,
+                                config.contactsRisk, tick, agentID);
                 }
             }
-           
-            
+
+
         } else {
             theAgent.healthState = recovered;
         }
