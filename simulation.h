@@ -5,6 +5,8 @@ typedef struct simConfig {
     int amountOfStartInfected;
     int maxEvents;
     int symptomaticPercent;
+    int maxIncubationTime;
+    int willIsolatePercent;
     int primaryGroupSize;
     int secondaryGroupSize;
     int primaryGroupRisk;

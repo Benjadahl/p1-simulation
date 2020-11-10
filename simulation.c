@@ -12,7 +12,8 @@ typedef struct agent {
     HealthState healthState;
     int infectedTime;
     int symptomatic;
-    int isolated;
+    int incubationTime;
+    int willIsolate;
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -185,7 +186,8 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         agents[a].healthState = succeptible;
 
         agents[a].symptomatic = trueChance(config.symptomaticPercent);
-        agents[a].isolated = 0;
+        agents[a].incubationTime = rndInt(config.maxIncubationTime);
+        agents[a].willIsolate = trueChance(config.willIsolatePercent);
 
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
@@ -254,7 +256,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     agent theAgent = agents[agentID];
 
     if (theAgent.healthState == infectious) {
-        if (theAgent.infectedTime > tick - config.infectionTime && !theAgent.symptomatic) {
+        int shouldIsolate = theAgent.symptomatic && theAgent.infectedTime + theAgent.incubationTime < tick;
+        if (theAgent.infectedTime > tick - config.infectionTime && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,

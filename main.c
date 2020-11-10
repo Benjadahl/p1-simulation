@@ -11,6 +11,8 @@ int main(void)
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
     config.symptomaticPercent = 25;
+    config.maxIncubationTime = 14;
+    config.willIsolatePercent = 98;
     config.primaryGroupSize = 40;
     config.secondaryGroupSize = 20;
     config.primaryGroupRisk = 1;
