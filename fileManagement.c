@@ -26,7 +26,7 @@ void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2, DataSet da
     return;    
 }
 
-FILE CreatFile(char *file_name)
+FILE CreateFile(char *file_name)
 {
     FILE *new_file;
     new_file = fopen(file_name, "w+");
