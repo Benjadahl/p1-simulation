@@ -2,11 +2,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+typedef enum HealthState { succeptible, infectious,
+    recovered
+} HealthState;
+
 typedef struct agent {
     int ID;
-    int succeptible;
-    int infectious;
-    int removed;
+    HealthState healthState;
+    int infectedTime;
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -90,9 +93,9 @@ void printAgent(agent agent, int contacts[], simConfig config)
 {
     int i = 0;
 
-    printf("Succeptible: %d\n", agent.succeptible);
-    printf("Infectious: %d\n", agent.infectious);
-    printf("Removed: %d\n", agent.removed);
+    /*printf("Succeptible: %d\n", agent.succeptible);
+       printf("Infectious: %d\n", agent.infectious);
+       printf("Removed: %d\n", agent.removed); */
 
     /* Needs to be rewritten for pointer style groups */
     /*printf("Primary Group: %d\n", agent.primaryGroup);
@@ -123,9 +126,17 @@ void printStats(agent agents[], simConfig config, int tick)
     static int prevInfected;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        totalSucceptible += agents[a].succeptible;
-        totalInfectious += agents[a].infectious > 0;
-        totalRemoved += agents[a].removed > 0;
+        switch (agents[a].healthState) {
+        case succeptible:
+            totalSucceptible++;
+            break;
+        case infectious:
+            totalInfectious++;
+            break;
+        case recovered:
+            totalRemoved++;
+            break;
+        }
     }
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
@@ -166,10 +177,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         int c = 0;
 
         agents[a].ID = a;
-        agents[a].succeptible = 1;
-        agents[a].infectious = 0;
-        agents[a].removed = 0;
-
+        agents[a].healthState = succeptible;
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
@@ -212,9 +220,9 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
 
 agent infectAgent(agent agent, int tick)
 {
-    if (agent.succeptible) {
-        agent.succeptible = 0;
-        agent.infectious = tick;
+    if (agent.healthState == succeptible) {
+        agent.healthState = infectious;
+        agent.infectedTime = tick;
     }
     return agent;
 }
@@ -227,7 +235,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     do {
         randomID = rndInt(config.amountOfAgents);
         theAgent = agents[randomID];
-    } while (theAgent.infectious);
+    } while (theAgent.healthState == infectious);
 
     agents[randomID] = infectAgent(theAgent, tick);
 }
@@ -236,8 +244,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    if (theAgent.infectious != 0) {
-        if (theAgent.infectious > tick - config.infectionTime) {
+    if (theAgent.healthState == infectious) {
+        if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
@@ -248,8 +256,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
         } else {
-            theAgent.infectious = 0;
-            theAgent.removed = tick;
+            theAgent.healthState = recovered;
         }
     }
 
