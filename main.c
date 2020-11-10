@@ -235,8 +235,9 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
+    int infectPeople = tick == 1 ? theAgent.infectious != 0: theAgent.infectious != 0 && theAgent.infectious != tick;
 
-    if (theAgent.infectious != 0 && theAgent.infectious != tick) {
+    if (infectPeople) {
         if (theAgent.infectious > tick - config.infectionTime) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
