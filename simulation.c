@@ -184,7 +184,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         agents[a].ID = a;
         agents[a].healthState = succeptible;
 
-        agents[a].symptomatic = trueChance(25);
+        agents[a].symptomatic = trueChance(config.symptomaticPercent);
         agents[a].isolated = 0;
 
         for (c = 0; c < config.amountOfContacts; c++) {

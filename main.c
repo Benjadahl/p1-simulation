@@ -10,6 +10,7 @@ int main(void)
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
+    config.symptomaticPercent = 25;
     config.primaryGroupSize = 40;
     config.secondaryGroupSize = 20;
     config.primaryGroupRisk = 1;
