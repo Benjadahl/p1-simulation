@@ -5,7 +5,7 @@
 #include"import.h"
 #include"export.h"
 
-FILE CreatFile(char *file_name);
+FILE CreateFile(char *file_name);
 void SplitLine(float *data1, float *data2, float *data3, char *t);
 
 void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2, DataSet data_set3, int data_size)
