@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef enum HealthState {succeptible, infectious, recovered} HealthState;
+typedef enum HealthState { succeptible, infectious,
+        recovered } HealthState;
 
 typedef struct agent {
     int ID;
     HealthState healthState;
     int infectedTime;
     /*int succeptible;
-    int infectious;
-    int removed;*/
+       int infectious;
+       int removed; */
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -97,8 +98,8 @@ void printAgent(agent agent, int contacts[], simConfig config)
     int i = 0;
 
     /*printf("Succeptible: %d\n", agent.succeptible);
-    printf("Infectious: %d\n", agent.infectious);
-    printf("Removed: %d\n", agent.removed);*/
+       printf("Infectious: %d\n", agent.infectious);
+       printf("Removed: %d\n", agent.removed); */
 
     /* Needs to be rewritten for pointer style groups */
     /*printf("Primary Group: %d\n", agent.primaryGroup);
@@ -129,8 +130,7 @@ void printStats(agent agents[], simConfig config, int tick)
     static int prevInfected;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        switch (agents[a].healthState)
-        {
+        switch (agents[a].healthState) {
         case succeptible:
             totalSucceptible++;
             break;
