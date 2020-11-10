@@ -247,12 +247,18 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     if (theAgent.healthState == infectious) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
-            infectGroup(agents, theAgent.primaryGroup,
+            if (tick % 7 != 0 || 6) {
+                infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
                         tick, agentID);
-            infectGroup(agents, theAgent.secondaryGroup,
+            }
+            
+            if (tick % 7 == 2 || 4 ) {
+                infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
                         config.secondaryGroupRisk, tick, agentID);
+            }
+            
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
         } else {
