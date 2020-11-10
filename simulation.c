@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "plot.h"
 #include "simulation.h"
 
 typedef enum HealthState { succeptible, infectious,
@@ -69,7 +68,8 @@ void PlotData(agent * agents, double *succeptible_data,
     double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
     double total_succeptible = 0, total_infectious = 0, total_recovered =
         0;
-    for (int i = 0; i < config.amountOfAgents; i++) {
+    int i = 0;
+    for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
             total_succeptible++;
