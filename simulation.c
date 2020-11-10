@@ -201,7 +201,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
-        infectRandomAgent(agents, config, tick);
+        infectRandomAgent(agents, config, tick - 1);
     }
 }
 
@@ -247,7 +247,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    if (theAgent.healthState == infectious) {
+    if (theAgent.healthState == infectious && theAgent.infectedTime != tick) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
