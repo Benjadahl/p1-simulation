@@ -3,7 +3,8 @@
 #include <time.h>
 
 typedef enum HealthState { succeptible, infectious,
-        recovered } HealthState;
+    recovered
+} HealthState;
 
 typedef struct agent {
     int ID;
