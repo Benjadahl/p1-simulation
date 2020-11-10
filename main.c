@@ -259,8 +259,18 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
                         config.secondaryGroupRisk, tick, agentID);
             }
             
-            infectGroup(agents, theAgent.contacts, config.amountOfContacts,
+            if ((rndInt(30) >= 25)) {
+                if (tick % 7 == 0 || 6) {
+                    int highRisk = 2 * config.contactsRisk;
+                    infectGroup(agents, theAgent.contacts, config.amountOfContacts,
+                        highRisk, tick, agentID);
+                } else {
+                infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
+                }
+            }
+           
+            
         } else {
             theAgent.healthState = recovered;
         }
