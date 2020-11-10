@@ -47,9 +47,9 @@ void runEvent(agent agents[], simConfig config, int tick);
 
 int main(int argc, char *argv[])
 {
-    int i; 
-    int j; 
-    int k; 
+    int i;
+    int j;
+    int k;
     int seed;
     int par[7];
     char options[7];
@@ -71,15 +71,12 @@ int main(int argc, char *argv[])
 
     j = 0;
     k = 0;
-     /* indl�ser parametre */
-    for (i = 0; i < argc; i++){
-        if (argv[i][0] == '-')
-        {
+    /* indl�ser parametre */
+    for (i = 0; i < argc; i++) {
+        if (argv[i][0] == '-') {
             options[j] = argv[i][1];
             j++;
-        }
-        else if ((argv[i][0] > 47) && (argv[i][0] < 58))
-        {
+        } else if ((argv[i][0] > 47) && (argv[i][0] < 58)) {
             par[k] = atoi(argv[i]);
             k++;
         }
@@ -87,9 +84,9 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
 
-     /* switch */
-    for (i = 0; i < 7; i++){
-    switch(options[i]){
+    /* switch */
+    for (i = 0; i < 7; i++) {
+        switch (options[i]) {
         case 'c':
             config.contactsRisk = par[i];
             printf(" %d\n", config.contactsRisk);
@@ -148,8 +145,8 @@ int main(int argc, char *argv[])
 
 void printAgent(agent agent, int contacts[], simConfig config)
 {
-    /*int i = 0;*/
-    
+    /*int i = 0; */
+
     printf("Succeptible: %d\n", agent.succeptible);
     printf("Infectious: %d\n", agent.infectious);
     printf("Removed: %d\n", agent.removed);
