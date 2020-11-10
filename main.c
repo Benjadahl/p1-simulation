@@ -75,17 +75,15 @@ int main(void)
     agent agents[config.amountOfAgents];
 
     int tick = 1;
-    int event = 0;
 
     srand(time(NULL));
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
 
-    for (event = 0; event < config.maxEvents; event++) {
+    for (tick = 1; tick <= config.maxEvents; tick++) {
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
-        tick += 1;
     }
 
     return 0;
