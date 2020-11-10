@@ -39,7 +39,7 @@ void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event, simConfig config);
 
-void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data)
+void run_simulation(simConfig config, double *succeptible_data, double *infectious_data, double *recovered_data)
 {
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
