@@ -14,7 +14,7 @@ void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2, DataSet da
     char data_print[50];
     FILE *file = fopen(file_name, "w");
     if(file == NULL)
-        *file = CreatFile(file_name);
+        *file = CreateFile(file_name);
     
     snprintf(data_print,50,"%s %s %s", data_set1.name, data_set2.name, data_set3.name);
     fprintf(file, "\n%s", data_print);
