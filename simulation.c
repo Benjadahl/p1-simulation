@@ -256,6 +256,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     agent theAgent = agents[agentID];
 
     if (theAgent.healthState == infectious) {
+        /* Check if the agent should isolate, if it does so it will be set to recovered state */
         int shouldIsolate = theAgent.symptomatic && theAgent.infectedTime + theAgent.incubationTime < tick;
         if (theAgent.infectedTime > tick - config.infectionTime && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
