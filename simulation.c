@@ -63,7 +63,7 @@ void run_simulation(simConfig config,double *succeptible_data, double *infectiou
 }
 
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, int event, simConfig config)
+              double *infectious_data, double *recovered_data, int tick, simConfig config)
 {
     double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
     double total_succeptible = 0, total_infectious = 0, total_recovered =
@@ -87,9 +87,9 @@ void PlotData(agent * agents, double *succeptible_data,
     infectious_p = total_infectious * 100 / config.amountOfAgents;
     recovered_p = total_recovered * 100 / config.amountOfAgents;
 
-    succeptible_data[event-1] = succeptible_p;
-    infectious_data[event-1] = infectious_p;
-    recovered_data[event-1] = recovered_p;
+    succeptible_data[tick-1] = succeptible_p;
+    infectious_data[tick-1] = infectious_p;
+    recovered_data[tick-1] = recovered_p;
 }
 
 /*void printAgent(agent agent, int contacts[], simConfig config)
