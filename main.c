@@ -8,9 +8,6 @@ typedef struct agent {
     int ID;
     HealthState healthState;
     int infectedTime;
-    /*int succeptible;
-    int infectious;
-    int removed;*/
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
