@@ -244,7 +244,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    if (theAgent.healthState == infectious && theAgent.infectedTime != tick) {
+    if (theAgent.healthState == infectious
+        && theAgent.infectedTime != tick) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
