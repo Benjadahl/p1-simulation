@@ -1,6 +1,6 @@
 #include "simulation.h"
 #include "export.h"
-#include "graph.h"  
+#include "graph.h"
 
 int main(void)
 {
@@ -23,9 +23,11 @@ int main(void)
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
-    
-    run_simulation(config, succeptible_data, infectious_data, recovered_data);
-    ExportData(succeptible_data, infectious_data, recovered_data, config.maxEvents);
+
+    run_simulation(config, succeptible_data, infectious_data,
+                   recovered_data);
+    ExportData(succeptible_data, infectious_data, recovered_data,
+               config.maxEvents);
     CreatePlotFromCVS("out.csv");
 
     return 0;
