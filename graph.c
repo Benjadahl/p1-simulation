@@ -1,30 +1,31 @@
 #include"import.h"
 #include"plot.h"
+#include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name);
-void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[]);
+void CreatePlotFromCVS(char *file_name,simConfig config);
+void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[], int time_length);
 
-void CreatePlotFromCVS(char *file_name)
+void CreatePlotFromCVS(char *file_name, simConfig config)
 {
     int i;
-    float data1[100], data2[100], data3[100];
-    double new_data1[100], new_data2[100], new_data3[100];
+    float data1[config.maxEvents], data2[config.maxEvents], data3[config.maxEvents];
+    double new_data1[config.maxEvents], new_data2[config.maxEvents], new_data3[config.maxEvents];
     ReadFile(file_name, data1, data2, data3);
     
-    for(i = 0; i < 100; i++)
+    for(i = 0; i < config.maxEvents; i++)
     {
         new_data1[i] = (double)data1[i];
         new_data2[i] = (double)data2[i];
         new_data3[i] = (double)data3[i];
     }
     
-    CreatePlot("Graph.png", new_data1, new_data2, new_data3);
+    CreatePlot("Graph.png", new_data1, new_data2, new_data3, config.maxEvents);
 }
 
-void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[])
+void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[], int time_length)
 {
-    double timeSeries[100];
-    for (int i = 0; i < 100; i++)
+    double timeSeries[time_length];
+    for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
     RGBABitmapImageReference canvasReference;
