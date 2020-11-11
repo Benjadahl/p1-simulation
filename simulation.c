@@ -273,16 +273,9 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
                         config.secondaryGroupRisk, tick, agentID);
             }
             
-            if ((rndInt(30) - 1 >= 25)) {
-                if (isDay(tick) == Friday || isDay(tick) == Saturday) {
-                    int highRisk = 2 * config.contactsRisk;
-                    infectGroup(agents, theAgent.contacts, config.amountOfContacts,
-                        highRisk, tick, agentID);
-                } else {
-                infectGroup(agents, theAgent.contacts, config.amountOfContacts,
+            infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
-                }
-            }
+                        
         } else {
             theAgent.healthState = recovered;
         }
