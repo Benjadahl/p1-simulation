@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* switch */
+    /* Switch over command line options */
     for (i = 0; i < 7; i++) {
         switch (options[i]) {
         case 'c':
