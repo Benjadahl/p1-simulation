@@ -1,1 +1,0 @@
-void CreatePlotFromCVS(char *file_name);
