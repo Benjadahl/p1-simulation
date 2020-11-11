@@ -4,6 +4,7 @@ typedef struct simConfig {
     int infectionTime;
     int amountOfStartInfected;
     int maxEvents;
+    int seed;
     int primaryGroupSize;
     int secondaryGroupSize;
     int primaryGroupRisk;
