@@ -62,8 +62,6 @@ void run_simulation(simConfig config,double *succeptible_data, double *infectiou
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
 
-    printf("inited");
-
     for (tick = 1; tick <= config.maxEvents; tick++) {
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
@@ -178,7 +176,6 @@ void printStats(agent agents[], simConfig config, int tick)
 void initAgents(agent agents[], int contacts[], int primaryGroups[],
                 int secondaryGroups[], simConfig config, int tick)
 {
-    printf("lol");
     int a = 0;
     int i = 0;
 
@@ -186,8 +183,6 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
         primaryGroups[a] = -1;
         secondaryGroups[a] = -1;
     }
-
-    printf("lol");
 
     for (a = 0; a < config.amountOfAgents; a++) {
         int c = 0;
