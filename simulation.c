@@ -247,23 +247,27 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
+    typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
+        Friday, Saturday
+    } Day;
+
     if (theAgent.healthState == infectious) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
-            if (tick % 7 != 0 || 6) {
+            if (tick % 7 != Saturday || Sunday) {
                 infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
                         tick, agentID);
             }
             
-            if (tick % 7 == 2 || 4 ) {
+            if (tick % 7 == Tuesday || Thursday ) {
                 infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
                         config.secondaryGroupRisk, tick, agentID);
             }
             
             if ((rndInt(30) >= 25)) {
-                if (tick % 7 == 0 || 6) {
+                if (tick % 7 == Friday || Saturday) {
                     int highRisk = 2 * config.contactsRisk;
                     infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         highRisk, tick, agentID);
