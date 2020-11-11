@@ -249,7 +249,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
 }
 
 
-int isDay(int tick)
+int isDay(int tick) /* Tager udagngspunkt i at tick == 1 er Mandag */
 {
     return tick % 7;
 }
@@ -275,7 +275,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
-                        
+
         } else {
             theAgent.healthState = recovered;
         }
