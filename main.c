@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
     int seed;
     int par[7];
     char options[7];
-
     simConfig config;
+
     config.contactsRisk = 1;
     config.amountOfAgents = 10000;
     config.infectionTime = 4;
@@ -24,14 +24,6 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 1;
     config.secondaryGroupRisk = 1;
     config.amountOfContacts = 5;
-    config.amountOfPrimaryGroups =
-        config.amountOfAgents / config.primaryGroupSize;
-    config.amountOfSecondaryGroups =
-        config.amountOfAgents / config.secondaryGroupSize;
-
-    double succeptible_data[config.maxEvents];
-    double infectious_data[config.maxEvents];
-    double recovered_data[config.maxEvents];
 
     j = 0;
     k = 0;
@@ -46,14 +38,11 @@ int main(int argc, char *argv[])
         }
     }
 
-
-
     /* switch */
     for (i = 0; i < 7; i++) {
         switch (options[i]) {
         case 'c':
             config.contactsRisk = par[i];
-
             break;
 
         case 'k':
@@ -82,6 +71,15 @@ int main(int argc, char *argv[])
         }
 
     }
+
+    config.amountOfPrimaryGroups =
+        config.amountOfAgents / config.primaryGroupSize;
+    config.amountOfSecondaryGroups =
+        config.amountOfAgents / config.secondaryGroupSize;
+
+    double succeptible_data[config.maxEvents];
+    double infectious_data[config.maxEvents];
+    double recovered_data[config.maxEvents];
 
     run_simulation(config, succeptible_data, infectious_data,
                    recovered_data);
