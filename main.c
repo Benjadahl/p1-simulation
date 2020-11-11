@@ -4,7 +4,7 @@
 #include "graph.h"
 
 int main(int argc, char *argv[])
-{   
+{
     int i;
     int j;
     int k;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
             k++;
         }
     }
-    
+
 
 
     /* switch */
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         switch (options[i]) {
         case 'c':
             config.contactsRisk = par[i];
-            
+
             break;
 
         case 'k':
