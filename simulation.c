@@ -7,10 +7,17 @@ typedef enum HealthState { succeptible, infectious,
     recovered
 } HealthState;
 
+typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
+        Friday, Saturday
+    } Day;
+
 typedef struct agent {
     int ID;
     HealthState healthState;
     int infectedTime;
+    int symptomatic;
+    int incubationTime;
+    int willIsolate;
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -25,6 +32,7 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                              int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
+int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
@@ -38,8 +46,7 @@ void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event,
               simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data,
-                    double *infectious_data, double *recovered_data)
+void run_simulation(simConfig config, double *succeptible_data, double *infectious_data, double *recovered_data)
 {
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
@@ -50,8 +57,15 @@ void run_simulation(simConfig config, double *succeptible_data,
     agent agents[config.amountOfAgents];
 
     int tick = 1;
-
-    srand(time(NULL));
+    if(!config.seed)
+    {
+        srand(time(NULL));
+    }
+    else
+    {
+        srand(config.seed);
+    }
+    
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
@@ -185,6 +199,11 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 
         agents[a].ID = a;
         agents[a].healthState = succeptible;
+
+        agents[a].symptomatic = trueChance(config.symptomaticPercent);
+        agents[a].incubationTime = rndInt(config.maxIncubationTime);
+        agents[a].willIsolate = trueChance(config.willIsolatePercent);
+
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
@@ -205,7 +224,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
-        infectRandomAgent(agents, config, tick);
+        infectRandomAgent(agents, config, tick - 1);
     }
 }
 
@@ -247,21 +266,36 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     agents[randomID] = infectAgent(theAgent, tick);
 }
 
+
+int isDay(int tick) /* Tager udagngspunkt i at tick == 1 er Mandag */
+{
+    return tick % 7;
+}
+
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
     if (theAgent.healthState == infectious) {
-        if (theAgent.infectedTime > tick - config.infectionTime) {
+        /* Check if the agent should isolate, if it does so it will be set to recovered state */
+        int shouldIsolate = theAgent.symptomatic && theAgent.infectedTime + theAgent.incubationTime < tick;
+        if (theAgent.infectedTime > tick - config.infectionTime && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
-            infectGroup(agents, theAgent.primaryGroup,
+            if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
+                infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
                         tick, agentID);
-            infectGroup(agents, theAgent.secondaryGroup,
+            }
+            
+            if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
+                infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
                         config.secondaryGroupRisk, tick, agentID);
+            }
+            
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
+
         } else {
             theAgent.healthState = recovered;
         }
