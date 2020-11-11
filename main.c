@@ -1,6 +1,6 @@
 #include "simulation.h"
 #include "export.h"
-#include "graph.h"  
+void CreatePlotFromCVS(char *file_name, simConfig config);
 
 int main(void)
 {
@@ -9,7 +9,7 @@ int main(void)
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
-    config.maxEvents = 100;
+    config.maxEvents = 150;
     config.primaryGroupSize = 40;
     config.secondaryGroupSize = 20;
     config.primaryGroupRisk = 1;
@@ -26,7 +26,7 @@ int main(void)
     
     run_simulation(config, succeptible_data, infectious_data, recovered_data);
     ExportData(succeptible_data, infectious_data, recovered_data, config.maxEvents);
-    CreatePlotFromCVS("out.csv");
+    CreatePlotFromCVS("out.csv", config);
 
     return 0;
 }
