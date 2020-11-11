@@ -51,11 +51,11 @@ void run_simulation(simConfig config,double *succeptible_data, double *infectiou
     int tick = 1;
     if(!config.seed)
     {
-        srand(config.seed);
+        srand(time(NULL));
     }
     else
     {
-        srand(time(NULL));
+        srand(config.seed);
     }
     
 
