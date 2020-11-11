@@ -7,6 +7,10 @@ typedef enum HealthState { succeptible, infectious,
     recovered
 } HealthState;
 
+typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
+        Friday, Saturday
+    } Day;
+
 typedef struct agent {
     int ID;
     HealthState healthState;
@@ -25,6 +29,7 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                              int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
+int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
@@ -201,7 +206,7 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
-        infectRandomAgent(agents, config, tick);
+        infectRandomAgent(agents, config, tick - 1);
     }
 }
 
@@ -243,31 +248,33 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     agents[randomID] = infectAgent(theAgent, tick);
 }
 
+
+int isDay(int tick)
+{
+    return tick % 7;
+}
+
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
-        Friday, Saturday
-    } Day;
-
     if (theAgent.healthState == infectious) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
-            if (tick % 7 != Saturday || Sunday) {
+            if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
                 infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
                         tick, agentID);
             }
             
-            if (tick % 7 == Tuesday || Thursday ) {
+            if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
                 infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
                         config.secondaryGroupRisk, tick, agentID);
             }
             
-            if ((rndInt(30) >= 25)) {
-                if (tick % 7 == Friday || Saturday) {
+            if ((rndInt(30) - 1 >= 25)) {
+                if (isDay(tick) == Friday || isDay(tick) == Saturday) {
                     int highRisk = 2 * config.contactsRisk;
                     infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         highRisk, tick, agentID);
