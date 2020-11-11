@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     simConfig config;
     config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
+    config.amountOfAgents = 10000;
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     j = 0;
     k = 0;
-    /* indl�ser parametre */
+    /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
             options[j] = argv[i][1];
@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
         switch (options[i]) {
         case 'c':
             config.contactsRisk = par[i];
+            
             break;
 
         case 'k':

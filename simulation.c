@@ -39,6 +39,7 @@ void PlotData(agent * agents, double *succeptible_data,
 
 void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data)
 {
+    printf("b: %d\n", config.amountOfAgents);
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
     int primaryGroups[config.amountOfAgents];
@@ -56,7 +57,7 @@ void run_simulation(simConfig config,double *succeptible_data, double *infectiou
     {
         srand(time(NULL));
     }
-
+    
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
