@@ -56,8 +56,15 @@ void run_simulation(simConfig config, double *succeptible_data, double *infectio
     agent agents[config.amountOfAgents];
 
     int tick = 1;
-
-    srand(time(NULL));
+    if(!config.seed)
+    {
+        srand(time(NULL));
+    }
+    else
+    {
+        srand(config.seed);
+    }
+    
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
