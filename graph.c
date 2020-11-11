@@ -33,23 +33,23 @@ void CreatePlot(char *file_name, double succeptible_data[], double infectious_da
     RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img;
 
     canvasReference =
-        PlotLineGraph(timeSeries, 100, succeptible_data, 100,
+        PlotLineGraph(timeSeries, time_length, succeptible_data, time_length,
                       L"Succeptible (%)",
                       L"Number of succeptible people (%)", L"Time (event)",
-                      100, 100);
+                      time_length, 100);
     succeptible_img = canvasReference.image;
 
     canvasReference =
-        PlotLineGraph(timeSeries, 100, infectious_data, 100,
+        PlotLineGraph(timeSeries, time_length, infectious_data, time_length,
                       L"Infectious (%)",
                       L"Number of infectious people (%)", L"Time (event)",
-                      100, 100);
+                      time_length, 100);
     infectious_img = canvasReference.image;
 
     canvasReference =
-        PlotLineGraph(timeSeries, 100, recovered_data, 100,
+        PlotLineGraph(timeSeries, time_length, recovered_data, time_length,
                       L"Recovered (%)", L"Number of recovered people (%)",
-                      L"Time (event)", 100, 100);
+                      L"Time (event)", time_length, 100);
     recovered_img = canvasReference.image;
 
     DrawImageOnImage(combined_plots, succeptible_img, 0, 0);
