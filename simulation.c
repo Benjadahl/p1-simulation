@@ -15,6 +15,9 @@ typedef struct agent {
     int ID;
     HealthState healthState;
     int infectedTime;
+    int symptomatic;
+    int incubationTime;
+    int willIsolate;
     int *primaryGroup;
     int *secondaryGroup;
     int *contacts;
@@ -42,7 +45,7 @@ void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event, simConfig config);
 
-void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data)
+void run_simulation(simConfig config, double *succeptible_data, double *infectious_data, double *recovered_data)
 {
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
@@ -193,6 +196,11 @@ void initAgents(agent agents[], int contacts[], int primaryGroups[],
 
         agents[a].ID = a;
         agents[a].healthState = succeptible;
+
+        agents[a].symptomatic = trueChance(config.symptomaticPercent);
+        agents[a].incubationTime = rndInt(config.maxIncubationTime);
+        agents[a].willIsolate = trueChance(config.willIsolatePercent);
+
         for (c = 0; c < config.amountOfContacts; c++) {
             *getGroupMember(contacts, config.amountOfContacts, a, c) =
                 rand() % config.amountOfAgents;
@@ -265,8 +273,10 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    if (theAgent.healthState == infectious && theAgent.infectedTime != tick) {
-        if (theAgent.infectedTime > tick - config.infectionTime) {
+    if (theAgent.healthState == infectious) {
+        /* Check if the agent should isolate, if it does so it will be set to recovered state */
+        int shouldIsolate = theAgent.symptomatic && theAgent.infectedTime + theAgent.incubationTime < tick;
+        if (theAgent.infectedTime > tick - config.infectionTime && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
             if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
                 infectGroup(agents, theAgent.primaryGroup,
