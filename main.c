@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <ctype.h>
 #include "simulation.h"
 #include "export.h"
 #include "graph.h"
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
         if (argv[i][0] == '-') {
             options[j] = argv[i][1];
             j++;
-        } else if ((argv[i][0] > 47) && (argv[i][0] < 58)) {
+        } else if (isdigit(argv[i][0])) {
             par[k] = atoi(argv[i]);
             k++;
         }
