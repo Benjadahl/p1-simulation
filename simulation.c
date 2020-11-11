@@ -7,6 +7,10 @@ typedef enum HealthState { succeptible, infectious,
     recovered
 } HealthState;
 
+typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
+        Friday, Saturday
+    } Day;
+
 typedef struct agent {
     int ID;
     HealthState healthState;
@@ -25,6 +29,7 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                              int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
+int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
@@ -251,6 +256,12 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     agents[randomID] = infectAgent(theAgent, tick);
 }
 
+
+int isDay(int tick) /* Tager udagngspunkt i at tick == 1 er Mandag */
+{
+    return tick % 7;
+}
+
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
@@ -258,14 +269,21 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     if (theAgent.healthState == infectious && theAgent.infectedTime != tick) {
         if (theAgent.infectedTime > tick - config.infectionTime) {
             /* Handle infectious agent */
-            infectGroup(agents, theAgent.primaryGroup,
+            if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
+                infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
                         tick, agentID);
-            infectGroup(agents, theAgent.secondaryGroup,
+            }
+            
+            if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
+                infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
                         config.secondaryGroupRisk, tick, agentID);
+            }
+            
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
+
         } else {
             theAgent.healthState = recovered;
         }
