@@ -3,15 +3,16 @@
 #include "simulation.h"
 #include "export.h"
 #include "graph.h"
+#define maxOptions 7
 
 int main(int argc, char *argv[])
 {
     int i;
-    int j;
-    int k;
+    int j = 0;
+    int k = 0;
     int seed;
-    int par[7];
-    char options[7];
+    int par[maxOptions];
+    char options[maxOptions];
     simConfig config;
 
     config.contactsRisk = 1;
@@ -26,8 +27,6 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 1;
     config.amountOfContacts = 5;
 
-    j = 0;
-    k = 0;
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
     }
 
     /* Switch over command line options */
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < maxOptions; i++) {
         switch (options[i]) {
         case 'c':
             config.contactsRisk = par[i];
