@@ -43,7 +43,7 @@ jobs:
         run: sudo apt install indent
 
       - name: Run GNU indent
-        run: indent -ts 2 -kr -nut main.c
+        run: indent -ts 2 -kr -nut ./*.c
 
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v4.7.2

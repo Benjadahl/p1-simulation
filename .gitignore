@@ -53,3 +53,7 @@ dkms.conf
 
 #GNU indent backups
 *.c~
+
+#Output files
+*.csv
+*.png

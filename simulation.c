@@ -7,9 +7,9 @@ typedef enum HealthState { succeptible, infectious,
     recovered
 } HealthState;
 
-typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, 
-        Friday, Saturday
-    } Day;
+typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday,
+    Friday, Saturday
+} Day;
 
 typedef struct agent {
     int ID;
@@ -43,9 +43,11 @@ int *getGroupMember(int groups[], int groupSize, int groupNr,
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, int event, simConfig config);
+              double *infectious_data, double *recovered_data, int event,
+              simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data, double *infectious_data, double *recovered_data)
+void run_simulation(simConfig config, double *succeptible_data,
+                    double *infectious_data, double *recovered_data)
 {
     int contacts[config.amountOfContacts * config.amountOfAgents];
 
@@ -56,15 +58,12 @@ void run_simulation(simConfig config, double *succeptible_data, double *infectio
     agent agents[config.amountOfAgents];
 
     int tick = 1;
-    if(!config.seed)
-    {
+    if (!config.seed) {
         srand(time(NULL));
-    }
-    else
-    {
+    } else {
         srand(config.seed);
     }
-    
+
 
     initAgents(agents, contacts, primaryGroups,
                secondaryGroups, config, tick);
@@ -73,12 +72,14 @@ void run_simulation(simConfig config, double *succeptible_data, double *infectio
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
         PlotData(agents,
-                 succeptible_data,infectious_data, recovered_data, tick, config);
+                 succeptible_data, infectious_data, recovered_data, tick,
+                 config);
     }
 }
 
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, int tick, simConfig config)
+              double *infectious_data, double *recovered_data, int tick,
+              simConfig config)
 {
     double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
     double total_succeptible = 0, total_infectious = 0, total_recovered =
@@ -102,9 +103,9 @@ void PlotData(agent * agents, double *succeptible_data,
     infectious_p = total_infectious * 100 / config.amountOfAgents;
     recovered_p = total_recovered * 100 / config.amountOfAgents;
 
-    succeptible_data[tick-1] = succeptible_p;
-    infectious_data[tick-1] = infectious_p;
-    recovered_data[tick-1] = recovered_p;
+    succeptible_data[tick - 1] = succeptible_p;
+    infectious_data[tick - 1] = infectious_p;
+    recovered_data[tick - 1] = recovered_p;
 }
 
 /*void printAgent(agent agent, int contacts[], simConfig config)
@@ -264,8 +265,8 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
 }
 
 
-int isDay(int tick) /* Tager udagngspunkt i at tick == 1 er Mandag */
-{
+int isDay(int tick)
+{                               /* Tager udagngspunkt i at tick == 1 er Mandag */
     return tick % 7;
 }
 
@@ -275,21 +276,23 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 
     if (theAgent.healthState == infectious) {
         /* Check if the agent should isolate, if it does so it will be set to recovered state */
-        int shouldIsolate = theAgent.symptomatic && theAgent.infectedTime + theAgent.incubationTime < tick;
-        if (theAgent.infectedTime > tick - config.infectionTime && !(shouldIsolate && theAgent.willIsolate)) {
+        int shouldIsolate = theAgent.symptomatic
+            && theAgent.infectedTime + theAgent.incubationTime < tick;
+        if (theAgent.infectedTime > tick - config.infectionTime
+            && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
             if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
                 infectGroup(agents, theAgent.primaryGroup,
-                        config.primaryGroupSize, config.primaryGroupRisk,
-                        tick, agentID);
+                            config.primaryGroupSize,
+                            config.primaryGroupRisk, tick, agentID);
             }
-            
+
             if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
                 infectGroup(agents, theAgent.secondaryGroup,
-                        config.secondaryGroupSize,
-                        config.secondaryGroupRisk, tick, agentID);
+                            config.secondaryGroupSize,
+                            config.secondaryGroupRisk, tick, agentID);
             }
-            
+
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
                         config.contactsRisk, tick, agentID);
 

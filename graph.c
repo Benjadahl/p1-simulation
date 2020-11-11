@@ -2,27 +2,33 @@
 #include"plot.h"
 #include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name,simConfig config);
-void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[], int time_length);
+void CreatePlotFromCVS(char *file_name, simConfig config);
+void CreatePlot(char *file_name, double succeptible_data[],
+                double infectious_data[], double recovered_data[],
+                int time_length);
 
 void CreatePlotFromCVS(char *file_name, simConfig config)
 {
     int i;
-    float data1[config.maxEvents], data2[config.maxEvents], data3[config.maxEvents];
-    double new_data1[config.maxEvents], new_data2[config.maxEvents], new_data3[config.maxEvents];
+    float data1[config.maxEvents], data2[config.maxEvents],
+        data3[config.maxEvents];
+    double new_data1[config.maxEvents], new_data2[config.maxEvents],
+        new_data3[config.maxEvents];
     ReadFile(file_name, data1, data2, data3);
-    
-    for(i = 0; i < config.maxEvents; i++)
-    {
-        new_data1[i] = (double)data1[i];
-        new_data2[i] = (double)data2[i];
-        new_data3[i] = (double)data3[i];
+
+    for (i = 0; i < config.maxEvents; i++) {
+        new_data1[i] = (double) data1[i];
+        new_data2[i] = (double) data2[i];
+        new_data3[i] = (double) data3[i];
     }
-    
-    CreatePlot("Graph.png", new_data1, new_data2, new_data3, config.maxEvents);
+
+    CreatePlot("Graph.png", new_data1, new_data2, new_data3,
+               config.maxEvents);
 }
 
-void CreatePlot(char *file_name, double succeptible_data[], double infectious_data[], double recovered_data[], int time_length)
+void CreatePlot(char *file_name, double succeptible_data[],
+                double infectious_data[], double recovered_data[],
+                int time_length)
 {
     double timeSeries[time_length];
     for (int i = 0; i < time_length; i++)
@@ -33,15 +39,15 @@ void CreatePlot(char *file_name, double succeptible_data[], double infectious_da
     RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img;
 
     canvasReference =
-        PlotLineGraph(timeSeries, time_length, succeptible_data, time_length,
-                      L"Succeptible (%)",
+        PlotLineGraph(timeSeries, time_length, succeptible_data,
+                      time_length, L"Succeptible (%)",
                       L"Number of succeptible people (%)", L"Time (event)",
                       time_length, 100);
     succeptible_img = canvasReference.image;
 
     canvasReference =
-        PlotLineGraph(timeSeries, time_length, infectious_data, time_length,
-                      L"Infectious (%)",
+        PlotLineGraph(timeSeries, time_length, infectious_data,
+                      time_length, L"Infectious (%)",
                       L"Number of infectious people (%)", L"Time (event)",
                       time_length, 100);
     infectious_img = canvasReference.image;
