@@ -314,7 +314,7 @@ void infectGroup(agent agents[], int group[], int groupSize,
         agent peerAgent = agents[peerID];
 
         if (peerID != agentID) {
-            if (trueChance(infectionRisk && trueChance(config.groupPercentageToInfect))) {
+            if (trueChance(infectionRisk) && trueChance(config.groupPercentageToInfect)) {
                 agents[peerID] = infectAgent(peerAgent, tick);
             }
         }
