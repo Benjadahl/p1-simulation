@@ -36,7 +36,8 @@ int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
-                 int infectionRisk, int tick, int agentID, simConfig config);
+                 int infectionRisk, int tick, int agentID,
+                 simConfig config);
 int rndInt(int max);
 int *getGroupMember(int groups[], int groupSize, int groupNr,
                     int memberNr);
@@ -284,13 +285,15 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
                 infectGroup(agents, theAgent.primaryGroup,
                             config.primaryGroupSize,
-                            config.primaryGroupRisk, tick, agentID, config);
+                            config.primaryGroupRisk, tick, agentID,
+                            config);
             }
 
             if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
                 infectGroup(agents, theAgent.secondaryGroup,
                             config.secondaryGroupSize,
-                            config.secondaryGroupRisk, tick, agentID, config);
+                            config.secondaryGroupRisk, tick, agentID,
+                            config);
             }
 
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
@@ -305,7 +308,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 }
 
 void infectGroup(agent agents[], int group[], int groupSize,
-                 int infectionRisk, int tick, int agentID, simConfig config)
+                 int infectionRisk, int tick, int agentID,
+                 simConfig config)
 {
     int s = 0;
 
