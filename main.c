@@ -29,7 +29,15 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 1;
     config.secondaryGroupRisk = 1;
     config.amountOfContacts = 5;
-    config.maxParties = 10;
+    config.maxParties = 100;
+    config.dinnerPartyTranmissionChanceMax = 25;
+    config.dinnerPartyTranmissionChanceMin = 5;
+    config.dinnerCapMin = 4;
+    config.dinnerCapMax = 12;
+    config.clubPartyTranmissionChanceMax = 75;
+    config.clubPartyTranmissionChanceMin = 45;
+    config.clubCapMin = 20;
+    config.clubCapMax = 200;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {

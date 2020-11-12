@@ -47,9 +47,9 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
                              int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
-Party CreateParty(PartyType type, int ID);
-void CreateRndParties(Party parties[], int amount, agent agents[], int agentAmount);
-void FillParty(agent agents[], Party *party, int agentAmount);
+Party CreateParty(PartyType type, int ID, simConfig config);
+void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig config);
+void FillParty(Party *party, int agentAmount);
 void SimulateParty(agent agents[], Party *parties, int partyID, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
@@ -284,7 +284,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     agents[randomID] = infectAgent(theAgent, tick);
 }
 
-Party CreateParty(PartyType type, int ID)
+Party CreateParty(PartyType type, int ID, simConfig config)
 {
     Party newParty;
     newParty.ID = ID;
@@ -293,18 +293,19 @@ Party CreateParty(PartyType type, int ID)
     switch (type)
     {
     case dinner:
-        newParty.participantCap = rndInt(8)+4;
-        newParty.transmissionChance = rndInt(20)+5;
+        newParty.participantCap = rndInt(config.dinnerCapMax-config.dinnerCapMin)+config.dinnerCapMin;
+        newParty.transmissionChance = rndInt(config.dinnerPartyTranmissionChanceMax-config.dinnerPartyTranmissionChanceMin)+config.dinnerPartyTranmissionChanceMin;
         break;
     case club:
-        newParty.participantCap = rndInt(170)+30;
-        newParty.transmissionChance = rndInt(45)+30;
+        newParty.participantCap = rndInt(config.clubCapMax-config.clubCapMin)+config.clubCapMin;
+        newParty.transmissionChance = rndInt(config.clubPartyTranmissionChanceMax-config.clubPartyTranmissionChanceMin)+config.clubPartyTranmissionChanceMin;
+        break;
         break;
     }
     return newParty;
 }
 
-void CreateRndParties(Party parties[], int amount, agent agents[], int agentAmount)
+void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig config)
 {
     int partyType = 0;
     int i;
@@ -314,22 +315,21 @@ void CreateRndParties(Party parties[], int amount, agent agents[], int agentAmou
         switch (partyType)
         {
         case 0:
-            parties[i] = CreateParty(dinner,i);
+            parties[i] = CreateParty(dinner,i,config);
             break;
         case 1:
-            parties[i] = CreateParty(club,i);
+            parties[i] = CreateParty(club,i,config);
             break;
         default:
-            parties[i] = CreateParty(club,i);
+            parties[i] = CreateParty(club,i,config);
             break;
         }
-        FillParty(agents, &parties[i], agentAmount);
-        /*printf("\nParty created: ID = %d, CAP = %d, CHANCE = %d", parties[i].ID, parties[i].participantCap, parties[i].transmissionChance);*/
+        FillParty(&parties[i], agentAmount);
     } 
 }
 
 
-void FillParty(agent agents[], Party *party, int agentAmount)
+void FillParty(Party *party, int agentAmount)
 {
     Party partyTemp = *party;
     int countParticipant = 0;
@@ -367,7 +367,6 @@ void SimulateParty(agent agents[], Party parties[], int partyID, int tick)
             infectGroup(agents,parties[partyID].participants, parties[partyID].participantCap, parties[partyID].transmissionChance,tick,curAgent.ID);
         }
     }
-    
 }
 
 int isDay(int tick)
@@ -450,12 +449,10 @@ void RunParties(agent agents[], simConfig config, int tick)
     Party parties[config.maxParties];
     int amountOfParties = rndInt(config.maxParties)+1;
     int p;
-    CreateRndParties(parties, amountOfParties, agents, config.amountOfAgents);
+    CreateRndParties(parties, amountOfParties, config.amountOfAgents, config);
     
     for (p = 0; p < amountOfParties; p++)
         SimulateParty(agents, parties, p, tick);
-
-    
 }
 
 void runEvent(agent agents[], simConfig config, int tick)
@@ -469,6 +466,4 @@ void runEvent(agent agents[], simConfig config, int tick)
     if (isDay(tick) == Saturday || isDay(tick) == Sunday) {
         RunParties(agents, config, tick);
     }
-
-    
 }
