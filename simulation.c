@@ -47,9 +47,10 @@ int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 Party CreateParty(PartyType type, int ID, simConfig config);
-void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig config);
-void FillParty(Party *party, int agentAmount);
-void SimulateParty(agent agents[], Party *parties, int partyID, int tick);
+void CreateRndParties(Party parties[], int amount, int agentAmount,
+                      simConfig config);
+void FillParty(Party * party, int agentAmount);
+void SimulateParty(agent agents[], Party * parties, int partyID, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
@@ -291,19 +292,30 @@ Party CreateParty(PartyType type, int ID, simConfig config)
     newParty.curParticipants = 0;
     switch (type) {
     case dinner:
-        newParty.participantCap = rndInt(config.dinnerCapMax-config.dinnerCapMin)+config.dinnerCapMin;
-        newParty.transmissionChance = rndInt(config.dinnerPartyTranmissionChanceMax-config.dinnerPartyTranmissionChanceMin)+config.dinnerPartyTranmissionChanceMin;
+        newParty.participantCap =
+            rndInt(config.dinnerCapMax - config.dinnerCapMin) +
+            config.dinnerCapMin;
+        newParty.transmissionChance =
+            rndInt(config.dinnerPartyTranmissionChanceMax -
+                   config.dinnerPartyTranmissionChanceMin) +
+            config.dinnerPartyTranmissionChanceMin;
         break;
     case club:
-        newParty.participantCap = rndInt(config.clubCapMax-config.clubCapMin)+config.clubCapMin;
-        newParty.transmissionChance = rndInt(config.clubPartyTranmissionChanceMax-config.clubPartyTranmissionChanceMin)+config.clubPartyTranmissionChanceMin;
+        newParty.participantCap =
+            rndInt(config.clubCapMax - config.clubCapMin) +
+            config.clubCapMin;
+        newParty.transmissionChance =
+            rndInt(config.clubPartyTranmissionChanceMax -
+                   config.clubPartyTranmissionChanceMin) +
+            config.clubPartyTranmissionChanceMin;
         break;
         break;
     }
     return newParty;
 }
 
-void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig config)
+void CreateRndParties(Party parties[], int amount, int agentAmount,
+                      simConfig config)
 {
     int partyType = 0;
     int i;
@@ -311,21 +323,21 @@ void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig co
         partyType = rndInt(PARTY_TYPES);
         switch (partyType) {
         case 0:
-            parties[i] = CreateParty(dinner,i,config);
+            parties[i] = CreateParty(dinner, i, config);
             break;
         case 1:
-            parties[i] = CreateParty(club,i,config);
+            parties[i] = CreateParty(club, i, config);
             break;
         default:
-            parties[i] = CreateParty(club,i,config);
+            parties[i] = CreateParty(club, i, config);
             break;
         }
         FillParty(&parties[i], agentAmount);
-    } 
+    }
 }
 
 
-void FillParty(Party *party, int agentAmount)
+void FillParty(Party * party, int agentAmount)
 {
     Party partyTemp = *party;
     int countParticipant = 0;
@@ -444,8 +456,9 @@ void RunParties(agent agents[], simConfig config, int tick)
     Party parties[config.maxParties];
     int amountOfParties = rndInt(config.maxParties) + 1;
     int p;
-    CreateRndParties(parties, amountOfParties, config.amountOfAgents, config);
-    
+    CreateRndParties(parties, amountOfParties, config.amountOfAgents,
+                     config);
+
     for (p = 0; p < amountOfParties; p++)
         SimulateParty(agents, parties, p, tick);
 }
