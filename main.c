@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 1;
     config.secondaryGroupRisk = 1;
     config.amountOfContacts = 5;
+    config.maxParties = 10;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
