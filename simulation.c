@@ -298,7 +298,6 @@ Party CreateParty(PartyType type, int ID, simConfig config)
         newParty.participantCap = rndInt(config.clubCapMax-config.clubCapMin)+config.clubCapMin;
         newParty.transmissionChance = rndInt(config.clubPartyTranmissionChanceMax-config.clubPartyTranmissionChanceMin)+config.clubPartyTranmissionChanceMin;
         break;
-        break;
     }
     return newParty;
 }
@@ -458,7 +457,7 @@ void runEvent(agent agents[], simConfig config, int tick)
         agents[a] = computeAgent(agents, config, tick, a);
     }
 
-    if (isDay(tick) == Saturday || isDay(tick) == Sunday) {
+    if (isDay(tick) == Friday || isDay(tick) == Saturday) {
         RunParties(agents, config, tick);
     }
 }
