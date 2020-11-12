@@ -28,7 +28,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void infectGroup(agent agents[], int group[], int groupSize,
-                 int infectionRisk, int tick, int agentID);
+                 int infectionRisk, int tick, int agentID, simConfig config);
 int rndInt(int max);
 int *getGroupMember(int groups[], int groupSize, int groupNr,
                     int memberNr);
@@ -252,12 +252,12 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             /* Handle infectious agent */
             infectGroup(agents, theAgent.primaryGroup,
                         config.primaryGroupSize, config.primaryGroupRisk,
-                        tick, agentID);
+                        tick, agentID, config);
             infectGroup(agents, theAgent.secondaryGroup,
                         config.secondaryGroupSize,
-                        config.secondaryGroupRisk, tick, agentID);
+                        config.secondaryGroupRisk, tick, agentID, config);
             infectGroup(agents, theAgent.contacts, config.amountOfContacts,
-                        config.contactsRisk, tick, agentID);
+                        config.contactsRisk, tick, agentID, config);
         } else {
             theAgent.healthState = recovered;
         }
@@ -267,7 +267,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 }
 
 void infectGroup(agent agents[], int group[], int groupSize,
-                 int infectionRisk, int tick, int agentID)
+                 int infectionRisk, int tick, int agentID, simConfig config)
 {
     int s = 0;
 
@@ -276,7 +276,7 @@ void infectGroup(agent agents[], int group[], int groupSize,
         agent peerAgent = agents[peerID];
 
         if (peerID != agentID) {
-            if (trueChance(infectionRisk)) {
+            if (trueChance(infectionRisk && trueChance(config.groupPercentageToInfect))) {
                 agents[peerID] = infectAgent(peerAgent, tick);
             }
         }

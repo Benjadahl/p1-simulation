@@ -19,6 +19,7 @@ int main(void)
         config.amountOfAgents / config.primaryGroupSize;
     config.amountOfSecondaryGroups =
         config.amountOfAgents / config.secondaryGroupSize;
+    config.groupPercentageToInfect = 74;
 
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];

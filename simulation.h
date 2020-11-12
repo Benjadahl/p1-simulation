@@ -11,5 +11,6 @@ typedef struct simConfig {
     int amountOfContacts;
     int amountOfPrimaryGroups;
     int amountOfSecondaryGroups;
+    int groupPercentageToInfect;
 } simConfig;
 void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data);
