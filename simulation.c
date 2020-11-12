@@ -15,8 +15,7 @@ typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday,
     Friday, Saturday
 } Day;
 
-typedef struct Party
-{
+typedef struct Party {
     int ID;
     PartyType type;
     int participantCap;
@@ -290,8 +289,7 @@ Party CreateParty(PartyType type, int ID, simConfig config)
     newParty.ID = ID;
     newParty.type = type;
     newParty.curParticipants = 0;
-    switch (type)
-    {
+    switch (type) {
     case dinner:
         newParty.participantCap = rndInt(config.dinnerCapMax-config.dinnerCapMin)+config.dinnerCapMin;
         newParty.transmissionChance = rndInt(config.dinnerPartyTranmissionChanceMax-config.dinnerPartyTranmissionChanceMin)+config.dinnerPartyTranmissionChanceMin;
@@ -309,11 +307,9 @@ void CreateRndParties(Party parties[], int amount, int agentAmount, simConfig co
 {
     int partyType = 0;
     int i;
-    for (i = 0; i < amount; i++)
-    {
+    for (i = 0; i < amount; i++) {
         partyType = rndInt(PARTY_TYPES);
-        switch (partyType)
-        {
+        switch (partyType) {
         case 0:
             parties[i] = CreateParty(dinner,i,config);
             break;
@@ -336,22 +332,20 @@ void FillParty(Party *party, int agentAmount)
     int isNewParticipant;
     int p;
     int newParticipant;
-    while (countParticipant < partyTemp.participantCap)
-    {
+    while (countParticipant < partyTemp.participantCap) {
         isNewParticipant = 1;
         newParticipant = rndInt(agentAmount);
-        for (p = 0; p < partyTemp.participantCap; p++)
-        {
-            if(partyTemp.participants[p] == newParticipant){
+        for (p = 0; p < partyTemp.participantCap; p++) {
+            if (partyTemp.participants[p] == newParticipant) {
                 isNewParticipant = 0;
                 break;
-            }        
+            }
         }
-        if(isNewParticipant){
+        if (isNewParticipant) {
             partyTemp.participants[countParticipant] = newParticipant;
             countParticipant++;
-        }  
-    }  
+        }
+    }
     *party = partyTemp;
 }
 
@@ -359,12 +353,13 @@ void SimulateParty(agent agents[], Party parties[], int partyID, int tick)
 {
     int a;
     agent curAgent;
-    for (a = 0; a < parties[partyID].participantCap; a++)
-    {
+    for (a = 0; a < parties[partyID].participantCap; a++) {
         curAgent = agents[parties[partyID].participants[a]];
-        if(curAgent.healthState == infectious)
-        {
-            infectGroup(agents,parties[partyID].participants, parties[partyID].participantCap, parties[partyID].transmissionChance,tick,curAgent.ID);
+        if (curAgent.healthState == infectious) {
+            infectGroup(agents, parties[partyID].participants,
+                        parties[partyID].participantCap,
+                        parties[partyID].transmissionChance, tick,
+                        curAgent.ID);
         }
     }
 }
@@ -447,7 +442,7 @@ int *getGroupMember(int groups[], int groupSize, int groupNr, int memberNr)
 void RunParties(agent agents[], simConfig config, int tick)
 {
     Party parties[config.maxParties];
-    int amountOfParties = rndInt(config.maxParties)+1;
+    int amountOfParties = rndInt(config.maxParties) + 1;
     int p;
     CreateRndParties(parties, amountOfParties, config.amountOfAgents, config);
     
