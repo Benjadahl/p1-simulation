@@ -283,14 +283,14 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
 
     agents[randomID] = infectAgent(theAgent, tick);
 }
-
+/*creates a single new party and returns it*/
 Party CreateParty(PartyType type, int ID, simConfig config)
 {
     Party newParty;
     newParty.ID = ID;
     newParty.type = type;
     newParty.curParticipants = 0;
-    switch (type) {
+    switch (type) { /*differnt variables of the party is set based on the type of party*/
     case dinner:
         newParty.participantCap =
             rndInt(config.dinnerCapMax - config.dinnerCapMin) +
@@ -313,13 +313,14 @@ Party CreateParty(PartyType type, int ID, simConfig config)
     return newParty;
 }
 
+/*Creates a number of random parties based on the parameters given when called*/
 void CreateRndParties(Party parties[], int amount, int agentAmount,
                       simConfig config)
 {
     int partyType = 0;
     int i;
     for (i = 0; i < amount; i++) {
-        partyType = rndInt(PARTY_TYPES);
+        partyType = rndInt(PARTY_TYPES); /*Gets a random party type*/
         switch (partyType) {
         case 0:
             parties[i] = CreateParty(dinner, i, config);
@@ -331,11 +332,11 @@ void CreateRndParties(Party parties[], int amount, int agentAmount,
             parties[i] = CreateParty(club, i, config);
             break;
         }
-        FillParty(&parties[i], agentAmount);
+        FillParty(&parties[i], agentAmount); /*fills the newly created party with people (agents)*/
     }
 }
 
-
+/*Fills a specific party with people (agents)*/
 void FillParty(Party * party, int agentAmount)
 {
     Party partyTemp = *party;
@@ -343,30 +344,30 @@ void FillParty(Party * party, int agentAmount)
     int isNewParticipant;
     int p;
     int newParticipant;
-    while (countParticipant < partyTemp.participantCap) {
+    while (countParticipant < partyTemp.participantCap) { /*runs as long the array of party participant isnt full.*/
         isNewParticipant = 1;
         newParticipant = rndInt(agentAmount);
-        for (p = 0; p < partyTemp.participantCap; p++) {
+        for (p = 0; p < partyTemp.participantCap; p++) { /* runs though all of the participants in a party to check if the new participant is currently in the array*/
             if (partyTemp.participants[p] == newParticipant) {
                 isNewParticipant = 0;
                 break;
             }
         }
-        if (isNewParticipant) {
+        if (isNewParticipant) {/*if/when a new participant is found it is added to the array of party participants*/
             partyTemp.participants[countParticipant] = newParticipant;
             countParticipant++;
         }
     }
     *party = partyTemp;
 }
-
+/*Infects people who participants in a specific party*/
 void SimulateParty(agent agents[], Party parties[], int partyID, int tick)
 {
     int a;
     agent curAgent;
     for (a = 0; a < parties[partyID].participantCap; a++) {
         curAgent = agents[parties[partyID].participants[a]];
-        if (curAgent.healthState == infectious) {
+        if (curAgent.healthState == infectious) { /*if the agent is infected and is at a party, they are able to infect people/agents at the party using the infectGroup function*/
             infectGroup(agents, parties[partyID].participants,
                         parties[partyID].participantCap,
                         parties[partyID].transmissionChance, tick,
@@ -449,7 +450,7 @@ int *getGroupMember(int groups[], int groupSize, int groupNr, int memberNr)
 {
     return &groups[groupNr * groupSize + memberNr];
 }
-
+/*creates, fills and simulates the parties for a single tick*/
 void RunParties(agent agents[], simConfig config, int tick)
 {
     Party parties[config.maxParties];
@@ -469,7 +470,7 @@ void runEvent(agent agents[], simConfig config, int tick)
     for (a = 0; a < config.amountOfAgents; a++) {
         agents[a] = computeAgent(agents, config, tick, a);
     }
-
+    /*if the current tick is a friday or a saturday it runs the RunParties function*/
     if (isDay(tick) == Friday || isDay(tick) == Saturday) {
         RunParties(agents, config, tick);
     }
