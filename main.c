@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
         config.amountOfAgents / config.primaryGroupSize;
     config.amountOfSecondaryGroups =
         config.amountOfAgents / config.secondaryGroupSize;
-    config.amountOfContacts = config.amountOfContactsPerAgent * config.amountOfAgents;
+    config.amountOfContacts =
+        config.amountOfContactsPerAgent * config.amountOfAgents;
     config.groupPercentageToInfect = 74;
 
     double succeptible_data[config.maxEvents];
