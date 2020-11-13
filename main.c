@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     simConfig config;
 
     config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
+    config.amountOfAgents = 20;
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
@@ -24,11 +24,11 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
     config.seed = 0;
-    config.primaryGroupSize = 40;
-    config.secondaryGroupSize = 20;
+    config.primaryGroupSize = 10;
+    config.secondaryGroupSize = 10;
     config.primaryGroupRisk = 1;
     config.secondaryGroupRisk = 1;
-    config.amountOfContacts = 5;
+    config.amountOfContactsPerAgent = 5;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
         config.amountOfAgents / config.primaryGroupSize;
     config.amountOfSecondaryGroups =
         config.amountOfAgents / config.secondaryGroupSize;
+    config.amountOfContacts = config.amountOfContactsPerAgent * config.amountOfAgents;
     config.groupPercentageToInfect = 74;
 
     double succeptible_data[config.maxEvents];
