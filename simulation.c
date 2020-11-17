@@ -233,22 +233,25 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
         (agents + i)->primaryGroup = NULL;
         (agents + i)->secondaryGroup = NULL;
         (agents + i)->contacts = NULL;
-        (agents + i)->groups = malloc(sizeof(agent**) * 3);
+        (agents + i)->groups = malloc(sizeof(agent **) * 3);
     }
 
     /*Initializing primary groups */
     for (i = 0; i < config.amountOfPrimaryGroups; i++) {
-        *(freePrimaryGroups + i) = createGroup(agents, config, config.primaryGroupSize, 0);
+        *(freePrimaryGroups + i) =
+            createGroup(agents, config, config.primaryGroupSize, 0);
     }
 
     /*Initializing secondary groups */
     for (i = 0; i < config.amountOfSecondaryGroups; i++) {
-        *(freeSecondaryGroups + i) = createGroup(agents, config, config.secondaryGroupSize, 1);
+        *(freeSecondaryGroups + i) =
+            createGroup(agents, config, config.secondaryGroupSize, 1);
     }
 
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++) {
-        agent **ptr = malloc(sizeof(agent *) * config.amountOfContactsPerAgent);
+        agent **ptr =
+            malloc(sizeof(agent *) * config.amountOfContactsPerAgent);
         int randomID;
 
         for (j = 0; j < config.amountOfContactsPerAgent; j++) {
@@ -256,7 +259,7 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
 
             randomID = rand() % config.amountOfAgents;
             theAgent = agents + randomID;
-        
+
             *(ptr + j) = theAgent;
         }
 
@@ -271,7 +274,9 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
 
 }
 
-agent **createGroup (agent *agents, simConfig config, int groupSize, int groupNr) {
+agent **createGroup(agent * agents, simConfig config, int groupSize,
+                    int groupNr)
+{
     agent **ptr = malloc(sizeof(agent *) * groupSize);
     int i = 0;
     int randomID;
