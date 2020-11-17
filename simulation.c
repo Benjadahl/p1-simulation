@@ -40,8 +40,6 @@ void infectGroup(agent agents[], int group[], int groupSize,
                  int infectionRisk, int tick, int agentID,
                  simConfig config);
 int rndInt(int max);
-int *getGroupMember(int groups[], int groupSize, int groupNr,
-                    int memberNr);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
@@ -388,11 +386,6 @@ int trueChance(int percentage)
     } else {
         return 0;
     }
-}
-
-int *getGroupMember(int groups[], int groupSize, int groupNr, int memberNr)
-{
-    return &groups[groupNr * groupSize + memberNr];
 }
 
 void runEvent(agent agents[], simConfig config, int tick)
