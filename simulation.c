@@ -31,8 +31,6 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
                 agent *** freeSecondaryGroups, agent *** freeContacts,
                 simConfig config, int tick);
 agent **createGroup (agent *agents, simConfig config, int groupSize, int groupNr);
-int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
-                             int agentID);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
@@ -293,22 +291,6 @@ agent **createGroup (agent *agents, simConfig config, int groupSize, int groupNr
     }
 
     return ptr;
-}
-
-int *placeAgentInRandomGroup(int groups[], int groupSize, int groupAmount,
-                             int agentID)
-{
-    int g = rndInt(groupAmount - 1);
-
-    while (1) {
-        int groupLevel = agentID / groupAmount;
-        if (*getGroupMember(groups, groupSize, g, groupLevel) == -1) {
-            *getGroupMember(groups, groupSize, g, groupLevel) = agentID;
-            return getGroupMember(groups, groupSize, g, 0);
-        } else {
-            g = (g + 1) % groupAmount;
-        }
-    }
 }
 
 agent infectAgent(agent agent, int tick)
