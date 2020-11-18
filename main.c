@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
     config.seed = 0;
-    config.primaryGroupSize = 10;
-    config.secondaryGroupSize = 10;
+    config.groupSize[0] = 15;
+    config.groupSize[1] = 10;
     config.primaryGroupRisk = 7;
     config.secondaryGroupRisk = 7;
     config.amountOfContactsPerAgent = 5;
@@ -75,10 +75,10 @@ int main(int argc, char *argv[])
 
     }
 
-    config.amountOfPrimaryGroups =
-        config.amountOfAgents / config.primaryGroupSize;
-    config.amountOfSecondaryGroups =
-        config.amountOfAgents / config.secondaryGroupSize;
+    for (i = 0; i <= 1; i++) {
+        config.groupAmounts[i] = config.amountOfAgents / config.groupSize[i];
+    }
+    config.groupAmounts[2] = config.amountOfAgents;
     config.amountOfContacts =
         config.amountOfContactsPerAgent * config.amountOfAgents;
     config.groupPercentageToInfect = 74;
