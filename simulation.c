@@ -32,6 +32,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
+int getNextID(int currentID, simConfig config);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
@@ -181,7 +182,7 @@ void printStats(agent agents[], simConfig config, int tick)
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick)
 {
-    int i, j, k = 0;
+    int i, j, k = 0, l;
 
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
@@ -214,15 +215,26 @@ void initAgents(agent * agents, group ** groupsPtrs,
         group *newGroup = malloc(sizeof(group));
         agent **members =
             malloc(sizeof(agent *) * config.amountOfContactsPerAgent);
-        int randomID;
         newGroup->members = members;
         newGroup->size = config.amountOfContactsPerAgent;
 
         for (j = 0; j < config.amountOfContactsPerAgent; j++) {
             agent *theAgent;
+            int randomID = rand() % config.amountOfAgents;
+            int isReplica;
 
-            randomID = rand() % config.amountOfAgents;
-            theAgent = agents + randomID;
+            do {
+                isReplica = 0;
+                theAgent = agents + randomID;
+                randomID = getNextID(randomID, config);
+
+                /* Check if the agent is already in contact group, dont readd*/
+                for (l = 0; l < j; l++) {
+                    if (theAgent->ID == (*(members + l))->ID) {
+                        isReplica = 1;
+                    }
+                }
+            } while (isReplica);
 
             *(members + j) = theAgent;
         }
@@ -249,12 +261,11 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 
     for (i = 0; i < groupSize; i++) {
         agent *theAgent;
-        int randomID;
-        randomID = rand() % config.amountOfAgents;
+        int randomID = rand() % config.amountOfAgents;
 
         do {
             theAgent = agents + randomID;
-            randomID = (randomID + 1) % config.amountOfAgents;
+            randomID = getNextID(randomID, config);
         } while (theAgent->groups[groupNr] != NULL);
 
         theAgent->groups[groupNr] = newGroup;
@@ -262,6 +273,10 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     }
 
     return newGroup;
+}
+
+int getNextID(int currentID, simConfig config) {
+    return (currentID + 1) % config.amountOfAgents;
 }
 
 agent infectAgent(agent agent, int tick)
