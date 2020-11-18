@@ -28,16 +28,16 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void initAgents(agent *agents, group **groupsPtrs,
+void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick);
 group *createGroup(agent * agents, simConfig config, int groupSize,
-                    int groupNr);
+                   int groupNr);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
-void infectGroup(group *group, int infectionRisk,
+void infectGroup(group * group, int infectionRisk,
                  int percentageToMeet, int tick, agent theAgent);
 int rndInt(int max);
 int trueChance(int percentage);
@@ -52,7 +52,9 @@ void run_simulation(simConfig config, double *succeptible_data,
     int i;
     int tick = 1;
 
-    int totalGroups = config.groupAmounts[0] + 1 + config.groupAmounts[1] + 1 + config.groupAmounts[2];
+    int totalGroups =
+        config.groupAmounts[0] + 1 + config.groupAmounts[1] + 1 +
+        config.groupAmounts[2];
     group **groupPtrs = malloc(sizeof(group *) * totalGroups);
 
     agent *agents = malloc(sizeof(agent) * config.amountOfAgents);
@@ -163,7 +165,7 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void initAgents(agent *agents, group **groupsPtrs,
+void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick)
 {
     int i, j, k = 0;
@@ -182,9 +184,9 @@ void initAgents(agent *agents, group **groupsPtrs,
     }
 
     /*Initializing primary groups */
-    for (i = 0; i <= 1; i++)
-    {
-        int groupRemainder = config.amountOfAgents % config.groupAmounts[i];
+    for (i = 0; i <= 1; i++) {
+        int groupRemainder =
+            config.amountOfAgents % config.groupAmounts[i];
 
         for (j = 0; j < config.groupAmounts[i]; j++, k++) {
             *(groupsPtrs + k) =
@@ -193,7 +195,7 @@ void initAgents(agent *agents, group **groupsPtrs,
         *(groupsPtrs + k) = createGroup(agents, config, groupRemainder, i);
         k++;
     }
-    
+
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
         group *newGroup = malloc(sizeof(group));
@@ -224,7 +226,7 @@ void initAgents(agent *agents, group **groupsPtrs,
 }
 
 group *createGroup(agent * agents, simConfig config, int groupSize,
-                    int groupNr)
+                   int groupNr)
 {
     group *newGroup = malloc(sizeof(group));
     agent **members = malloc(sizeof(agent *) * groupSize);
@@ -312,7 +314,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     return theAgent;
 }
 
-void infectGroup(group *group, int infectionRisk,
+void infectGroup(group * group, int infectionRisk,
                  int percentageToMeet, int tick, agent theAgent)
 {
     int i = 0;

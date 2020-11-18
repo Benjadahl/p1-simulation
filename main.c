@@ -76,7 +76,8 @@ int main(int argc, char *argv[])
     }
 
     for (i = 0; i <= 1; i++) {
-        config.groupAmounts[i] = config.amountOfAgents / config.groupSize[i];
+        config.groupAmounts[i] =
+            config.amountOfAgents / config.groupSize[i];
     }
     config.groupAmounts[2] = config.amountOfAgents;
     config.amountOfContacts =
