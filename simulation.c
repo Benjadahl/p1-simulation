@@ -29,13 +29,15 @@ void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
 void initAgents(agent *agents, agent ***groupsPtrs,
                 simConfig config, int tick);
-agent **createGroup (agent *agents, simConfig config, int groupSize, int groupNr);
+agent **createGroup(agent * agents, simConfig config, int groupSize,
+                    int groupNr);
 agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
-void infectGroup(agent **group, int groupSize, int infectionRisk, int percentageToMeet, int tick, agent theAgent);
+void infectGroup(agent ** group, int groupSize, int infectionRisk,
+                 int percentageToMeet, int tick, agent theAgent);
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
@@ -63,12 +65,12 @@ void run_simulation(simConfig config, double *succeptible_data,
     initAgents(agents, groupPtrs, config, tick);
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-       printStats(agents, config, tick);
-       runEvent(agents, config, tick);
-       PlotData(agents,
-       succeptible_data, infectious_data, recovered_data, tick,
-       config);
-    } 
+        printStats(agents, config, tick);
+        runEvent(agents, config, tick);
+        PlotData(agents,
+                 succeptible_data, infectious_data, recovered_data, tick,
+                 config);
+    }
 
     /*Freeing groups */
     for (i = 0; i < amountOfGroups; i++) {
@@ -313,14 +315,23 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
             && !(shouldIsolate && theAgent.willIsolate)) {
             /* Handle infectious agent */
             if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
-                infectGroup(theAgent.groups[0], config.primaryGroupSize, config.primaryGroupRisk, config.groupPercentageToInfect, tick, theAgent); 
+                infectGroup(theAgent.groups[0], config.primaryGroupSize,
+                            config.primaryGroupRisk,
+                            config.groupPercentageToInfect, tick,
+                            theAgent);
             }
 
             if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
-                infectGroup(theAgent.groups[1], config.secondaryGroupSize, config.secondaryGroupRisk, config.groupPercentageToInfect, tick, theAgent); 
+                infectGroup(theAgent.groups[1], config.secondaryGroupSize,
+                            config.secondaryGroupRisk,
+                            config.groupPercentageToInfect, tick,
+                            theAgent);
             }
 
-            infectGroup(theAgent.groups[2], config.amountOfContactsPerAgent, config.contactsRisk, config.groupPercentageToInfect, tick, theAgent); 
+            infectGroup(theAgent.groups[2],
+                        config.amountOfContactsPerAgent,
+                        config.contactsRisk,
+                        config.groupPercentageToInfect, tick, theAgent);
         } else {
             theAgent.healthState = recovered;
         }
@@ -329,7 +340,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     return theAgent;
 }
 
-void infectGroup(agent **group, int groupSize, int infectionRisk, int percentageToMeet, int tick, agent theAgent)
+void infectGroup(agent ** group, int groupSize, int infectionRisk,
+                 int percentageToMeet, int tick, agent theAgent)
 {
     int i = 0;
 
