@@ -77,6 +77,7 @@ void run_simulation(simConfig config, double *succeptible_data,
 
     /*Freeing groups */
     for (i = 0; i < amountOfGroups; i++) {
+        free((*(groupPtrs + i))->members);
         free(*(groupPtrs + i));
     }
     free(groupPtrs);
