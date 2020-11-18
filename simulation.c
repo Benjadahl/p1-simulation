@@ -258,14 +258,15 @@ agent **createGroup(agent * agents, simConfig config, int groupSize,
 {
     agent **ptr = malloc(sizeof(agent *) * groupSize);
     int i = 0;
-    int randomID;
 
     for (i = 0; i < groupSize; i++) {
         agent *theAgent;
+        int randomID;
+        randomID = rand() % config.amountOfAgents;
 
         do {
-            randomID = rand() % config.amountOfAgents;
             theAgent = agents + randomID;
+            randomID = (randomID + 1) % config.amountOfAgents;
         } while (theAgent->groups[groupNr] != NULL);
 
         theAgent->groups[groupNr] = ptr;
