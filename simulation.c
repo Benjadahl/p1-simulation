@@ -27,7 +27,7 @@ typedef struct agent {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void initAgents(agent *agents, agent ***groupsPtrs,
+void initAgents(agent * agents, agent *** groupsPtrs,
                 simConfig config, int tick);
 agent **createGroup(agent * agents, simConfig config, int groupSize,
                     int groupNr);
@@ -51,7 +51,9 @@ void run_simulation(simConfig config, double *succeptible_data,
     int i;
     int tick = 1;
 
-    int amountOfGroups = config.amountOfPrimaryGroups + config.amountOfSecondaryGroups + config.amountOfAgents;
+    int amountOfGroups =
+        config.amountOfPrimaryGroups + config.amountOfSecondaryGroups +
+        config.amountOfAgents;
     agent ***groupPtrs = malloc(sizeof(agent *) * amountOfGroups);
 
     agent *agents = malloc(sizeof(agent) * config.amountOfAgents);
@@ -196,7 +198,7 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void initAgents(agent *agents, agent ***groupsPtrs,
+void initAgents(agent * agents, agent *** groupsPtrs,
                 simConfig config, int tick)
 {
     int i, j, k = 0;
