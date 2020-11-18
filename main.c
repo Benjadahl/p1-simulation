@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
-    config.primaryGroupRisk = 7;
-    config.secondaryGroupRisk = 7;
+    config.primaryGroupRisk = 5;
+    config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent = 5;
 
     /* indlaeser parametre */
