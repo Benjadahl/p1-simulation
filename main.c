@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 #include "simulation.h"
 #include "export.h"
-#define maxOptions 7
+
 void CreatePlotFromCVS(char *file_name, simConfig config);
 
 int main(int argc, char *argv[])
@@ -11,8 +12,11 @@ int main(int argc, char *argv[])
     int j = 0;
     int k = 0;
     int seed;
-    int par[maxOptions];
-    char options[maxOptions];
+    int *parSize;
+    char *optionsSize;
+ 
+
+   
     simConfig config;
 
     config.contactsRisk = 1;
@@ -24,56 +28,87 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
     config.seed = 0;
-    config.primaryGroupSize = 40;
-    config.secondaryGroupSize = 20;
-    config.primaryGroupRisk = 1;
-    config.secondaryGroupRisk = 1;
-    config.amountOfContacts = 5;
+    config.primaryGroupSize = 10;
+    config.secondaryGroupSize = 10;
+    config.primaryGroupRisk = 7;
+    config.secondaryGroupRisk = 7;
+    config.amountOfContactsPerAgent = 5;
 
+
+    optionsSize = malloc(sizeof(char) * floor(argc/2));
+    parSize = malloc(sizeof(int) * floor(argc/2));
+
+    if (argc%2 ==0)
+    {
+        printf("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n");
+        return 0;
+    }
+   
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
-            options[j] = argv[i][1];
+            *(optionsSize +j) = argv[i][1];
             j++;
         } else if (isdigit(argv[i][0])) {
-            par[k] = atoi(argv[i]);
+            *(parSize + k) = atoi(argv[i]);
             k++;
         }
+        
     }
+    
 
     /* Switch over command line options */
-    for (i = 0; i < maxOptions; i++) {
-        switch (options[i]) {
-        case 'c':
-            config.contactsRisk = par[i];
+    for (i = 0; i < floor(argc/2); i++) {
+        switch (*(optionsSize + i)) {
+        case 'z':/*how many angents have sympums when infected*/
+            config.symptomaticPercent = *(parSize +i);
             break;
 
-        case 'k':
-            config.amountOfContacts = par[i];
+        case 'w': /*chanc that angent will isolate*/
+            config.willIsolatePercent = *(parSize +i);
             break;
 
-        case 'a':
-            config.infectionTime = par[i];
+        case 'c':/*risk of infetion*/
+            config.contactsRisk = *(parSize +i);
             break;
 
-        case 'p':
-            config.amountOfAgents = par[i];
+        case 'k':/*amount of contacts pr agent*/
+            config.amountOfContacts = *(parSize +i);
             break;
 
-        case 'i':
-            config.amountOfStartInfected = par[i];
+        case 't':/*size of primary group*/
+            config.primaryGroupSize = *(parSize +i);
+            break;
+        
+        case 'y':/*size of secound group*/
+            config.primaryGroupSize = *(parSize +i);
             break;
 
-        case 't':
-            config.maxEvents = par[i];
+        case 'a':/*amount of time incted*/
+            config.infectionTime = *(parSize +i);
             break;
 
-        case 's':
-            config.seed = par[i];
+        case 'p':/*total amount of agents*/
+            config.amountOfAgents = *(parSize +i);
+            break;
+
+        case 'i':/*amount of infected at start of simulation*/
+            config.amountOfStartInfected = *(parSize +i);
+            break;
+
+        case 'e':/*lenght of simulation*/
+            config.maxEvents = *(parSize +i);
+            break;
+
+        case 's':/*seed*/
+            config.seed = *(parSize +i);
             break;
         }
 
     }
+    free(optionsSize);
+    free(parSize);
+  
 
     config.amountOfPrimaryGroups =
         config.amountOfAgents / config.primaryGroupSize;
