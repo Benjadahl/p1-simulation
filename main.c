@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     simConfig config;
 
     config.contactsRisk = 1;
-    config.amountOfAgents = 400;
+    config.amountOfAgents = 100000;
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.primaryGroupSize = 10;
     config.secondaryGroupSize = 10;
-    config.primaryGroupRisk = 1;
-    config.secondaryGroupRisk = 1;
+    config.primaryGroupRisk = 7;
+    config.secondaryGroupRisk = 7;
     config.amountOfContactsPerAgent = 5;
 
     /* indlaeser parametre */
