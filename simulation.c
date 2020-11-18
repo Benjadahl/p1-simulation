@@ -228,7 +228,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
                 theAgent = agents + randomID;
                 randomID = getNextID(randomID, config);
 
-                /* Check if the agent is already in contact group, dont readd*/
+                /* Check if the agent is already in contact group, dont readd */
                 for (l = 0; l < j; l++) {
                     if (theAgent->ID == (*(members + l))->ID) {
                         isReplica = 1;
@@ -275,7 +275,8 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     return newGroup;
 }
 
-int getNextID(int currentID, simConfig config) {
+int getNextID(int currentID, simConfig config)
+{
     return (currentID + 1) % config.amountOfAgents;
 }
 
