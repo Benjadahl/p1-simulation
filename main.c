@@ -29,6 +29,14 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent = 5;
+    config.groupPercentageToInfect = 74;
+
+    for (i = 0; i <= 1; i++) {
+        config.groupAmounts[i] =
+            config.amountOfAgents / config.groupSize[i];
+    }
+    config.groupAmounts[2] = config.amountOfAgents;
+
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -75,14 +83,8 @@ int main(int argc, char *argv[])
 
     }
 
-    for (i = 0; i <= 1; i++) {
-        config.groupAmounts[i] =
-            config.amountOfAgents / config.groupSize[i];
-    }
-    config.groupAmounts[2] = config.amountOfAgents;
     config.amountOfContacts =
         config.amountOfContactsPerAgent * config.amountOfAgents;
-    config.groupPercentageToInfect = 74;
 
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
