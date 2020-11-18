@@ -27,8 +27,7 @@ typedef struct agent {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void initAgents(agent * agents, agent *** freePrimaryGroups,
-                agent *** freeSecondaryGroups, agent *** freeContacts,
+void initAgents(agent *agents, agent ***groupsPtrs,
                 simConfig config, int tick);
 agent **createGroup (agent *agents, simConfig config, int groupSize, int groupNr);
 agent infectAgent(agent agent, int tick);
@@ -50,12 +49,8 @@ void run_simulation(simConfig config, double *succeptible_data,
     int i;
     int tick = 1;
 
-    agent ***freePrimaryGroups =
-        malloc(sizeof(agent *) * config.amountOfPrimaryGroups);
-    agent ***freeSecondaryGroups =
-        malloc(sizeof(agent *) * config.amountOfSecondaryGroups);
-    agent ***freeContacts =
-        malloc(sizeof(agent *) * config.amountOfAgents);
+    int amountOfGroups = config.amountOfPrimaryGroups + config.amountOfSecondaryGroups + config.amountOfAgents;
+    agent ***groupPtrs = malloc(sizeof(agent *) * amountOfGroups);
 
     agent *agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -65,8 +60,7 @@ void run_simulation(simConfig config, double *succeptible_data,
         srand(config.seed);
     }
 
-    initAgents(agents, freePrimaryGroups, freeSecondaryGroups,
-               freeContacts, config, tick);
+    initAgents(agents, groupPtrs, config, tick);
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
        printStats(agents, config, tick);
@@ -76,23 +70,11 @@ void run_simulation(simConfig config, double *succeptible_data,
        config);
     } 
 
-    /*Freeing primary groups */
-    for (i = 0; i < config.amountOfPrimaryGroups; i++) {
-        free(*(freePrimaryGroups + i));
+    /*Freeing groups */
+    for (i = 0; i < amountOfGroups; i++) {
+        free(*(groupPtrs + i));
     }
-    free(freePrimaryGroups);
-
-    /*Freeing secondary groups */
-    for (i = 0; i < config.amountOfSecondaryGroups; i++) {
-        free(*(freeSecondaryGroups + i));
-    }
-    free(freeSecondaryGroups);
-
-    /*Freeing contacts */
-    for (i = 0; i < config.amountOfAgents; i++) {
-        free(*(freeContacts + i));
-    }
-    free(freeContacts);
+    free(groupPtrs);
 
     /*Freeing agents */
     free(agents);
@@ -212,11 +194,10 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void initAgents(agent * agents, agent *** freePrimaryGroups,
-                agent *** freeSecondaryGroups, agent *** freeContacts,
+void initAgents(agent *agents, agent ***groupsPtrs,
                 simConfig config, int tick)
 {
-    int i, j, k;
+    int i, j, k = 0;
     int randomID;
 
     for (i = 0; i < config.amountOfAgents; i++) {
@@ -233,19 +214,19 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
     }
 
     /*Initializing primary groups */
-    for (i = 0; i < config.amountOfPrimaryGroups; i++) {
-        *(freePrimaryGroups + i) =
+    for (i = 0; i < config.amountOfPrimaryGroups; i++, k++) {
+        *(groupsPtrs + k) =
             createGroup(agents, config, config.primaryGroupSize, 0);
     }
 
     /*Initializing secondary groups */
-    for (i = 0; i < config.amountOfSecondaryGroups; i++) {
-        *(freeSecondaryGroups + i) =
+    for (i = 0; i < config.amountOfSecondaryGroups; i++, k++) {
+        *(groupsPtrs + k) =
             createGroup(agents, config, config.secondaryGroupSize, 1);
     }
 
     /*Initializing contacts */
-    for (i = 0; i < config.amountOfAgents; i++) {
+    for (i = 0; i < config.amountOfAgents; i++, k++) {
         agent **ptr =
             malloc(sizeof(agent *) * config.amountOfContactsPerAgent);
         int randomID;
@@ -260,7 +241,7 @@ void initAgents(agent * agents, agent *** freePrimaryGroups,
         }
 
         (agents + i)->groups[2] = ptr;
-        *(freeContacts + i) = ptr;
+        *(groupsPtrs + k) = ptr;
     }
 
     /* Infect random agents */
