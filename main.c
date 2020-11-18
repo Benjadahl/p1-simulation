@@ -31,13 +31,6 @@ int main(int argc, char *argv[])
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
-    for (i = 0; i <= 1; i++) {
-        config.groupAmounts[i] =
-            config.amountOfAgents / config.groupSize[i];
-    }
-    config.groupAmounts[2] = config.amountOfAgents;
-
-
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
@@ -83,8 +76,7 @@ int main(int argc, char *argv[])
 
     }
 
-    config.amountOfContacts =
-        config.amountOfContactsPerAgent * config.amountOfAgents;
+
 
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];

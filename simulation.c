@@ -51,13 +51,25 @@ void run_simulation(simConfig config, double *succeptible_data,
 {
     int i;
     int tick = 1;
+    int totalGroups;
+    group **groupPtrs;
+    agent *agents;
 
-    int totalGroups =
+    for (i = 0; i <= 1; i++) {
+        config.groupAmounts[i] =
+            config.amountOfAgents / config.groupSize[i];
+    }
+    config.groupAmounts[2] = config.amountOfAgents;
+
+    config.amountOfContacts =
+        config.amountOfContactsPerAgent * config.amountOfAgents;
+    totalGroups =
         config.groupAmounts[0] + 1 + config.groupAmounts[1] + 1 +
         config.groupAmounts[2];
-    group **groupPtrs = malloc(sizeof(group *) * totalGroups);
 
-    agent *agents = malloc(sizeof(agent) * config.amountOfAgents);
+    groupPtrs = malloc(sizeof(group *) * totalGroups);
+
+    agents = malloc(sizeof(agent) * config.amountOfAgents);
 
     if (!config.seed) {
         srand(time(NULL));
