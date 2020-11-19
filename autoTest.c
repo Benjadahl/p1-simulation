@@ -4,16 +4,13 @@
 #include <math.h>
 #include "simulation.h"
 
-void test10k(simConfig config, double output[]);
-void test100k(simConfig config, double output[]);
-void test1M(simConfig config, double output[]);
+void printCheck(int i, simConfig config, double output[], double expectedValue);
 
 int main()
 {
-    int seed;
-    double expectedValue10k = 80.3;
-    double expectedValue100k = 79.6;
-    double expectedValue1M = 79.7; 
+    int seed; 
+    int i;
+    double expectedValue[3] = {80.3, 79.6, 79.7};
     double results[3] = { 0, 0, 0 };
 
     simConfig config;
@@ -26,7 +23,8 @@ int main()
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
-    config.seed = 1;
+    config.seed = 0;
+    config.print = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
@@ -34,85 +32,31 @@ int main()
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
-    test10k(config, results);
-    test100k(config, results);
-    test1M(config, results);
+    double succeptible_data_test[config.maxEvents];
+    double infectious_data_test[config.maxEvents];
+    double recovered_data_test[config.maxEvents];
 
-    /* Swap the new value with the previous if your change was expecting a different value */
-    if (results[0] != expectedValue10k) {
-        /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
-               results[0]);
-        printf(">> Program output an unexpected value in test 10k <<\n");
-    } else if (results[0] == expectedValue10k) {
-        printf("The result haven't changed in test 10k\n");
-    } else {
-        printf("FATAL ERROR IN TEST 10K\n");
-    }
-
-    if (results[1] != expectedValue100k) {
-        /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
-               results[1]);
-        printf(">> Program output an unexpected value in test 100k <<\n");
-    } else if (results[1] == expectedValue100k) {
-        printf("The result haven't changed in test 100k\n");
-    } else {
-        printf("FATAL ERROR IN TEST 100K\n");
-    }
-
-    if (results[2] != expectedValue1M) {
-        /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
-               results[2]);
-        printf(">> Program output an unexpected value in test 1M <<\n");
-    } else if (results[2] == expectedValue1M) {
-        printf("The result haven't changed in test 1M\n");
-    } else {
-        printf("FATAL ERROR IN TEST 1M\n");
+    for (i = 0; i < 3; i++)
+    {
+        config.amountOfAgents = 1000 * pow(10, i + 1);
+        run_simulation(config, succeptible_data_test, infectious_data_test, recovered_data_test);
+        results[i] = floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
+        printCheck(i, config, results, expectedValue[i]);
     }
 
     return 0;
 }
 
-void test10k(simConfig config, double output[])
-{
-    config.amountOfAgents = 10000;
-    double succeptible_data_test10k[config.maxEvents];
-    double infectious_data_test10k[config.maxEvents];
-    double recovered_data_test10k[config.maxEvents];
-
-    run_simulation(config, succeptible_data_test10k,
-                   infectious_data_test10k, recovered_data_test10k);
-
-    output[0] =
-        floor(recovered_data_test10k[config.maxEvents - 1] * 10) / 10;
-}
-
-void test100k(simConfig config, double output[])
-{
-    config.amountOfAgents = 100000;
-    double succeptible_data_test100k[config.maxEvents];
-    double infectious_data_test100k[config.maxEvents];
-    double recovered_data_test100k[config.maxEvents];
-
-    run_simulation(config, succeptible_data_test100k,
-                   infectious_data_test100k, recovered_data_test100k);
-
-    output[1] =
-        floor(recovered_data_test100k[config.maxEvents - 1] * 10) / 10;
-}
-
-void test1M(simConfig config, double output[])
-{
-    config.amountOfAgents = 1000000;
-    double succeptible_data_test1M[config.maxEvents];
-    double infectious_data_test1M[config.maxEvents];
-    double recovered_data_test1M[config.maxEvents];
-
-    run_simulation(config, succeptible_data_test1M, infectious_data_test1M,
-                   recovered_data_test1M);
-
-    output[2] =
-        floor(recovered_data_test1M[config.maxEvents - 1] * 10) / 10;
+void printCheck(int i, simConfig config, double output[], double expectedValue){
+    
+    if (output[i] != expectedValue) {
+        /* This prints the value that needs to be used as the check */
+        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
+            output[i]);
+        printf(">> Program output an unexpected value in test %d <<\n", i);
+    } else if (output[i] == expectedValue) {
+        printf("The result haven't changed in test %d\n", i);
+    } else {
+        printf("FATAL ERROR IN TEST %d\n", i);
+    }
 }

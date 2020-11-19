@@ -10,6 +10,7 @@ typedef struct simConfig {
     int maxIncubationTime;
     int willIsolatePercent;
     int seed;
+    int print;
     int primaryGroupRisk;
     int secondaryGroupRisk;
     int amountOfContactsPerAgent;

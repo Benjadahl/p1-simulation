@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
     config.seed = 0;
+    config.print = 1; /* Printer ikke hvis den er lig 0 */
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
