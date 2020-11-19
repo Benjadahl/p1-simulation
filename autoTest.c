@@ -10,11 +10,11 @@ void test1M(simConfig config, double output[]);
 
 int main()
 {
-    int seed, i;
-    double
-        expectedValue10k = 80.3,
-        expectedValue100k = 79.6,
-        expectedValue1M = 79.7, results[3] = { 0, 0, 0 };
+    int seed;
+    double expectedValue10k = 80.3;
+    double expectedValue100k = 79.6;
+    double expectedValue1M = 79.7; 
+    double results[3] = { 0, 0, 0 };
 
     simConfig config;
 
