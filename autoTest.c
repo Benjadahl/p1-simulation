@@ -16,6 +16,7 @@ int main()
     expectedValue100k = 79.6,
     expectedValue1M = 79.7,
     results[3] = {0, 0, 0};
+    
     simConfig config;
 
     config.contactsRisk = 1;
@@ -41,37 +42,37 @@ int main()
     /* Swap the new value with the previous if your change was expecting a different value */
     if(results[0] != expectedValue10k){
         /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents, results[0]);
+        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
+               results[0]);
         printf(">> Program output an unexpected value in test 10k <<\n");
     }
     else if(results[0] == expectedValue10k){
         printf("The result haven't changed in test 10k\n");
-    }
-    else{
+    } else {
         printf("FATAL ERROR IN TEST 10K\n");
     }
     
     if(results[1] != expectedValue100k){
         /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents, results[1]);
+        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
+               results[1]);
         printf(">> Program output an unexpected value in test 100k <<\n");
     }
     else if(results[1] == expectedValue100k){
         printf("The result haven't changed in test 100k\n");
-    }
-    else{
+    } else {
         printf("FATAL ERROR IN TEST 100K\n");
     }
 
     if(results[2] != expectedValue1M){
         /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents, results[2]);
+        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
+               results[2]);
         printf(">> Program output an unexpected value in test 1M <<\n");
     }
     else if(results[2] == expectedValue1M){
         printf("The result haven't changed in test 1M\n");
-    }
-    else{
+    } else {
         printf("FATAL ERROR IN TEST 1M\n");
     }
 
@@ -85,10 +86,11 @@ void test10k(simConfig config, double output[])
     double infectious_data_test10k[config.maxEvents];
     double recovered_data_test10k[config.maxEvents];
 
-    run_simulation(config, succeptible_data_test10k, infectious_data_test10k,
-                   recovered_data_test10k);
+    run_simulation(config, succeptible_data_test10k,
+                   infectious_data_test10k, recovered_data_test10k);
 
-    output[0] = floor(recovered_data_test10k[config.maxEvents - 1] * 10) / 10;
+    output[0] =
+        floor(recovered_data_test10k[config.maxEvents - 1] * 10) / 10;
 }
 
 void test100k(simConfig config, double output[])
@@ -98,10 +100,11 @@ void test100k(simConfig config, double output[])
     double infectious_data_test100k[config.maxEvents];
     double recovered_data_test100k[config.maxEvents];
 
-    run_simulation(config, succeptible_data_test100k, infectious_data_test100k,
-                   recovered_data_test100k);
+    run_simulation(config, succeptible_data_test100k,
+                   infectious_data_test100k, recovered_data_test100k);
 
-    output[1] = floor(recovered_data_test100k[config.maxEvents - 1] * 10) / 10;
+    output[1] =
+        floor(recovered_data_test100k[config.maxEvents - 1] * 10) / 10;
 }
 
 void test1M(simConfig config, double output[])
@@ -114,5 +117,6 @@ void test1M(simConfig config, double output[])
     run_simulation(config, succeptible_data_test1M, infectious_data_test1M,
                    recovered_data_test1M);
 
-    output[2] = floor(recovered_data_test1M[config.maxEvents - 1] * 10) / 10;
+    output[2] =
+        floor(recovered_data_test1M[config.maxEvents - 1] * 10) / 10;
 }
