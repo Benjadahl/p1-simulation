@@ -30,10 +30,6 @@ int main()
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
-    double succeptible_data[config.maxEvents];
-    double infectious_data[config.maxEvents];
-    double recovered_data[config.maxEvents];
-
     test10k(config, results);
     test100k(config, results);
     test1M(config, results);
