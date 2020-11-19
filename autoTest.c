@@ -4,13 +4,14 @@
 #include <math.h>
 #include "simulation.h"
 
-void printCheck(int i, simConfig config, double output[], double expectedValue);
+void printCheck(int i, simConfig config, double output[],
+                double expectedValue);
 
 int main()
 {
-    int seed; 
+    int seed;
     int i;
-    double expectedValue[3] = {80.3, 79.6, 79.7};
+    double expectedValue[3] = { 80.3, 79.6, 79.7 };
     double results[3] = { 0, 0, 0 };
 
     simConfig config;
@@ -36,23 +37,26 @@ int main()
     double infectious_data_test[config.maxEvents];
     double recovered_data_test[config.maxEvents];
 
-    for (i = 0; i < 3; i++)
-    {
+    for (i = 0; i < 3; i++) {
         config.amountOfAgents = 1000 * pow(10, i + 1);
-        run_simulation(config, succeptible_data_test, infectious_data_test, recovered_data_test);
-        results[i] = floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
+        run_simulation(config, succeptible_data_test, infectious_data_test,
+                       recovered_data_test);
+        results[i] =
+            floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
         printCheck(i, config, results, expectedValue[i]);
     }
 
     return 0;
 }
 
-void printCheck(int i, simConfig config, double output[], double expectedValue){
-    
+void printCheck(int i, simConfig config, double output[],
+                double expectedValue)
+{
+
     if (output[i] != expectedValue) {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
-            output[i]);
+               output[i]);
         printf(">> Program output an unexpected value in test %d <<\n", i);
     } else if (output[i] == expectedValue) {
         printf("The result haven't changed in test %d\n", i);
