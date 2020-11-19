@@ -182,7 +182,7 @@ void printStats(agent agents[], simConfig config, int tick)
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick)
 {
-    int i, j, k = 0, l;
+    int i, j, l, k = 0;
 
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
