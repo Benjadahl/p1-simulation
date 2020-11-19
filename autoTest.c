@@ -25,7 +25,7 @@ int main()
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
-    config.seed = 2;
+    config.seed = 1;
     config.print = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
