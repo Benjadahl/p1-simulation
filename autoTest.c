@@ -47,10 +47,9 @@ int main()
         printCheck(i, failure, config, results, expectedValue[i]);
     }
 
-    if(failure != 0){
+    if (failure != 0) {
         return 1;
-    }
-    else{
+    } else {
         return 0;
     }
 }
