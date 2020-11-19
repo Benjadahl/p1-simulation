@@ -4,11 +4,12 @@
 #include <math.h>
 #include "simulation.h"
 
-void printCheck(int i, simConfig config, double output[], double expectedValue);
+void printCheck(int i, simConfig config, double output[],
+                double expectedValue);
 
 int main()
 {
-    int seed; 
+    int seed;
     int i;
     double expectedValue[3] = {79.09, 80.37, 79.62};
     double results[3] = { 0, 0, 0 };
@@ -47,8 +48,10 @@ int main()
     return 0;
 }
 
-void printCheck(int i, simConfig config, double output[], double expectedValue){
-    
+void printCheck(int i, simConfig config, double output[],
+                double expectedValue)
+{
+
     if (output[i] != expectedValue) {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
