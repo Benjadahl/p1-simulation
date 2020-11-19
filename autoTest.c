@@ -10,7 +10,7 @@ int main()
 {
     int seed; 
     int i;
-    double expectedValue[3] = {80.3, 79.6, 79.7};
+    double expectedValue[3] = {79.09, 80.37, 79.62};
     double results[3] = { 0, 0, 0 };
 
     simConfig config;
@@ -23,7 +23,7 @@ int main()
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
-    config.seed = 0;
+    config.seed = 1;
     config.print = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
@@ -38,7 +38,7 @@ int main()
 
     for (i = 0; i < 3; i++)
     {
-        config.amountOfAgents = 1000 * pow(10, i + 1);
+        config.amountOfAgents = 100 * pow(10, i + 1);
         run_simulation(config, succeptible_data_test, infectious_data_test, recovered_data_test);
         results[i] = floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
         printCheck(i, config, results, expectedValue[i]);
@@ -51,7 +51,7 @@ void printCheck(int i, simConfig config, double output[], double expectedValue){
     
     if (output[i] != expectedValue) {
         /* This prints the value that needs to be used as the check */
-        printf("\nThis is the value of tick %d: %lf\n", config.maxEvents,
+        printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
             output[i]);
         printf(">> Program output an unexpected value in test %d <<\n", i);
     } else if (output[i] == expectedValue) {
