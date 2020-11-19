@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
             break;
 
         case 't':              /*size of primary group */
-            config.primaryGroupSize = *(parSize + i);
+             config.secondaryGroupSize = *(parSize + i);
             break;
 
         case 'y':              /*size of secound group */
