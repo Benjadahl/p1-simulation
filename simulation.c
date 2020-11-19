@@ -191,7 +191,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->symptomatic = trueChance(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
-        (agents + i)->groups = malloc(sizeof(agent **) * 3);
+        (agents + i)->groups = malloc(sizeof(group **) * 3);
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
