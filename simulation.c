@@ -80,7 +80,10 @@ void run_simulation(simConfig config, double *succeptible_data,
     initAgents(agents, groupPtrs, config, tick);
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-        printStats(agents, config, tick);
+        if (config.print != 0) {
+            printStats(agents, config, tick);
+        }
+
         runEvent(agents, config, tick);
         PlotData(agents,
                  succeptible_data, infectious_data, recovered_data, tick,
@@ -155,16 +158,19 @@ void printStats(agent agents[], simConfig config, int tick)
         }
     }
 
-    percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
-    percentInfectious = totalInfectious * 100 / config.amountOfAgents;
-    percentRemoved = totalRemoved * 100 / config.amountOfAgents;
+    percentSucceptible =
+        (double) totalSucceptible *100 / (double) config.amountOfAgents;
+    percentInfectious =
+        (double) totalInfectious *100 / (double) config.amountOfAgents;
+    percentRemoved =
+        (double) totalRemoved *100 / (double) config.amountOfAgents;
 
     printf("\nTick: %d\n", tick);
-    printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
+    printf("Total succeptible: %d (%.2f%%)\n", totalSucceptible,
            percentSucceptible);
-    printf("Total infectious: %d (%f%%)\n", totalInfectious,
+    printf("Total infectious: %d (%.2f%%)\n", totalInfectious,
            percentInfectious);
-    printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
+    printf("Total removed: %d (%.2f%%)\n", totalRemoved, percentRemoved);
 
     if (prevInfected != 0) {
         R0 = (double) totalInfectious / (double) prevInfected;
@@ -172,7 +178,7 @@ void printStats(agent agents[], simConfig config, int tick)
         R0 = 0;
     }
     if (tick != 0) {
-        printf("R0 = %f\n", R0);
+        printf("R0 = %.2f\n", R0);
     }
 
     prevInfected = totalInfectious;
