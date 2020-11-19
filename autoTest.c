@@ -4,14 +4,14 @@
 #include <math.h>
 #include "simulation.h"
 
-void printCheck(int i, int failure, simConfig config, double output[],
+void printCheck(int i, int *failures, simConfig config, double output[],
                 double expectedValue);
 
 int main()
 {
     int seed;
     int i;
-    int failure = 0;
+    int failures = 0;
     double expectedValue[3] = { 79.09, 80.37, 79.62 };
     double results[3] = { 0, 0, 0 };
 
@@ -44,30 +44,23 @@ int main()
                        recovered_data_test);
         results[i] =
             floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
-        printCheck(i, failure, config, results, expectedValue[i]);
+        printCheck(i, &failures, config, results, expectedValue[i]);
     }
 
-    if (failure != 0) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return failures;
 }
 
-void printCheck(int i, int failure, simConfig config, double output[],
+void printCheck(int i, int *f, simConfig config, double output[],
                 double expectedValue)
 {
 
-    if (output[i] != expectedValue) {
+    if (output[i] == expectedValue) {
+        printf("The result haven't changed in test %d\n", i);
+    } else {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
                output[i]);
         printf(">> Program output an unexpected value in test %d <<\n", i);
-        failure++;
-    } else if (output[i] == expectedValue) {
-        printf("The result haven't changed in test %d\n", i);
-    } else {
-        printf("FATAL ERROR IN TEST %d\n", i);
-        failure++;
+        (*f)++;
     }
 }
