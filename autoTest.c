@@ -11,7 +11,7 @@ int main()
 {
     int seed;
     int i;
-    int failure;
+    int failure = 0;
     double expectedValue[3] = { 79.09, 80.37, 79.62 };
     double results[3] = { 0, 0, 0 };
 
