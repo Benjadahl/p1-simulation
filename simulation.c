@@ -42,11 +42,11 @@ void infectGroup(group * group, int infectionRisk,
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, double *succeptible_data,
+void plotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event,
               simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data,
+void runSimulation(simConfig config, double *succeptible_data,
                     double *infectious_data, double *recovered_data)
 {
     int i;
@@ -85,7 +85,7 @@ void run_simulation(simConfig config, double *succeptible_data,
         }
 
         runEvent(agents, config, tick);
-        PlotData(agents,
+        plotData(agents,
                  succeptible_data, infectious_data, recovered_data, tick,
                  config);
     }
@@ -101,7 +101,7 @@ void run_simulation(simConfig config, double *succeptible_data,
     free(agents);
 }
 
-void PlotData(agent * agents, double *succeptible_data,
+void plotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int tick,
               simConfig config)
 {

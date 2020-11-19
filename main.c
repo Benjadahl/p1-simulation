@@ -3,7 +3,7 @@
 #include "simulation.h"
 #include "export.h"
 #define maxOptions 7
-void CreatePlotFromCVS(char *file_name, simConfig config);
+void createPlotFromCVS(char *file_name, simConfig config);
 
 int main(int argc, char *argv[])
 {
@@ -83,11 +83,11 @@ int main(int argc, char *argv[])
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
 
-    run_simulation(config, succeptible_data, infectious_data,
+    runSimulation(config, succeptible_data, infectious_data,
                    recovered_data);
-    ExportData(succeptible_data, infectious_data, recovered_data,
+    exportData(succeptible_data, infectious_data, recovered_data,
                config.maxEvents);
-    CreatePlotFromCVS("out.csv", config);
+    createPlotFromCVS("out.csv", config);
 
     return 0;
 }

@@ -5,17 +5,17 @@
 #include"import.h"
 #include"export.h"
 
-FILE CreateFile(char *file_name);
-void SplitLine(float *data1, float *data2, float *data3, char *t);
+FILE createFile(char *file_name);
+void splitLine(float *data1, float *data2, float *data3, char *t);
 
-void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2,
+void writeFile(char *file_name, DataSet data_set1, DataSet data_set2,
                DataSet data_set3, int data_size)
 {
     int i;
     char data_print[50];
     FILE *file = fopen(file_name, "w");
     if (file == NULL)
-        *file = CreateFile(file_name);
+        *file = createFile(file_name);
 
     snprintf(data_print, 50, "%s;%s;%s;", data_set1.name, data_set2.name,
              data_set3.name);
@@ -29,14 +29,14 @@ void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2,
     return;
 }
 
-FILE CreateFile(char *file_name)
+FILE createFile(char *file_name)
 {
     FILE *new_file;
     new_file = fopen(file_name, "w+");
     return *new_file;
 }
 
-void ReadFile(char *file_name, float *data1, float *data2, float *data3)
+void readFile(char *file_name, float *data1, float *data2, float *data3)
 {
     FILE *file = fopen(file_name, "r");
     char line[200];
@@ -52,7 +52,7 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3)
         while (token != NULL) {
             char *token_token = strtok(token, "\n");
             if (isdigit(token[0])) {
-                SplitLine(&data1[i], &data2[i], &data3[i], token_token);
+                splitLine(&data1[i], &data2[i], &data3[i], token_token);
                 i++;
             }
             token = strtok(NULL, ",");
@@ -61,7 +61,7 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3)
     fclose(file);
 }
 
-void SplitLine(float *data1, float *data2, float *data3, char *t)
+void splitLine(float *data1, float *data2, float *data3, char *t)
 {
     int data_set = 0;
     char *token = strtok(t, ";");
@@ -84,7 +84,7 @@ void SplitLine(float *data1, float *data2, float *data3, char *t)
     }
 }
 
-void ExportData(double *data1, double *data2, double *data3, int events)
+void exportData(double *data1, double *data2, double *data3, int events)
 {
     DataSet data_set1, data_set2, data_set3;
     data_set1.data = data1;
@@ -93,5 +93,5 @@ void ExportData(double *data1, double *data2, double *data3, int events)
     data_set2.name = "Infectious";
     data_set3.data = data3;
     data_set3.name = "Recovered";
-    WriteFile("out.csv", data_set1, data_set2, data_set3, events);
+    writeFile("out.csv", data_set1, data_set2, data_set3, events);
 }
