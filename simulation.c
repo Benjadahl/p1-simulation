@@ -47,7 +47,7 @@ void plotData(agent * agents, double *succeptible_data,
               simConfig config);
 
 void runSimulation(simConfig config, double *succeptible_data,
-                    double *infectious_data, double *recovered_data)
+                   double *infectious_data, double *recovered_data)
 {
     int i;
     int tick = 1;

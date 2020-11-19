@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     double recovered_data[config.maxEvents];
 
     runSimulation(config, succeptible_data, infectious_data,
-                   recovered_data);
+                  recovered_data);
     exportData(succeptible_data, infectious_data, recovered_data,
                config.maxEvents);
     createPlotFromCVS("out.csv", config);

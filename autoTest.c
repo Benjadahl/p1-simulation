@@ -41,7 +41,7 @@ int main()
     for (i = 0; i < 3; i++) {
         config.amountOfAgents = 100 * pow(10, i + 1);
         runSimulation(config, succeptible_data_test, infectious_data_test,
-                       recovered_data_test);
+                      recovered_data_test);
         results[i] =
             floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
         printCheck(i, &failures, config, results, expectedValue[i]);
