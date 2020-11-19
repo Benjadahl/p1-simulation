@@ -13,7 +13,7 @@ int main()
     int seed;
     double expectedValue10k = 80.3;
     double expectedValue100k = 79.6;
-    double expectedValue1M = 79.7; 
+    double expectedValue1M = 79.7;
     double results[3] = { 0, 0, 0 };
 
     simConfig config;
