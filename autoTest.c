@@ -4,7 +4,7 @@
 #include <math.h>
 #include "simulation.h"
 
-void printCheck(int i, int *failures, simConfig config, double output[],
+void printCheck(int i, int *failures, simConfig config, double input,
                 double expectedValue);
 
 int main()
@@ -44,22 +44,22 @@ int main()
                       recovered_data_test);
         results[i] =
             floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
-        printCheck(i, &failures, config, results, expectedValue[i]);
+        printCheck(i, &failures, config, results[i], expectedValue[i]);
     }
 
     return failures;
 }
 
-void printCheck(int i, int *f, simConfig config, double output[],
+void printCheck(int i, int *f, simConfig config, double input,
                 double expectedValue)
 {
 
-    if (output[i] == expectedValue) {
+    if (input == expectedValue) {
         printf("The result haven't changed in test %d\n", i);
     } else {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
-               output[i]);
+               input);
         printf(">> Program output an unexpected value in test %d <<\n", i);
         (*f)++;
     }
