@@ -13,11 +13,12 @@ int main(int argc, char *argv[])
     int k = 0;
     int chk = 0;
     int seed;
+
     int *par;
     char *options;
     
 
-   
+
     simConfig config;
 
     config.contactsRisk = 1;
@@ -34,6 +35,7 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 7;
     config.secondaryGroupRisk = 7;
     config.amountOfContacts = 5;
+
 
 
     options = malloc(sizeof(char) * (argc-1)/2);
@@ -108,11 +110,14 @@ int main(int argc, char *argv[])
                 break;
             }
 
+
         }
     }
+
     free(options);
     free(par);
   
+
 
     config.amountOfPrimaryGroups =
         config.amountOfAgents / config.primaryGroupSize;
