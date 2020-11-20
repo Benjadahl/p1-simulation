@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -ansi -pedantic -Wall -Wextra -fsyntax-only -lm
+CFLAGS= -ansi -pedantic -Wall -Wextra -fsyntax-only 
 TARGET=main
 
 build: libs
