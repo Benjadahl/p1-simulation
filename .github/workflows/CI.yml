@@ -51,5 +51,3 @@ jobs:
           commit_message: (Auto) Apply Linting
           file_pattern: '*.c'
           commit_user_name: 'LinterBot'
-
-  
