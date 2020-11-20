@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     int *par;
     char *options;
-    
+
 
 
     simConfig config;
@@ -38,16 +38,15 @@ int main(int argc, char *argv[])
 
 
 
-    options = malloc(sizeof(char) * (argc-1)/2);
-    par = malloc(sizeof(int) * (argc-1)/2);
+    options = malloc(sizeof(char) * (argc - 1) / 2);
+    par = malloc(sizeof(int) * (argc - 1) / 2);
 
-    if (argc%2 ==0)
-    {
-        printf("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
+    if (argc % 2 == 0) {
+        printf
+            ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
         chk = 1;
     }
-    if (chk == 0)
-    {
+    if (chk == 0) {
 
         /* indlaeser parametre */
         for (i = 0; i < argc; i++) {
@@ -58,55 +57,55 @@ int main(int argc, char *argv[])
                 *(par + k) = atoi(argv[i]);
                 k++;
             }
-            
+
         }
-        
+
 
         /* Switch over command line options */
-        for (i = 0; i < (argc-1)/2; i++) {
+        for (i = 0; i < (argc - 1) / 2; i++) {
             switch (*(options + i)) {
-            case 'z':/*how many angents have sympums when infected*/
-                config.symptomaticPercent = *(par +i);
+            case 'z':          /*how many angents have sympums when infected */
+                config.symptomaticPercent = *(par + i);
                 break;
 
-            case 'w': /*chanc that angent will isolate*/
-                config.willIsolatePercent = *(par +i);
+            case 'w':          /*chanc that angent will isolate */
+                config.willIsolatePercent = *(par + i);
                 break;
 
-            case 'c':/*risk of infetion*/
-                config.contactsRisk = *(par +i);
+            case 'c':          /*risk of infetion */
+                config.contactsRisk = *(par + i);
                 break;
 
-            case 'k':/*amount of contacts pr agent*/
-                config.amountOfContacts = *(par +i);
+            case 'k':          /*amount of contacts pr agent */
+                config.amountOfContacts = *(par + i);
                 break;
 
-            case 't':/*size of primary group*/
-                config.primaryGroupSize = *(par +i);
-                break;
-            
-            case 'y':/*size of secound group*/
-                config.primaryGroupSize = *(par +i);
+            case 't':          /*size of primary group */
+                config.primaryGroupSize = *(par + i);
                 break;
 
-            case 'a':/*amount of time incted*/
-                config.infectionTime = *(par +i);
+            case 'y':          /*size of secound group */
+                config.primaryGroupSize = *(par + i);
                 break;
 
-            case 'p':/*total amount of agents*/
-                config.amountOfAgents = *(par +i);
+            case 'a':          /*amount of time incted */
+                config.infectionTime = *(par + i);
                 break;
 
-            case 'i':/*amount of infected at start of simulation*/
-                config.amountOfStartInfected = *(par +i);
+            case 'p':          /*total amount of agents */
+                config.amountOfAgents = *(par + i);
                 break;
 
-            case 'e':/*lenght of simulation*/
-                config.maxEvents = *(par +i);
+            case 'i':          /*amount of infected at start of simulation */
+                config.amountOfStartInfected = *(par + i);
                 break;
 
-            case 's':/*seed*/
-                config.seed = *(par +i);
+            case 'e':          /*lenght of simulation */
+                config.maxEvents = *(par + i);
+                break;
+
+            case 's':          /*seed */
+                config.seed = *(par + i);
                 break;
             }
 
@@ -116,7 +115,7 @@ int main(int argc, char *argv[])
 
     free(options);
     free(par);
-  
+
 
 
     config.amountOfPrimaryGroups =
