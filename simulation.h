@@ -15,6 +15,9 @@ typedef struct simConfig {
     int amountOfContactsPerAgent;
     int amountOfContacts;
     int groupPercentageToInfect;
+    int chanceToHaveApp;
+    int contactTickLength;
+    int isolationTime;
     int groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
 } simConfig;

@@ -3,6 +3,8 @@
 #include <time.h>
 #include "simulation.h"
 
+#define MAX_CONTACTS_IN_APP 50
+
 typedef enum HealthState { succeptible, infectious,
     recovered
 } HealthState;
@@ -11,13 +13,29 @@ typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday,
     Friday, Saturday
 } Day;
 
+typedef struct ContactRecord
+{
+    int ID;
+    int onContactTick;
+} ContactRecord;
+
+typedef struct App
+{
+    int haveApp;
+    int infected;
+    ContactRecord records[MAX_CONTACTS_IN_APP];
+    int recorded;
+} App;
+
 typedef struct agent {
     int ID;
     HealthState healthState;
+    struct App app; 
     int infectedTime;
     int symptomatic;
     int incubationTime;
     int willIsolate;
+    int isolatedTick;
     struct group **groups;
 } agent;
 
@@ -26,18 +44,23 @@ typedef struct group {
     struct agent **members;
 } group;
 
+
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick);
+App initApp(int haveApp);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, simConfig config);
-agent infectAgent(agent agent, int tick);
+agent infectAgent(agent agents[], simConfig config, int tick, agent a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
+void meetGroup(group *group, int infectionRisk, int percentageToMeet, int tick, agent theAgent, simConfig config, agent agents[]);
+void informContacts(App app, agent agents[], simConfig config, int tick);
+void isolate(agent *agent);
 void infectGroup(group * group, int infectionRisk,
                  int percentageToMeet, int tick, agent theAgent);
 int rndInt(int max);
@@ -187,10 +210,12 @@ void initAgents(agent * agents, group ** groupsPtrs,
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
         (agents + i)->healthState = succeptible;
+        (agents + i)->app = initApp(trueChance(config.chanceToHaveApp));
         (agents + i)->infectedTime = config.infectionTime;
         (agents + i)->symptomatic = trueChance(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
+        (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * 3);
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
@@ -238,7 +263,6 @@ void initAgents(agent * agents, group ** groupsPtrs,
 
             *(members + j) = theAgent;
         }
-
         (agents + i)->groups[2] = newGroup;
         *(groupsPtrs + k) = newGroup;
     }
@@ -247,7 +271,15 @@ void initAgents(agent * agents, group ** groupsPtrs,
     for (i = 0; i < config.amountOfStartInfected; i++) {
         infectRandomAgent(agents, config, tick - 1);
     }
+}
 
+App initApp(int haveApp)
+{
+    App app;
+    app.haveApp = haveApp;
+    app.infected = 0;
+    app.recorded = 0;
+    return app;
 }
 
 group *createGroup(agent * agents, simConfig config, int groupSize,
@@ -280,13 +312,17 @@ int getNextID(int currentID, simConfig config)
     return (currentID + 1) % config.amountOfAgents;
 }
 
-agent infectAgent(agent agent, int tick)
+agent infectAgent(agent agents[], simConfig config, int tick, agent a)
 {
-    if (agent.healthState == succeptible) {
-        agent.healthState = infectious;
-        agent.infectedTime = tick;
+    if (a.healthState == succeptible) {
+        a.healthState = infectious;
+        a.infectedTime = tick;
+        if(a.app.haveApp)
+        {
+            informContacts(a.app, agents, config, tick);
+        }
     }
-    return agent;
+    return a;
 }
 
 void infectRandomAgent(agent agents[], simConfig config, int tick)
@@ -299,7 +335,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
         theAgent = agents[randomID];
     } while (theAgent.healthState == infectious);
 
-    agents[randomID] = infectAgent(theAgent, tick);
+    agents[randomID] = infectAgent(agents, config, tick, theAgent);
 }
 
 int isDay(int tick)
@@ -311,40 +347,38 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent theAgent = agents[agentID];
 
-    if (theAgent.healthState == infectious) {
-        /* Check if the agent should isolate, if it does so it will be set to recovered state */
-        int shouldIsolate = theAgent.symptomatic
-            && theAgent.infectedTime + theAgent.incubationTime < tick;
-        if (theAgent.infectedTime > tick - config.infectionTime
-            && !(shouldIsolate && theAgent.willIsolate)) {
-            /* Handle infectious agent */
-            if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
-                infectGroup(theAgent.groups[0],
-                            config.primaryGroupRisk,
-                            config.groupPercentageToInfect, tick,
-                            theAgent);
-            }
+    if(theAgent.healthState == infectious && tick > theAgent.infectedTime + config.infectionTime)
+    {
+        theAgent.healthState = recovered;
+        if(theAgent.app.haveApp)
+            theAgent.app.infected = 0;
+    }   
 
-            if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
-                infectGroup(theAgent.groups[1],
-                            config.secondaryGroupRisk,
-                            config.groupPercentageToInfect, tick,
-                            theAgent);
-            }
-
-            infectGroup(theAgent.groups[2],
-                        config.contactsRisk,
-                        config.groupPercentageToInfect, tick, theAgent);
-        } else {
-            theAgent.healthState = recovered;
+    if(theAgent.isolatedTick == -1 || theAgent.isolatedTick + config.isolationTime < tick)
+    {
+        if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
+            meetGroup(theAgent.groups[0],
+                        config.primaryGroupRisk,
+                        config.groupPercentageToInfect, tick,
+                        theAgent, config, agents);
         }
-    }
 
+        if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
+            meetGroup(theAgent.groups[1],
+                        config.secondaryGroupRisk,
+                        config.groupPercentageToInfect, tick,
+                        theAgent, config, agents);
+        }
+
+        meetGroup(theAgent.groups[2],
+                    config.contactsRisk,
+                    config.groupPercentageToInfect, tick, theAgent, config, agents);
+    }
+    
     return theAgent;
 }
 
-void infectGroup(group * group, int infectionRisk,
-                 int percentageToMeet, int tick, agent theAgent)
+void meetGroup(group *group, int infectionRisk, int percentageToMeet, int tick, agent theAgent, simConfig config, agent agents[])
 {
     int i = 0;
     int size = group->size;
@@ -352,9 +386,38 @@ void infectGroup(group * group, int infectionRisk,
     for (i = 0; i < size; i++) {
         agent *peer = *(group->members + i);
         if (peer->ID != theAgent.ID) {
-            if (trueChance(infectionRisk) && trueChance(percentageToMeet)) {
-                *peer = infectAgent(*peer, tick);
+            if (trueChance(percentageToMeet)) 
+            {
+                if(theAgent.healthState == infectious && trueChance(infectionRisk))
+                    *peer = infectAgent(agents, config, tick, *peer);
+                if(theAgent.app.haveApp && peer->app.haveApp)
+                {
+                    theAgent.app.records[theAgent.app.recorded % MAX_CONTACTS_IN_APP].ID = peer->ID;
+                    theAgent.app.recorded++;
+                    peer->app.records[peer->app.recorded % MAX_CONTACTS_IN_APP].ID = theAgent.ID;
+                    peer->app.recorded++;
+                }
             }
+        }
+    }
+}
+
+void informContacts(App app, agent agents[], simConfig config, int tick)
+{
+    int i;
+    int contacts = MAX_CONTACTS_IN_APP;
+    if(app.recorded < MAX_CONTACTS_IN_APP)
+        contacts = app.recorded;
+
+    if(app.recorded <= 0)
+        return;
+    
+    for (i = 0; i < contacts; i++)
+    {
+        if(tick - app.records[i].onContactTick < config.contactTickLength)
+        {
+            if(agents[app.records[i].ID].willIsolate)
+                agents[app.records[i].ID].isolatedTick = tick;
         }
     }
 }
