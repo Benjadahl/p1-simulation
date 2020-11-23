@@ -320,9 +320,9 @@ agent infectAgent(agent agents[], simConfig config, int tick, agent a)
         if(a.willIsolate && a.symptomatic)
             a.isolatedTick = tick;
 
-        if(a.app.haveApp)
+        if (a.app.haveApp)
             informContacts(a.app, agents, config, tick);
-        
+
     }
     return a;
 }
