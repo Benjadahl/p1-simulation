@@ -401,11 +401,11 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
                     *peer = infectAgent(agents, config, tick, *peer);
                 if (theAgent.app != NULL && peer->app != NULL) {
                     theAgent.app->records[theAgent.app->recorded %
-                                         MAX_CONTACTS_IN_APP].ID =
+                                          MAX_CONTACTS_IN_APP].ID =
                         peer->ID;
                     theAgent.app->recorded++;
                     (peer->app)->records[(peer->app)->recorded %
-                                      MAX_CONTACTS_IN_APP].ID =
+                                         MAX_CONTACTS_IN_APP].ID =
                         theAgent.ID;
                     (peer->app)->recorded++;
                 }
