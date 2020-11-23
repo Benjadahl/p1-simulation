@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     int i;
     int j = 0;
     int k = 0;
-    int chk = 0;
+    int vaild = 0;
     int seed;
 
     int *par;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     if (argc % 2 == 0) {
         printf
             ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
-        chk = 1;
+        vaild = 1;
     }
     if (chk == 0) {
 
