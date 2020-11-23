@@ -57,8 +57,9 @@ int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void meetGroup(group * group, int infectionRisk, int percentageToMeet,
-               int tick, agent *theAgent, simConfig config, agent agents[]);
-void addRecord(agent *recorder, agent *peer, int tick);
+               int tick, agent * theAgent, simConfig config,
+               agent agents[]);
+void addRecord(agent * recorder, agent * peer, int tick);
 void informContacts(App app, agent agents[], simConfig config, int tick);
 void isolate(agent * agent);
 void infectGroup(group * group, int infectionRisk,
@@ -388,7 +389,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 }
 
 void meetGroup(group * group, int infectionRisk, int percentageToMeet,
-               int tick, agent *theAgent, simConfig config, agent agents[])
+               int tick, agent * theAgent, simConfig config,
+               agent agents[])
 {
     int i = 0;
     int size = group->size;
@@ -412,7 +414,8 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
     }
 }
 
-void addRecord(agent *recorder, agent *peer, int tick) {
+void addRecord(agent * recorder, agent * peer, int tick)
+{
     int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
     ContactRecord *record = &(recorder->app->records[recordNr]);
     record->ID = peer->ID;
