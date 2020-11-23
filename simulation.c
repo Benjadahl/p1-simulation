@@ -317,7 +317,7 @@ agent infectAgent(agent agents[], simConfig config, int tick, agent a)
         a.healthState = infectious;
         a.infectedTime = tick;
 
-        if(a.willIsolate && a.symptomatic)
+        if (a.willIsolate && a.symptomatic)
             a.isolatedTick = tick;
 
         if (a.app.haveApp)
