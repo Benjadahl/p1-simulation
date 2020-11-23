@@ -10,10 +10,10 @@ int main(int argc, char *argv[])
 {
     int i;
     int j = 0;
-    int k = 0;
-    int vaild = 0;
+    char convert = '0';
+    int vaildInput = 0;
     int seed;
-
+    int graf = 0;
     int *par;
     char *options;
 
@@ -38,76 +38,93 @@ int main(int argc, char *argv[])
 
 
 
-    options = malloc(sizeof(char) * (argc - 1) / 2);
-    par = malloc(sizeof(int) * (argc - 1) / 2);
-
-    if (argc % 2 == 0) {
-        printf
-            ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
-        vaild = 1;
-    }
-    if (chk == 0) {
+    options = malloc(sizeof(char) * (argc - 1));
+    
+    
+    
+    
 
         /* indlaeser parametre */
-        for (i = 0; i < argc; i++) {
-            if (argv[i][0] == '-') {
+        for (i = 0; i < argc; i++) 
+        {
+            if (argv[i][0] == '-') 
+            {
                 *(options + j) = argv[i][1];
                 j++;
-            } else if (isdigit(argv[i][0])) {
-                *(par + k) = atoi(argv[i]);
-                k++;
+                
+                if (argv[j][1] != 'g' && !isdigit(argv[j + 1][0]))
+                {
+                    printf
+                        ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
+                    vaildInput = 1;
+                    break;
+                }
+            } 
+            else if (isdigit(argv[i][0])) 
+            {
+                *(options + j) = atoi(argv[i]);
+                j++;
+                
             }
 
         }
 
+    if (vaildInput == 0) 
+    {
 
         /* Switch over command line options */
-        for (i = 0; i < (argc - 1) / 2; i++) {
-            switch (*(options + i)) {
-            case 'z':          /*how many angents have sympums when infected */
-                config.symptomaticPercent = *(par + i);
-                break;
+        for (i = 0, j = 0; i < (argc - 1); i++, j = i + 1) {
+            
+                switch (*(options + i)) {
+                case 'z':          /*how many angents have sympums when infected */
+                    config.symptomaticPercent = *(options + j);
+                    break;
 
-            case 'w':          /*chanc that angent will isolate */
-                config.willIsolatePercent = *(par + i);
-                break;
+                case 'w':          /*chanc that angent will isolate */
+                    config.willIsolatePercent = *(options + j);
+                    break;
 
-            case 'c':          /*risk of infetion */
-                config.contactsRisk = *(par + i);
-                break;
+                case 'c':          /*risk of infetion */
+                    config.contactsRisk = *(options + j);
+                    break;
 
-            case 'k':          /*amount of contacts pr agent */
-                config.amountOfContacts = *(par + i);
-                break;
+                case 'k':          /*amount of contacts pr agent */
+                    config.amountOfContacts = *(options + j);
+                    break;
 
-            case 't':          /*size of primary group */
-                config.primaryGroupSize = *(par + i);
-                break;
+                case 't':          /*size of primary group */
+                    config.primaryGroupSize = *(options + j);
+                    break;
 
-            case 'y':          /*size of secound group */
-                config.primaryGroupSize = *(par + i);
-                break;
+                case 'y':          /*size of secound group */
+                    config.primaryGroupSize = *(options + j);
+                    break;
 
-            case 'a':          /*amount of time incted */
-                config.infectionTime = *(par + i);
-                break;
+                case 'a':          /*amount of time incted */
+                    config.infectionTime = *(options + j);
+                    break;
 
-            case 'p':          /*total amount of agents */
-                config.amountOfAgents = *(par + i);
-                break;
+                case 'p':          /*total amount of agents */
+                    config.amountOfAgents = *(options + j);
+                    break;
 
-            case 'i':          /*amount of infected at start of simulation */
-                config.amountOfStartInfected = *(par + i);
-                break;
+                case 'i':          /*amount of infected at start of simulation */
+                    config.amountOfStartInfected = *(options + j);
+                    break;
 
-            case 'e':          /*lenght of simulation */
-                config.maxEvents = *(par + i);
-                break;
+                case 'e':          /*lenght of simulation */
+                    config.maxEvents = *(options + j);
+                    break;
 
-            case 's':          /*seed */
-                config.seed = *(par + i);
-                break;
-            }
+                case 's':          /*seed */
+                    config.seed = *(options + j);
+                    break;
+
+                case 'g':
+                    graf = 1;
+                    break;
+                }
+            
 
 
         }
@@ -130,9 +147,11 @@ int main(int argc, char *argv[])
 
     run_simulation(config, succeptible_data, infectious_data,
                    recovered_data);
+    if (graf != 0)
+    {
     ExportData(succeptible_data, infectious_data, recovered_data,
                config.maxEvents);
     CreatePlotFromCVS("out.csv", config);
-
+    }
     return 0;
 }
