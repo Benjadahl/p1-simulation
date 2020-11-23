@@ -57,7 +57,8 @@ int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
                    int agentID);
 void meetGroup(group * group, int infectionRisk, int percentageToMeet,
-               int tick, agent theAgent, simConfig config, agent agents[]);
+               int tick, agent *theAgent, simConfig config, agent agents[]);
+void addRecord(agent *recorder, agent *peer, int tick);
 void informContacts(App app, agent agents[], simConfig config, int tick);
 void isolate(agent * agent);
 void infectGroup(group * group, int infectionRisk,
@@ -352,66 +353,71 @@ int isDay(int tick)
 
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
-    agent theAgent = agents[agentID];
+    agent *theAgent = &agents[agentID];
 
-    if (theAgent.healthState == infectious
-        && tick > theAgent.infectedTime + config.infectionTime) {
-        theAgent.healthState = recovered;
-        if (theAgent.app != NULL)
-            theAgent.app->infected = 0;
+    if (theAgent->healthState == infectious
+        && tick > theAgent->infectedTime + config.infectionTime) {
+        theAgent->healthState = recovered;
+        if (theAgent->app != NULL)
+            theAgent->app->infected = 0;
     }
 
-    if (theAgent.isolatedTick == -1
-        || theAgent.isolatedTick + config.isolationTime < tick) {
+    if (theAgent->isolatedTick == -1
+        || theAgent->isolatedTick + config.isolationTime < tick) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
-            meetGroup(theAgent.groups[0],
+            meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,
                       config.groupPercentageToInfect, tick,
                       theAgent, config, agents);
         }
 
         if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
-            meetGroup(theAgent.groups[1],
+            meetGroup(theAgent->groups[1],
                       config.secondaryGroupRisk,
                       config.groupPercentageToInfect, tick,
                       theAgent, config, agents);
         }
 
-        meetGroup(theAgent.groups[2],
+        meetGroup(theAgent->groups[2],
                   config.contactsRisk,
                   config.groupPercentageToInfect, tick, theAgent, config,
                   agents);
     }
 
-    return theAgent;
+    return *theAgent;
 }
 
 void meetGroup(group * group, int infectionRisk, int percentageToMeet,
-               int tick, agent theAgent, simConfig config, agent agents[])
+               int tick, agent *theAgent, simConfig config, agent agents[])
 {
     int i = 0;
     int size = group->size;
 
     for (i = 0; i < size; i++) {
         agent *peer = *(group->members + i);
-        if (peer->ID != theAgent.ID) {
+        if (peer->ID != theAgent->ID) {
             if (trueChance(percentageToMeet)) {
-                if (theAgent.healthState == infectious
-                    && trueChance(infectionRisk))
+                if (theAgent->healthState == infectious
+                    && trueChance(infectionRisk)) {
                     *peer = infectAgent(agents, config, tick, *peer);
-                if (theAgent.app != NULL && peer->app != NULL) {
-                    theAgent.app->records[theAgent.app->recorded %
-                                          MAX_CONTACTS_IN_APP].ID =
-                        peer->ID;
-                    theAgent.app->recorded++;
-                    (peer->app)->records[(peer->app)->recorded %
-                                         MAX_CONTACTS_IN_APP].ID =
-                        theAgent.ID;
-                    (peer->app)->recorded++;
+
+                }
+
+                if (theAgent->app != NULL && peer->app != NULL) {
+                    addRecord(theAgent, peer, tick);
+                    addRecord(peer, theAgent, tick);
                 }
             }
         }
     }
+}
+
+void addRecord(agent *recorder, agent *peer, int tick) {
+    int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
+    ContactRecord *record = &(recorder->app->records[recordNr]);
+    record->ID = peer->ID;
+    record->onContactTick = tick;
+    recorder->app->recorded++;
 }
 
 void informContacts(App app, agent agents[], simConfig config, int tick)
@@ -451,6 +457,6 @@ void runEvent(agent agents[], simConfig config, int tick)
     int a = 0;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        agents[a] = computeAgent(agents, config, tick, a);
+        computeAgent(agents, config, tick, a);
     }
 }
