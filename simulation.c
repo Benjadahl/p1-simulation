@@ -28,7 +28,7 @@ typedef struct App {
 typedef struct agent {
     int ID;
     HealthState healthState;
-    struct App app;
+    struct App *app;
     int infectedTime;
     int symptomatic;
     int incubationTime;
@@ -47,7 +47,7 @@ void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick);
-App initApp(int haveApp);
+App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, simConfig config);
@@ -209,7 +209,11 @@ void initAgents(agent * agents, group ** groupsPtrs,
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
         (agents + i)->healthState = succeptible;
-        (agents + i)->app = initApp(trueChance(config.chanceToHaveApp));
+        if (trueChance(config.chanceToHaveApp)) {
+            (agents + i)->app = initApp();
+        } else {
+            (agents + i)->app = NULL;
+        }
         (agents + i)->infectedTime = config.infectionTime;
         (agents + i)->symptomatic = trueChance(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
@@ -272,12 +276,12 @@ void initAgents(agent * agents, group ** groupsPtrs,
     }
 }
 
-App initApp(int haveApp)
+App *initApp()
 {
-    App app;
-    app.haveApp = haveApp;
-    app.infected = 0;
-    app.recorded = 0;
+    App *app = malloc(sizeof(App));
+    app->haveApp = 1;
+    app->infected = 0;
+    (*app).recorded = 0;
     return app;
 }
 
@@ -320,8 +324,9 @@ agent infectAgent(agent agents[], simConfig config, int tick, agent a)
         if (a.willIsolate && a.symptomatic)
             a.isolatedTick = tick;
 
-        if (a.app.haveApp)
-            informContacts(a.app, agents, config, tick);
+        if (a.app != NULL) {
+            informContacts(*(a.app), agents, config, tick);
+        }
 
     }
     return a;
@@ -352,8 +357,8 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
     if (theAgent.healthState == infectious
         && tick > theAgent.infectedTime + config.infectionTime) {
         theAgent.healthState = recovered;
-        if (theAgent.app.haveApp)
-            theAgent.app.infected = 0;
+        if (theAgent.app != NULL)
+            theAgent.app->infected = 0;
     }
 
     if (theAgent.isolatedTick == -1
@@ -394,15 +399,15 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
                 if (theAgent.healthState == infectious
                     && trueChance(infectionRisk))
                     *peer = infectAgent(agents, config, tick, *peer);
-                if (theAgent.app.haveApp && peer->app.haveApp) {
-                    theAgent.app.records[theAgent.app.recorded %
+                if (theAgent.app != NULL && peer->app != NULL) {
+                    theAgent.app->records[theAgent.app->recorded %
                                          MAX_CONTACTS_IN_APP].ID =
                         peer->ID;
-                    theAgent.app.recorded++;
-                    peer->app.records[peer->app.recorded %
+                    theAgent.app->recorded++;
+                    (peer->app)->records[(peer->app)->recorded %
                                       MAX_CONTACTS_IN_APP].ID =
                         theAgent.ID;
-                    peer->app.recorded++;
+                    (peer->app)->recorded++;
                 }
             }
         }
