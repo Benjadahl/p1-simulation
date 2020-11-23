@@ -317,12 +317,12 @@ agent infectAgent(agent agents[], simConfig config, int tick, agent a)
         a.healthState = infectious;
         a.infectedTime = tick;
 
-        if(a.willIsolate)
+        if (a.willIsolate)
             a.isolatedTick = tick;
 
-        if(a.app.haveApp)
+        if (a.app.haveApp)
             informContacts(a.app, agents, config, tick);
-        
+
     }
     return a;
 }
