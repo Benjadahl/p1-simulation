@@ -366,9 +366,10 @@ void handleParties(agent agents[], simConfig config, int tick)
             config.minPartySize;
 
         groupPtr = createGroup(agents, config, grpSize, 3);
-        for(i = 0; i < groupPtr->size; i++)
-        {
-            meetGroup(groupPtr, config.partyTransmissionChance, config.partyMeetChance, tick, groupPtr->members[i], config);
+        for (i = 0; i < groupPtr->size; i++) {
+            meetGroup(groupPtr, config.partyTransmissionChance,
+                      config.partyMeetChance, tick, groupPtr->members[i],
+                      config);
         }
         free(groupPtr->members);
         free(groupPtr);
