@@ -9,9 +9,6 @@ void CreatePlotFromCVS(char *file_name, simConfig config);
 int main(int argc, char *argv[])
 {
     int i;
-    int j = 0;
-    int vaildInput = 0;
-    int seed;
     int graf = 0;
 
     simConfig config;
@@ -38,7 +35,6 @@ int main(int argc, char *argv[])
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
             printf
                 ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
-            vaildInput = 1;
             break;
             }
             
