@@ -34,6 +34,8 @@ typedef struct agent {
     int incubationTime;
     int willIsolate;
     int isolatedTick;
+    int willTest;
+    int testedTick;
     struct group **groups;
 } agent;
 
@@ -220,6 +222,8 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
+        (agents + i)->willTest = trueChance(config.willTestPercent);
+        (agents + i)->testedTick = -1 * config.testResponseTime;
         (agents + i)->groups = malloc(sizeof(group **) * 3);
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
@@ -356,11 +360,18 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent *theAgent = &agents[agentID];
 
+    /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
         && tick > theAgent->infectedTime + config.infectionTime) {
         theAgent->healthState = recovered;
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
+    }
+
+    if (theAgent->testedTick + config.testResponseTime == tick) {
+        if (theAgent->healthState == infectious && theAgent->willIsolate) {
+            theAgent->isolatedTick = tick;
+        }
     }
 
     if (theAgent->isolatedTick == -1
@@ -431,8 +442,8 @@ void informContacts(App app, simConfig config, int tick)
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick < config.contactTickLength) {
-            if (app.records[i].peer->willIsolate) {
-                app.records[i].peer->isolatedTick = tick;
+            if (app.records[i].peer->willTest) {
+                app.records[i].peer->testedTick = tick;
             }
         }
     }
