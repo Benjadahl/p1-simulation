@@ -32,63 +32,63 @@ int main(int argc, char *argv[])
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
-            
+
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
-            printf
-                ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
-            break;
+                printf
+                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
+                break;
             }
-            
+
             switch (argv[i][1]) {
-                case 'z':          /*how many angents have sympums when infected */
-                    config.symptomaticPercent = atoi(argv[i+1]);
-                    break;
+            case 'z':          /*how many angents have sympums when infected */
+                config.symptomaticPercent = atoi(argv[i + 1]);
+                break;
 
-                case 'w':          /*chanc that angent will isolate */
-                    config.willIsolatePercent = atoi(argv[i+1]);
-                    break;
+            case 'w':          /*chanc that angent will isolate */
+                config.willIsolatePercent = atoi(argv[i + 1]);
+                break;
 
-                case 'c':          /*risk of infetion */
-                    config.contactsRisk = atoi(argv[i+1]);
-                    break;
+            case 'c':          /*risk of infetion */
+                config.contactsRisk = atoi(argv[i + 1]);
+                break;
 
-                case 'k':          /*amount of contacts pr agent */
-                    config.amountOfContacts = atoi(argv[i+1]);
-                    break;
+            case 'k':          /*amount of contacts pr agent */
+                config.amountOfContacts = atoi(argv[i + 1]);
+                break;
 
-                case 't':          /*size of primary group */
-                    config.groupSize[0] = atoi(argv[i+1]);
-                    break;
+            case 't':          /*size of primary group */
+                config.groupSize[0] = atoi(argv[i + 1]);
+                break;
 
-                case 'y':          /*size of secound group */
-                    config.groupSize[1] = atoi(argv[i+1]);
-                    break;
+            case 'y':          /*size of secound group */
+                config.groupSize[1] = atoi(argv[i + 1]);
+                break;
 
-                case 'a':          /*amount of time incted */
-                    config.infectionTime = atoi(argv[i+1]);
-                    break;
+            case 'a':          /*amount of time incted */
+                config.infectionTime = atoi(argv[i + 1]);
+                break;
 
-                case 'p':          /*total amount of agents */
-                    config.amountOfAgents = atoi(argv[i+1]);
-                    break;
+            case 'p':          /*total amount of agents */
+                config.amountOfAgents = atoi(argv[i + 1]);
+                break;
 
-                case 'i':          /*amount of infected at start of simulation */
-                    config.amountOfStartInfected = atoi(argv[i+1]);
-                    break;
+            case 'i':          /*amount of infected at start of simulation */
+                config.amountOfStartInfected = atoi(argv[i + 1]);
+                break;
 
-                case 'e':          /*lenght of simulation */
-                    config.maxEvents = atoi(argv[i+1]);
-                    break;
+            case 'e':          /*lenght of simulation */
+                config.maxEvents = atoi(argv[i + 1]);
+                break;
 
-                case 's':          /*seed */
-                    config.seed = atoi(argv[i+1]);
-                    break;
+            case 's':          /*seed */
+                config.seed = atoi(argv[i + 1]);
+                break;
 
-                case 'g':
-                    graf = 1;
-                    break;
+            case 'g':
+                graf = 1;
+                break;
             }
-        } 
+        }
 
     }
 
