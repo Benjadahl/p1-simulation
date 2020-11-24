@@ -10,12 +10,9 @@ int main(int argc, char *argv[])
 {
     int i;
     int j = 0;
-    char convert = '0';
     int vaildInput = 0;
     int seed;
     int graf = 0;
-    int *par;
-    char *options;
 
     simConfig config;
 
@@ -34,87 +31,69 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 7;
     config.amountOfContacts = 5;
 
-    options = malloc(sizeof(char) * (argc - 1));
-
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
         if (argv[i][0] == '-') {
-            *(options + j) = argv[i][1];
-            j++;
-
-            if (argv[j][1] != 'g' && !isdigit(argv[j + 1][0])) {
-                printf
-                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
-                vaildInput = 1;
-                break;
+            
+            if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
+            printf
+                ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
+            vaildInput = 1;
+            break;
             }
-        } else if (isdigit(argv[i][0])) {
-            *(options + j) = atoi(argv[i]);
-            j++;
+            
+            switch (argv[i][1]) {
+                case 'z':          /*how many angents have sympums when infected */
+                    config.symptomaticPercent = atoi(argv[i+1]);
+                    break;
 
-        }
+                case 'w':          /*chanc that angent will isolate */
+                    config.willIsolatePercent = atoi(argv[i+1]);
+                    break;
+
+                case 'c':          /*risk of infetion */
+                    config.contactsRisk = atoi(argv[i+1]);
+                    break;
+
+                case 'k':          /*amount of contacts pr agent */
+                    config.amountOfContacts = atoi(argv[i+1]);
+                    break;
+
+                case 't':          /*size of primary group */
+                    config.primaryGroupSize = atoi(argv[i+1]);
+                    break;
+
+                case 'y':          /*size of secound group */
+                    config.primaryGroupSize = atoi(argv[i+1]);
+                    break;
+
+                case 'a':          /*amount of time incted */
+                    config.infectionTime = atoi(argv[i+1]);
+                    break;
+
+                case 'p':          /*total amount of agents */
+                    config.amountOfAgents = atoi(argv[i+1]);
+                    break;
+
+                case 'i':          /*amount of infected at start of simulation */
+                    config.amountOfStartInfected = atoi(argv[i+1]);
+                    break;
+
+                case 'e':          /*lenght of simulation */
+                    config.maxEvents = atoi(argv[i+1]);
+                    break;
+
+                case 's':          /*seed */
+                    config.seed = atoi(argv[i+1]);
+                    break;
+
+                case 'g':
+                    graf = 1;
+                    break;
+            }
+        } 
 
     }
-
-    if (vaildInput == 0) {
-
-        /* Switch over command line options */
-        for (i = 0, j = 0; i < (argc - 1); i++, j = i + 1) {
-
-            switch (*(options + i)) {
-            case 'z':          /*how many angents have sympums when infected */
-                config.symptomaticPercent = *(options + j);
-                break;
-
-            case 'w':          /*chanc that angent will isolate */
-                config.willIsolatePercent = *(options + j);
-                break;
-
-            case 'c':          /*risk of infetion */
-                config.contactsRisk = *(options + j);
-                break;
-
-            case 'k':          /*amount of contacts pr agent */
-                config.amountOfContacts = *(options + j);
-                break;
-
-            case 't':          /*size of primary group */
-                config.primaryGroupSize = *(options + j);
-                break;
-
-            case 'y':          /*size of secound group */
-                config.primaryGroupSize = *(options + j);
-                break;
-
-            case 'a':          /*amount of time incted */
-                config.infectionTime = *(options + j);
-                break;
-
-            case 'p':          /*total amount of agents */
-                config.amountOfAgents = *(options + j);
-                break;
-
-            case 'i':          /*amount of infected at start of simulation */
-                config.amountOfStartInfected = *(options + j);
-                break;
-
-            case 'e':          /*lenght of simulation */
-                config.maxEvents = *(options + j);
-                break;
-
-            case 's':          /*seed */
-                config.seed = *(options + j);
-                break;
-
-            case 'g':
-                graf = 1;
-                break;
-            }
-        }
-    }
-
-    free(options);
-    free(par);
 
     config.amountOfPrimaryGroups =
         config.amountOfAgents / config.primaryGroupSize;
