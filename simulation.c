@@ -221,10 +221,11 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
-        (agents + i)->groups = malloc(sizeof(group **) * 3);
+        (agents + i)->groups = malloc(sizeof(group **) * 4);
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
+        (agents + i)->groups[3] = NULL;
     }
 
     /*Initializing primary groups */
@@ -352,6 +353,33 @@ int isDay(int tick)
     return tick % 7;
 }
 
+void handleParties(agent agents[], simConfig config, int tick)
+{
+    int i;
+    int partyMemberCount = 0;
+    int grpSize = 0;
+    int maxPartyMembers = config.amountOfAgents / 100 * config.ParyChance;
+    group *groupPtr;
+    while (partyMemberCount < maxPartyMembers)
+    {
+        grpSize = rndInt(config.maxPartySize - config.minPartySize) + config.minPartySize;
+        
+        groupPtr = createGroup(agents, config, grpSize, 3);
+        for(i = 0; i < groupPtr->size; i++)
+        {
+            meetGroup(groupPtr, config.partyTransmissionChance, config.partyMeetChance, tick, groupPtr->members[i], config, agents);
+        }
+        free(groupPtr->members);
+        free(groupPtr);
+        partyMemberCount += grpSize;
+    }
+
+    for(i = 0; i < config.amountOfAgents; i++)
+    {
+        agents[i].groups[3] = NULL;
+    }
+}
+
 agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent *theAgent = &agents[agentID];
@@ -458,7 +486,11 @@ int trueChance(int percentage)
 void runEvent(agent agents[], simConfig config, int tick)
 {
     int a = 0;
-
+    
+    if(isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party*/
+        handleParties(agents,config, tick);
+    }
+    
     for (a = 0; a < config.amountOfAgents; a++) {
         computeAgent(agents, config, tick, a);
     }
