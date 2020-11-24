@@ -22,11 +22,12 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
     config.seed = 0;
-    config.primaryGroupSize = 10;
-    config.secondaryGroupSize = 10;
-    config.primaryGroupRisk = 7;
-    config.secondaryGroupRisk = 7;
-    config.amountOfContacts = 5;
+    config.groupSize[0] = 15;
+    config.groupSize[1] = 10;
+    config.primaryGroupRisk = 5;
+    config.secondaryGroupRisk = 5;
+    config.amountOfContactsPerAgent = 5;
+    config.groupPercentageToInfect = 74;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -56,11 +57,11 @@ int main(int argc, char *argv[])
                     break;
 
                 case 't':          /*size of primary group */
-                    config.primaryGroupSize = atoi(argv[i+1]);
+                    config.groupSize[0] = atoi(argv[i+1]);
                     break;
 
                 case 'y':          /*size of secound group */
-                    config.primaryGroupSize = atoi(argv[i+1]);
+                    config.groupSize[1] = atoi(argv[i+1]);
                     break;
 
                 case 'a':          /*amount of time incted */
@@ -91,11 +92,7 @@ int main(int argc, char *argv[])
 
     }
 
-    config.amountOfPrimaryGroups =
-        config.amountOfAgents / config.primaryGroupSize;
-    config.amountOfSecondaryGroups =
-        config.amountOfAgents / config.secondaryGroupSize;
-    config.groupPercentageToInfect = 74;
+
 
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
