@@ -366,7 +366,7 @@ int rndInt(int max)
 
 int trueChance(int percentage)
 {
-    if (rand() % 100 < percentage) {
+    if (rndInt(100) < percentage) {
         return 1;
     } else {
         return 0;
