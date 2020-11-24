@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     for (i = 0; i < argc; i++) {
 
         if (argv[i][0] == '-') {
-            
+
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
             printf
                 ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nRunning simulation with user perameters op to %c.\nAlle other inputs will be defualt perameters.\n", argv[i][1]);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
                     graph = 1;
                     break;
             }
-        } 
+        }
 
     }
 
