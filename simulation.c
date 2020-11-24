@@ -47,9 +47,10 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void getStats(agent agents[], simConfig config, int *succeptibleOut, int *infectiosOut, int *removedOut);
-void initAgents(agent * agents, group ** groupsPtrs,
-                simConfig config, int tick);
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *infectiosOut, int *removedOut);
+void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
+                int tick);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
@@ -169,7 +170,8 @@ void printStats(agent agents[], simConfig config, int tick)
     int totalInfectious = 0;
     int totalRemoved = 0;
 
-    getStats(agents, config, &totalSucceptible, &totalInfectious, &totalRemoved);
+    getStats(agents, config, &totalSucceptible, &totalInfectious,
+             &totalRemoved);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
@@ -194,7 +196,9 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void getStats(agent agents[], simConfig config, int *succeptibleOut, int *infectiousOut, int *removedOut) {
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *infectiousOut, int *removedOut)
+{
     int a = 0;
     int totalSucceptible = 0;
     int totalInfectious = 0;
