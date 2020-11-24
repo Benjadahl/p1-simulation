@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
     int *par;
     char *options;
 
-
-
     simConfig config;
 
     config.contactsRisk = 1;
@@ -36,13 +34,7 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 7;
     config.amountOfContacts = 5;
 
-
-
     options = malloc(sizeof(char) * (argc - 1));
-
-
-
-
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -118,16 +110,11 @@ int main(int argc, char *argv[])
                 graf = 1;
                 break;
             }
-
-
-
         }
     }
 
     free(options);
     free(par);
-
-
 
     config.amountOfPrimaryGroups =
         config.amountOfAgents / config.primaryGroupSize;
