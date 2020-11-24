@@ -9,7 +9,8 @@ void CreatePlotFromCVS(char *file_name, simConfig config);
 int main(int argc, char *argv[])
 {
     int i;
-    int graf = 0;
+    int value;
+    int graph = 0;
 
     simConfig config;
 
@@ -31,61 +32,62 @@ int main(int argc, char *argv[])
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
+
         if (argv[i][0] == '-') {
             
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
             printf
-                ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\n Running simulation with default perameters.\n");
+                ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nRunning simulation with user perameters op to %c.\nAlle other inputs will be defualt perameters.\n", argv[i][1]);
             break;
             }
-            
+            value = atoi(argv[i+1]);
             switch (argv[i][1]) {
                 case 'z':          /*how many angents have sympums when infected */
-                    config.symptomaticPercent = atoi(argv[i+1]);
+                    config.symptomaticPercent = value;
                     break;
 
                 case 'w':          /*chanc that angent will isolate */
-                    config.willIsolatePercent = atoi(argv[i+1]);
+                    config.willIsolatePercent = value;
                     break;
 
                 case 'c':          /*risk of infetion */
-                    config.contactsRisk = atoi(argv[i+1]);
+                    config.contactsRisk = value;
                     break;
 
                 case 'k':          /*amount of contacts pr agent */
-                    config.amountOfContacts = atoi(argv[i+1]);
+                    config.amountOfContacts = value;
                     break;
 
                 case 't':          /*size of primary group */
-                    config.groupSize[0] = atoi(argv[i+1]);
+                    config.groupSize[0] = value;
                     break;
 
                 case 'y':          /*size of secound group */
-                    config.groupSize[1] = atoi(argv[i+1]);
+                    config.groupSize[1] = value;
                     break;
 
                 case 'a':          /*amount of time incted */
-                    config.infectionTime = atoi(argv[i+1]);
+                    config.infectionTime = value;
                     break;
 
                 case 'p':          /*total amount of agents */
-                    config.amountOfAgents = atoi(argv[i+1]);
+                    config.amountOfAgents = value;
                     break;
 
                 case 'i':          /*amount of infected at start of simulation */
-                    config.amountOfStartInfected = atoi(argv[i+1]);
+                    config.amountOfStartInfected = value;
                     break;
 
                 case 'e':          /*lenght of simulation */
-                    config.maxEvents = atoi(argv[i+1]);
+                    config.maxEvents = value;
                     break;
 
                 case 's':          /*seed */
-                    config.seed = atoi(argv[i+1]);
+                    config.seed = value;
                     break;
 
                 case 'g':
-                    graf = 1;
+                    graph = 1;
                     break;
             }
         } 
@@ -100,7 +102,7 @@ int main(int argc, char *argv[])
 
     run_simulation(config, succeptible_data, infectious_data,
                    recovered_data);
-    if (graf != 0) {
+    if (graph != 0) {
         ExportData(succeptible_data, infectious_data, recovered_data,
                    config.maxEvents);
         CreatePlotFromCVS("out.csv", config);
