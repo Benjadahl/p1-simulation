@@ -47,6 +47,7 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
+void getStats(agent agents[], simConfig config, int *succeptibleOut, int *infectiosOut, int *removedOut);
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick);
 App *initApp();
@@ -157,29 +158,18 @@ void PlotData(agent * agents, double *succeptible_data,
 
 void printStats(agent agents[], simConfig config, int tick)
 {
-    int a = 0;
-    int totalSucceptible = 0;
-    int totalInfectious = 0;
-    int totalRemoved = 0;
+
     double percentSucceptible = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
     double R0 = 0;
     static int prevInfected;
 
-    for (a = 0; a < config.amountOfAgents; a++) {
-        switch (agents[a].healthState) {
-        case succeptible:
-            totalSucceptible++;
-            break;
-        case infectious:
-            totalInfectious++;
-            break;
-        case recovered:
-            totalRemoved++;
-            break;
-        }
-    }
+    int totalSucceptible = 0;
+    int totalInfectious = 0;
+    int totalRemoved = 0;
+
+    getStats(agents, config, &totalSucceptible, &totalInfectious, &totalRemoved);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
@@ -202,6 +192,31 @@ void printStats(agent agents[], simConfig config, int tick)
     }
 
     prevInfected = totalInfectious;
+}
+
+void getStats(agent agents[], simConfig config, int *succeptibleOut, int *infectiousOut, int *removedOut) {
+    int a = 0;
+    int totalSucceptible = 0;
+    int totalInfectious = 0;
+    int totalRemoved = 0;
+
+    for (a = 0; a < config.amountOfAgents; a++) {
+        switch (agents[a].healthState) {
+        case succeptible:
+            totalSucceptible++;
+            break;
+        case infectious:
+            totalInfectious++;
+            break;
+        case recovered:
+            totalRemoved++;
+            break;
+        }
+    }
+
+    *succeptibleOut = totalSucceptible;
+    *infectiousOut = totalInfectious;
+    *removedOut = totalRemoved;
 }
 
 void initAgents(agent * agents, group ** groupsPtrs,
@@ -465,9 +480,15 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    int a = 0;
+    int infectious = 0;
+    int throwaway;
+    getStats(agents, config, &throwaway, &infectious, &throwaway);
 
-    for (a = 0; a < config.amountOfAgents; a++) {
-        computeAgent(agents, config, tick, a);
+    if (infectious > 0) {
+        int a = 0;
+
+        for (a = 0; a < config.amountOfAgents; a++) {
+            computeAgent(agents, config, tick, a);
+        }
     }
 }
