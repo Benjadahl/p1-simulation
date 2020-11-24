@@ -360,22 +360,23 @@ void handleParties(agent agents[], simConfig config, int tick)
     int grpSize = 0;
     int maxPartyMembers = config.amountOfAgents / 100 * config.ParyChance;
     group *groupPtr;
-    while (partyMemberCount < maxPartyMembers)
-    {
-        grpSize = rndInt(config.maxPartySize - config.minPartySize) + config.minPartySize;
-        
+    while (partyMemberCount < maxPartyMembers) {
+        grpSize =
+            rndInt(config.maxPartySize - config.minPartySize) +
+            config.minPartySize;
+
         groupPtr = createGroup(agents, config, grpSize, 3);
-        for(i = 0; i < groupPtr->size; i++)
-        {
-            meetGroup(groupPtr, config.partyTransmissionChance, config.partyMeetChance, tick, groupPtr->members[i], config, agents);
+        for (i = 0; i < groupPtr->size; i++) {
+            meetGroup(groupPtr, config.partyTransmissionChance,
+                      config.partyMeetChance, tick, groupPtr->members[i],
+                      config, agents);
         }
         free(groupPtr->members);
         free(groupPtr);
         partyMemberCount += grpSize;
     }
 
-    for(i = 0; i < config.amountOfAgents; i++)
-    {
+    for (i = 0; i < config.amountOfAgents; i++) {
         agents[i].groups[3] = NULL;
     }
 }
@@ -486,11 +487,11 @@ int trueChance(int percentage)
 void runEvent(agent agents[], simConfig config, int tick)
 {
     int a = 0;
-    
-    if(isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party*/
-        handleParties(agents,config, tick);
+
+    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+        handleParties(agents, config, tick);
     }
-    
+
     for (a = 0; a < config.amountOfAgents; a++) {
         computeAgent(agents, config, tick, a);
     }
