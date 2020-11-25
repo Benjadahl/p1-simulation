@@ -222,6 +222,20 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
     *removedOut = totalRemoved;
 }
 
+int getInfectious(agent agents[], simConfig config)
+{
+    int a = 0;
+    int totalInfectious = 0;
+
+    for (a = 0; a < config.amountOfAgents; a++) {
+        if (agents[a].healthState == infectious) {
+            totalInfectious++;
+        }
+    }
+
+    return totalInfectious;
+}
+
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick)
 {
@@ -482,11 +496,7 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    int infectious = 0;
-    int throwaway;
-    getStats(agents, config, &throwaway, &infectious, &throwaway);
-
-    if (infectious > 0) {
+    if (getInfectious(agents, config) > 0) {
         int a = 0;
 
         for (a = 0; a < config.amountOfAgents; a++) {
