@@ -19,7 +19,6 @@ typedef struct ContactRecord {
 } ContactRecord;
 
 typedef struct App {
-    int haveApp;
     int infected;
     ContactRecord records[MAX_CONTACTS_IN_APP];
     int recorded;
@@ -303,7 +302,6 @@ void initAgents(agent * agents, group ** groupsPtrs,
 App *initApp()
 {
     App *app = malloc(sizeof(App));
-    app->haveApp = 1;
     app->infected = 0;
     (*app).recorded = 0;
     return app;
