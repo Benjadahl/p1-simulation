@@ -46,7 +46,7 @@ typedef struct group {
 
 
 void printAgent(agent * agent, simConfig config);
-void printStats(agent agents[], simConfig config, int tick, double *R0);
+void printStats(agent agents[], simConfig config, int tick, double *R0, double *avgR0);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *infectiosOut, int *removedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
@@ -68,7 +68,7 @@ void informContacts(App app, simConfig config, int tick);
 void isolate(agent * agent);
 int rndInt(int max);
 int trueChance(int percentage);
-void runEvent(agent agents[], simConfig config, int tick, double *R0);
+void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0);
 void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event,
               simConfig config);
@@ -77,6 +77,8 @@ void run_simulation(simConfig config, double *succeptible_data,
                     double *infectious_data, double *recovered_data)
 {
     double R0 = 0;
+    double avgR0 = 0;
+    
     int i;
     int tick = 1;
     int totalGroups;
@@ -108,8 +110,8 @@ void run_simulation(simConfig config, double *succeptible_data,
     initAgents(agents, groupPtrs, config, tick);
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-        printStats(agents, config, tick, &R0);
-        runEvent(agents, config, tick, &R0);
+        printStats(agents, config, tick, &R0, &avgR0);
+        runEvent(agents, config, tick, &R0, &avgR0);
         PlotData(agents,
                  succeptible_data, infectious_data, recovered_data, tick,
                  config);
@@ -157,7 +159,7 @@ void PlotData(agent * agents, double *succeptible_data,
     recovered_data[tick - 1] = recovered_p;
 }
 
-void printStats(agent agents[], simConfig config, int tick, double *R0)
+void printStats(agent agents[], simConfig config, int tick, double *R0, double *avgR0)
 {
 
     double percentSucceptible = 0;
@@ -184,6 +186,7 @@ void printStats(agent agents[], simConfig config, int tick, double *R0)
 
     if (*R0 != 0 || totalRemoved > 0) {
         printf("R0 = %f\n", *R0);
+        printf("Average R0 = %f\n", *avgR0);
     }
 }
 
@@ -528,7 +531,7 @@ int trueChance(int percentage)
     }
 }
 
-void runEvent(agent agents[], simConfig config, int tick, double *R0)
+void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0)
 {
     int totalAgentsRecoveredInTick = 0;
     int totalRecoveredAgentsInfectedInInfectionTime = 0;
@@ -554,5 +557,11 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0)
         *R0 =
             ((double) totalRecoveredAgentsInfectedInInfectionTime) /
             ((double) totalAgentsRecoveredInTick);
+    }
+
+    if (*avgR0 == 0) {
+    	*avgR0 = *R0;
+    } else {
+    	*avgR0 = (*avgR0 + *R0) / 2;
     }
 }
