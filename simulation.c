@@ -19,7 +19,6 @@ typedef struct ContactRecord {
 } ContactRecord;
 
 typedef struct App {
-    int haveApp;
     int infected;
     ContactRecord records[MAX_CONTACTS_IN_APP];
     int recorded;
@@ -34,6 +33,8 @@ typedef struct agent {
     int incubationTime;
     int willIsolate;
     int isolatedTick;
+    int willTest;
+    int testedTick;
     struct group **groups;
 } agent;
 
@@ -45,8 +46,10 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void initAgents(agent * agents, group ** groupsPtrs,
-                simConfig config, int tick);
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *infectiosOut, int *removedOut);
+void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
+                int tick);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
@@ -155,29 +158,19 @@ void PlotData(agent * agents, double *succeptible_data,
 
 void printStats(agent agents[], simConfig config, int tick)
 {
-    int a = 0;
-    int totalSucceptible = 0;
-    int totalInfectious = 0;
-    int totalRemoved = 0;
+
     double percentSucceptible = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
     double R0 = 0;
     static int prevInfected;
 
-    for (a = 0; a < config.amountOfAgents; a++) {
-        switch (agents[a].healthState) {
-        case succeptible:
-            totalSucceptible++;
-            break;
-        case infectious:
-            totalInfectious++;
-            break;
-        case recovered:
-            totalRemoved++;
-            break;
-        }
-    }
+    int totalSucceptible = 0;
+    int totalInfectious = 0;
+    int totalRemoved = 0;
+
+    getStats(agents, config, &totalSucceptible, &totalInfectious,
+             &totalRemoved);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
@@ -202,6 +195,47 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *infectiousOut, int *removedOut)
+{
+    int a = 0;
+    int totalSucceptible = 0;
+    int totalInfectious = 0;
+    int totalRemoved = 0;
+
+    for (a = 0; a < config.amountOfAgents; a++) {
+        switch (agents[a].healthState) {
+        case succeptible:
+            totalSucceptible++;
+            break;
+        case infectious:
+            totalInfectious++;
+            break;
+        case recovered:
+            totalRemoved++;
+            break;
+        }
+    }
+
+    *succeptibleOut = totalSucceptible;
+    *infectiousOut = totalInfectious;
+    *removedOut = totalRemoved;
+}
+
+int getInfectious(agent agents[], simConfig config)
+{
+    int a = 0;
+    int totalInfectious = 0;
+
+    for (a = 0; a < config.amountOfAgents; a++) {
+        if (agents[a].healthState == infectious) {
+            totalInfectious++;
+        }
+    }
+
+    return totalInfectious;
+}
+
 void initAgents(agent * agents, group ** groupsPtrs,
                 simConfig config, int tick)
 {
@@ -221,6 +255,8 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * 4);
+        (agents + i)->willTest = trueChance(config.willTestPercent);
+        (agents + i)->testedTick = -1 * config.testResponseTime;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
@@ -281,7 +317,6 @@ void initAgents(agent * agents, group ** groupsPtrs,
 App *initApp()
 {
     App *app = malloc(sizeof(App));
-    app->haveApp = 1;
     app->infected = 0;
     (*app).recorded = 0;
     return app;
@@ -385,11 +420,18 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent *theAgent = &agents[agentID];
 
+    /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
         && tick > theAgent->infectedTime + config.infectionTime) {
         theAgent->healthState = recovered;
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
+    }
+
+    if (theAgent->testedTick + config.testResponseTime == tick) {
+        if (theAgent->healthState == infectious && theAgent->willIsolate) {
+            theAgent->isolatedTick = tick;
+        }
     }
 
     if (theAgent->isolatedTick == -1
@@ -460,8 +502,8 @@ void informContacts(App app, simConfig config, int tick)
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick < config.contactTickLength) {
-            if (app.records[i].peer->willIsolate) {
-                app.records[i].peer->isolatedTick = tick;
+            if (app.records[i].peer->willTest) {
+                app.records[i].peer->testedTick = tick;
             }
         }
     }
@@ -474,7 +516,7 @@ int rndInt(int max)
 
 int trueChance(int percentage)
 {
-    if (rand() % 100 < percentage) {
+    if (rndInt(100) < percentage) {
         return 1;
     } else {
         return 0;
@@ -483,13 +525,15 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    int a = 0;
+    if (getInfectious(agents, config) > 0) {
+        int a = 0;
 
-    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
-        handleParties(agents, config, tick);
-    }
+        if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+            handleParties(agents, config, tick);
+        }
 
-    for (a = 0; a < config.amountOfAgents; a++) {
-        computeAgent(agents, config, tick, a);
+        for (a = 0; a < config.amountOfAgents; a++) {
+            computeAgent(agents, config, tick, a);
+        }
     }
 }

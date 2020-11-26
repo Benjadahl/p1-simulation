@@ -14,6 +14,7 @@ typedef struct simConfig {
     int minPartySize;
     int partyTransmissionChance;
     int partyMeetChance;
+    int willTestPercent;
     int seed;
     int primaryGroupRisk;
     int secondaryGroupRisk;
@@ -23,6 +24,7 @@ typedef struct simConfig {
     int chanceToHaveApp;
     int contactTickLength;
     int isolationTime;
+    int testResponseTime;
     int groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
 } simConfig;
