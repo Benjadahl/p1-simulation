@@ -13,7 +13,7 @@ void CreatePlotFromCVS(char *file_name,char *output_name, simConfig config);
 
 int main(int argc, char *argv[])
 {
-    int i;
+    int i, e;
     int value;
     int graph = 0;
     char foldername[90];
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
-    config.simulationRuns = 5;
+    config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
@@ -121,16 +121,19 @@ int main(int argc, char *argv[])
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
+    double isolated_data[config.maxEvents];
 
     double avg_succeptible_data[config.maxEvents];
     double avg_infectious_data[config.maxEvents];
     double avg_recovered_data[config.maxEvents];
+    double avg_isolated_data[config.maxEvents];
 
     for (i = 0; i < config.maxEvents; i++)
     {
         avg_succeptible_data[i] = 0;
         avg_infectious_data[i] = 0;
         avg_recovered_data[i] = 0;
+        avg_isolated_data[i] = 0;
     }
     
 
@@ -142,26 +145,36 @@ int main(int argc, char *argv[])
     {
         sprintf(filename, "%s/%d.csv", foldername, i);
         run_simulation(config, succeptible_data, infectious_data,
-                   recovered_data);
-        ExportData(filename, succeptible_data, infectious_data, recovered_data,
+                   recovered_data, isolated_data);
+        ExportData(filename, succeptible_data, infectious_data, recovered_data, isolated_data,
                     config.maxEvents);
         
         if(i == 0){
-            avg_succeptible_data[i] = succeptible_data[i];
-            avg_infectious_data[i] = infectious_data[i];
-            avg_recovered_data[i] = recovered_data[i];
+            for (e = 0; e < config.maxEvents; e++)
+            {
+                avg_succeptible_data[e] = succeptible_data[e];
+                avg_infectious_data[e] = infectious_data[e];
+                avg_recovered_data[e] = recovered_data[e];
+                avg_isolated_data[e] = isolated_data[e];
+            }      
         }
         else{
-            avg_succeptible_data[i] = (avg_succeptible_data[i] + succeptible_data[i]) / 2;
-            avg_infectious_data[i] = (avg_succeptible_data[i] + infectious_data[i]) / 2;
-            avg_recovered_data[i] = (avg_succeptible_data[i] + recovered_data[i]) / 2;
+            for (e = 0; e < config.maxEvents; e++)
+            {
+                avg_succeptible_data[e] = (avg_succeptible_data[e] + succeptible_data[e]) / 2;
+                avg_infectious_data[e] = (avg_infectious_data[e] + infectious_data[e]) / 2;
+                avg_recovered_data[e] = (avg_recovered_data[e] + recovered_data[e]) / 2;
+                avg_isolated_data[e] = (avg_isolated_data[e] + isolated_data[e]) / 2;
+            }
+            
+            
         }
     }
     if (graph != 0) {
         sprintf(filename, "%s/avg.csv", foldername);
-        ExportData(filename, succeptible_data, infectious_data, recovered_data,
+        ExportData(filename, avg_succeptible_data, avg_infectious_data, avg_recovered_data, avg_isolated_data,
                     config.maxEvents);
-        sprintf(graphname, "%s/avg-graph.png", foldername);
+        sprintf(graphname, "%s/avg-graph", foldername);
         CreatePlotFromCVS(filename,graphname, config);
     }
     return 0;

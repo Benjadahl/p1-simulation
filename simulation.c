@@ -32,6 +32,7 @@ typedef struct agent {
     int symptomatic;
     int incubationTime;
     int willIsolate;
+    int isolated;
     int isolatedTick;
     int willTest;
     int testedTick;
@@ -47,7 +48,7 @@ typedef struct group {
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *infectiosOut, int *removedOut);
+              int *infectiosOut, int *removedOut, int *isolatedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
                 int tick);
 App *initApp();
@@ -70,11 +71,11 @@ int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, int event,
+              double *infectious_data, double *recovered_data, double *isolated_data, int event,
               simConfig config);
 
 void run_simulation(simConfig config, double *succeptible_data,
-                    double *infectious_data, double *recovered_data)
+                    double *infectious_data, double *recovered_data, double *isolated_data)
 {
     int i;
     int tick = 1;
@@ -110,7 +111,7 @@ void run_simulation(simConfig config, double *succeptible_data,
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
         PlotData(agents,
-                 succeptible_data, infectious_data, recovered_data, tick,
+                 succeptible_data, infectious_data, recovered_data, isolated_data, tick,
                  config);
     }
 
@@ -126,12 +127,12 @@ void run_simulation(simConfig config, double *succeptible_data,
 }
 
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, int tick,
+              double *infectious_data, double *recovered_data, double *isolate_data, int tick,
               simConfig config)
 {
-    double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
+    double succeptible_p = 0, infectious_p = 0, recovered_p = 0, isolated_p = 0;
     double total_succeptible = 0, total_infectious = 0, total_recovered =
-        0;
+        0, total_isolated = 0;
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
@@ -145,15 +146,18 @@ void PlotData(agent * agents, double *succeptible_data,
             total_recovered++;
             break;
         }
+        total_isolated += agents[i].isolated;
     }
 
     succeptible_p = total_succeptible * 100 / config.amountOfAgents;
     infectious_p = total_infectious * 100 / config.amountOfAgents;
     recovered_p = total_recovered * 100 / config.amountOfAgents;
+    isolated_p = total_isolated * 100 / config.amountOfAgents;
 
     succeptible_data[tick - 1] = succeptible_p;
     infectious_data[tick - 1] = infectious_p;
     recovered_data[tick - 1] = recovered_p;
+    isolate_data[tick -1] = isolated_p;
 }
 
 void printStats(agent agents[], simConfig config, int tick)
@@ -162,19 +166,22 @@ void printStats(agent agents[], simConfig config, int tick)
     double percentSucceptible = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
+    double percentIsolated = 0;
     double R0 = 0;
     static int prevInfected;
 
     int totalSucceptible = 0;
     int totalInfectious = 0;
     int totalRemoved = 0;
+    int totalIsolated = 0;
 
     getStats(agents, config, &totalSucceptible, &totalInfectious,
-             &totalRemoved);
+             &totalRemoved, &totalIsolated);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
     percentRemoved = totalRemoved * 100 / config.amountOfAgents;
+    percentIsolated = totalIsolated * 100 / config.amountOfAgents;
 
     printf("\nTick: %d\n", tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
@@ -182,6 +189,7 @@ void printStats(agent agents[], simConfig config, int tick)
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
+    printf("Total isolated: %d (%f%%)\n", totalIsolated, percentIsolated);
 
     if (prevInfected != 0) {
         R0 = (double) totalInfectious / (double) prevInfected;
@@ -196,12 +204,13 @@ void printStats(agent agents[], simConfig config, int tick)
 }
 
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *infectiousOut, int *removedOut)
+              int *infectiousOut, int *removedOut, int *isolatedOut)
 {
     int a = 0;
     int totalSucceptible = 0;
     int totalInfectious = 0;
     int totalRemoved = 0;
+    int totalIsolated = 0;
 
     for (a = 0; a < config.amountOfAgents; a++) {
         switch (agents[a].healthState) {
@@ -215,11 +224,13 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
             totalRemoved++;
             break;
         }
+        totalIsolated += agents[a].isolated;
     }
 
     *succeptibleOut = totalSucceptible;
     *infectiousOut = totalInfectious;
     *removedOut = totalRemoved;
+    *isolatedOut = totalIsolated;
 }
 
 int getInfectious(agent agents[], simConfig config)
@@ -254,6 +265,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
+        (agents +i)->isolated = 0;
         (agents + i)->groups = malloc(sizeof(group **) * 4);
         (agents + i)->willTest = trueChance(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
@@ -360,6 +372,7 @@ agent infectAgent(simConfig config, int tick, agent a)
 
         if (a.willIsolate && a.symptomatic) {
             a.isolatedTick = tick;
+            a.isolated = 1;
         }
 
         if (a.app != NULL) {
@@ -436,6 +449,9 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 
     if (theAgent->isolatedTick == -1
         || theAgent->isolatedTick + config.isolationTime < tick) {
+        if(theAgent->isolated == 1){
+            theAgent->isolated = 0;
+        }
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,

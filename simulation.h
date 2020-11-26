@@ -29,4 +29,4 @@ typedef struct simConfig {
     int groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
 } simConfig;
-void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data);
+void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data, double *isolated_data);
