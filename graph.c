@@ -2,12 +2,12 @@
 #include"plot.h"
 #include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name, simConfig config);
+void CreatePlotFromCVS(char *file_name,char *output_name, simConfig config);
 void CreatePlot(char *file_name, double succeptible_data[],
                 double infectious_data[], double recovered_data[],
                 int time_length);
 
-void CreatePlotFromCVS(char *file_name, simConfig config)
+void CreatePlotFromCVS(char *file_name, char *output_name, simConfig config)
 {
     int i;
     float data1[config.maxEvents], data2[config.maxEvents],
@@ -22,7 +22,7 @@ void CreatePlotFromCVS(char *file_name, simConfig config)
         new_data3[i] = (double) data3[i];
     }
 
-    CreatePlot("Graph.png", new_data1, new_data2, new_data3,
+    CreatePlot(output_name, new_data1, new_data2, new_data3,
                config.maxEvents);
 }
 

@@ -84,7 +84,7 @@ void SplitLine(float *data1, float *data2, float *data3, char *t)
     }
 }
 
-void ExportData(double *data1, double *data2, double *data3, int events)
+void ExportData(char *filename, double *data1, double *data2, double *data3, int events)
 {
     DataSet data_set1, data_set2, data_set3;
     data_set1.data = data1;
@@ -93,5 +93,5 @@ void ExportData(double *data1, double *data2, double *data3, int events)
     data_set2.name = "Infectious";
     data_set3.data = data3;
     data_set3.name = "Recovered";
-    WriteFile("out.csv", data_set1, data_set2, data_set3, events);
+    WriteFile(filename, data_set1, data_set2, data_set3, events);
 }

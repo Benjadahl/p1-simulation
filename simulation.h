@@ -1,6 +1,7 @@
 #define amountOfGroups 3
 
 typedef struct simConfig {
+    int simulationRuns;
     int contactsRisk;
     int amountOfAgents;
     int infectionTime;
