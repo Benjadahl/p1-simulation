@@ -5,8 +5,8 @@
 void CreatePlotFromCVS(char *file_name, char *output_name,
                        simConfig config);
 void CreatePlot(char *file_name, double succeptible_data[],
-                double infectious_data[], double recovered_data[], double isolated_data[],
-                int time_length);
+                double infectious_data[], double recovered_data[],
+                double isolated_data[], int time_length);
 
 void CreatePlotFromCVS(char *file_name, char *output_name,
                        simConfig config)
@@ -30,16 +30,18 @@ void CreatePlotFromCVS(char *file_name, char *output_name,
 }
 
 void CreatePlot(char *file_name, double succeptible_data[],
-                double infectious_data[], double recovered_data[], double isolated_data[],
-                int time_length)
+                double infectious_data[], double recovered_data[],
+                double isolated_data[], int time_length)
 {
     double timeSeries[time_length];
-    char recoveredName[50], infectiousName[50], succeptibleName[50], isolatedName[50];
+    char recoveredName[50], infectiousName[50], succeptibleName[50],
+        isolatedName[50];
     for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
     RGBABitmapImageReference canvasReference;
-    RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img, *isolated_img;
+    RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img,
+        *isolated_img;
 
     canvasReference =
         PlotLineGraph(timeSeries, time_length, succeptible_data,

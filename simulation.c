@@ -71,11 +71,12 @@ int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, double *isolated_data, int event,
-              simConfig config);
+              double *infectious_data, double *recovered_data,
+              double *isolated_data, int event, simConfig config);
 
 void run_simulation(simConfig config, double *succeptible_data,
-                    double *infectious_data, double *recovered_data, double *isolated_data)
+                    double *infectious_data, double *recovered_data,
+                    double *isolated_data)
 {
     int i;
     int tick = 1;
@@ -111,8 +112,8 @@ void run_simulation(simConfig config, double *succeptible_data,
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
         PlotData(agents,
-                 succeptible_data, infectious_data, recovered_data, isolated_data, tick,
-                 config);
+                 succeptible_data, infectious_data, recovered_data,
+                 isolated_data, tick, config);
     }
 
     /*Freeing groups */
@@ -127,10 +128,11 @@ void run_simulation(simConfig config, double *succeptible_data,
 }
 
 void PlotData(agent * agents, double *succeptible_data,
-              double *infectious_data, double *recovered_data, double *isolate_data, int tick,
-              simConfig config)
+              double *infectious_data, double *recovered_data,
+              double *isolate_data, int tick, simConfig config)
 {
-    double succeptible_p = 0, infectious_p = 0, recovered_p = 0, isolated_p = 0;
+    double succeptible_p = 0, infectious_p = 0, recovered_p =
+        0, isolated_p = 0;
     double total_succeptible = 0, total_infectious = 0, total_recovered =
         0, total_isolated = 0;
     int i = 0;
@@ -157,7 +159,7 @@ void PlotData(agent * agents, double *succeptible_data,
     succeptible_data[tick - 1] = succeptible_p;
     infectious_data[tick - 1] = infectious_p;
     recovered_data[tick - 1] = recovered_p;
-    isolate_data[tick -1] = isolated_p;
+    isolate_data[tick - 1] = isolated_p;
 }
 
 void printStats(agent agents[], simConfig config, int tick)
@@ -265,7 +267,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
-        (agents +i)->isolated = 0;
+        (agents + i)->isolated = 0;
         (agents + i)->groups = malloc(sizeof(group **) * 4);
         (agents + i)->willTest = trueChance(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
@@ -449,7 +451,7 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 
     if (theAgent->isolatedTick == -1
         || theAgent->isolatedTick + config.isolationTime < tick) {
-        if(theAgent->isolated == 1){
+        if (theAgent->isolated == 1) {
             theAgent->isolated = 0;
         }
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {

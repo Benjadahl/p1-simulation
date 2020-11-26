@@ -147,37 +147,39 @@ int main(int argc, char *argv[])
     for (i = 0; i < config.simulationRuns; i++) {
         sprintf(filename, "%s/%d.csv", foldername, i);
         run_simulation(config, succeptible_data, infectious_data,
-                   recovered_data, isolated_data);
-        ExportData(filename, succeptible_data, infectious_data, recovered_data, isolated_data,
-                    config.maxEvents);
-        
-        if(i == 0){
-            for (e = 0; e < config.maxEvents; e++)
-            {
+                       recovered_data, isolated_data);
+        ExportData(filename, succeptible_data, infectious_data,
+                   recovered_data, isolated_data, config.maxEvents);
+
+        if (i == 0) {
+            for (e = 0; e < config.maxEvents; e++) {
                 avg_succeptible_data[e] = succeptible_data[e];
                 avg_infectious_data[e] = infectious_data[e];
                 avg_recovered_data[e] = recovered_data[e];
                 avg_isolated_data[e] = isolated_data[e];
-            }      
-        }
-        else{
-            for (e = 0; e < config.maxEvents; e++)
-            {
-                avg_succeptible_data[e] = (avg_succeptible_data[e] + succeptible_data[e]) / 2;
-                avg_infectious_data[e] = (avg_infectious_data[e] + infectious_data[e]) / 2;
-                avg_recovered_data[e] = (avg_recovered_data[e] + recovered_data[e]) / 2;
-                avg_isolated_data[e] = (avg_isolated_data[e] + isolated_data[e]) / 2;
             }
-            
-            
+        } else {
+            for (e = 0; e < config.maxEvents; e++) {
+                avg_succeptible_data[e] =
+                    (avg_succeptible_data[e] + succeptible_data[e]) / 2;
+                avg_infectious_data[e] =
+                    (avg_infectious_data[e] + infectious_data[e]) / 2;
+                avg_recovered_data[e] =
+                    (avg_recovered_data[e] + recovered_data[e]) / 2;
+                avg_isolated_data[e] =
+                    (avg_isolated_data[e] + isolated_data[e]) / 2;
+            }
+
+
         }
     }
     if (graph != 0) {
         sprintf(filename, "%s/avg.csv", foldername);
-        ExportData(filename, avg_succeptible_data, avg_infectious_data, avg_recovered_data, avg_isolated_data,
-                    config.maxEvents);
+        ExportData(filename, avg_succeptible_data, avg_infectious_data,
+                   avg_recovered_data, avg_isolated_data,
+                   config.maxEvents);
         sprintf(graphname, "%s/avg-graph", foldername);
-        CreatePlotFromCVS(filename,graphname, config);
+        CreatePlotFromCVS(filename, graphname, config);
     }
     return 0;
 }
