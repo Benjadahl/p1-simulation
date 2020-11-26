@@ -84,7 +84,8 @@ void SplitLine(float *data1, float *data2, float *data3, char *t)
     }
 }
 
-void ExportData(char *filename, double *data1, double *data2, double *data3, int events)
+void ExportData(char *filename, double *data1, double *data2,
+                double *data3, int events)
 {
     DataSet data_set1, data_set2, data_set3;
     data_set1.data = data1;

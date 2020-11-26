@@ -2,12 +2,14 @@
 #include"plot.h"
 #include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name,char *output_name, simConfig config);
+void CreatePlotFromCVS(char *file_name, char *output_name,
+                       simConfig config);
 void CreatePlot(char *file_name, double succeptible_data[],
                 double infectious_data[], double recovered_data[],
                 int time_length);
 
-void CreatePlotFromCVS(char *file_name, char *output_name, simConfig config)
+void CreatePlotFromCVS(char *file_name, char *output_name,
+                       simConfig config)
 {
     int i;
     float data1[config.maxEvents], data2[config.maxEvents],
