@@ -40,6 +40,10 @@ int main(int argc, char *argv[])
     config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
+    config.groupMaxAmountToMeet[0] = 10;
+    config.groupMaxAmountToMeet[1] = 5;
+    config.groupMaxAmountToMeet[2] = 3;
+    config.groupMaxAmountToMeet[3] = 20;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {

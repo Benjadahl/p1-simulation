@@ -5,7 +5,7 @@
 
 #define MAX_CONTACTS_IN_APP 50
 
-typedef enum HealthState { succeptible, infectious,
+typedef enum HealthState { succeptible, exposed, infectious,
     recovered
 } HealthState;
 
@@ -28,7 +28,8 @@ typedef struct agent {
     int ID;
     HealthState healthState;
     struct App *app;
-    int infectedTime;
+    int exposedTick;
+    int infectedTick;
     int symptomatic;
     int incubationTime;
     int willIsolate;
@@ -46,14 +47,14 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *infectiosOut, int *removedOut);
+void getStats(agent agents[], simConfig config, int *succeptibleOut, int *exposedOut,
+              int *infectiousOut, int *removedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
                 int tick);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
-int getNextID(int currentID, simConfig config);
+int getNextID(int currentID, int size);
 agent infectAgent(simConfig config, int tick, agent a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
@@ -160,25 +161,30 @@ void printStats(agent agents[], simConfig config, int tick)
 {
 
     double percentSucceptible = 0;
+    double percentExposed = 0;
     double percentInfectious = 0;
     double percentRemoved = 0;
     double R0 = 0;
     static int prevInfected;
 
     int totalSucceptible = 0;
+    int totalExposed = 0;
     int totalInfectious = 0;
     int totalRemoved = 0;
 
-    getStats(agents, config, &totalSucceptible, &totalInfectious,
+    getStats(agents, config, &totalSucceptible, &totalExposed, &totalInfectious,
              &totalRemoved);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
+    percentExposed = totalExposed* 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
     percentRemoved = totalRemoved * 100 / config.amountOfAgents;
 
     printf("\nTick: %d\n", tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
            percentSucceptible);
+    printf("Total exposed: %d (%f%%)\n", totalExposed,
+           percentExposed);
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
@@ -195,11 +201,12 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void getStats(agent agents[], simConfig config, int *succeptibleOut,
+void getStats(agent agents[], simConfig config, int *succeptibleOut, int *exposedOut,
               int *infectiousOut, int *removedOut)
 {
     int a = 0;
     int totalSucceptible = 0;
+    int totalExposed = 0;
     int totalInfectious = 0;
     int totalRemoved = 0;
 
@@ -207,6 +214,9 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
         switch (agents[a].healthState) {
         case succeptible:
             totalSucceptible++;
+            break;
+        case exposed:
+            totalExposed++;
             break;
         case infectious:
             totalInfectious++;
@@ -218,6 +228,7 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
     }
 
     *succeptibleOut = totalSucceptible;
+    *exposedOut = totalExposed;
     *infectiousOut = totalInfectious;
     *removedOut = totalRemoved;
 }
@@ -249,14 +260,15 @@ void initAgents(agent * agents, group ** groupsPtrs,
         } else {
             (agents + i)->app = NULL;
         }
-        (agents + i)->infectedTime = config.infectionTime;
+        (agents + i)->infectedTick = config.infectionTime;
         (agents + i)->symptomatic = trueChance(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
-        (agents + i)->groups = malloc(sizeof(group **) * 4);
+        (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = trueChance(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
+        (agents + i)->exposedTick = -1 * config.maxIncubationTime;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
@@ -292,7 +304,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
             do {
                 isReplica = 0;
                 theAgent = agents + randomID;
-                randomID = getNextID(randomID, config);
+                randomID = getNextID(randomID, config.amountOfAgents);
 
                 /* Check if the agent is already in contact group, dont readd */
                 for (l = 0; l < j; l++) {
@@ -337,7 +349,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 
         do {
             theAgent = agents + randomID;
-            randomID = getNextID(randomID, config);
+            randomID = getNextID(randomID, config.amountOfAgents);
         } while (theAgent->groups[groupNr] != NULL);
 
         theAgent->groups[groupNr] = newGroup;
@@ -347,25 +359,16 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     return newGroup;
 }
 
-int getNextID(int currentID, simConfig config)
+int getNextID(int currentID, int size)
 {
-    return (currentID + 1) % config.amountOfAgents;
+    return (currentID + 1) % size;
 }
 
 agent infectAgent(simConfig config, int tick, agent a)
 {
     if (a.healthState == succeptible) {
-        a.healthState = infectious;
-        a.infectedTime = tick;
-
-        if (a.willIsolate && a.symptomatic) {
-            a.isolatedTick = tick;
-        }
-
-        if (a.app != NULL) {
-            informContacts(*(a.app), config, tick);
-        }
-
+        a.healthState = exposed;
+        a.exposedTick = tick;
     }
     return a;
 }
@@ -407,7 +410,7 @@ void handleParties(agent agents[], simConfig config, int tick)
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
             meetGroup(groupPtr, config.partyRisk,
-                      config.partyMeetChance, tick, groupPtr->members[i],
+                      rndInt(config.groupMaxAmountToMeet[3]), tick, groupPtr->members[i],
                       config);
         }
         free(groupPtr->members);
@@ -425,9 +428,23 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 {
     agent *theAgent = &agents[agentID];
 
+    /* Move agent to infectious state if incubationTime has passed */
+    if (theAgent->exposedTick + theAgent->incubationTime + 1 == tick) {
+        theAgent->healthState = infectious;
+        theAgent->infectedTick = tick;
+
+        if (theAgent->willIsolate && theAgent->symptomatic) {
+            theAgent->isolatedTick = tick;
+        }
+
+        if (theAgent->app != NULL) {
+            informContacts(*(theAgent->app), config, tick);
+        }
+    }
+
     /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
-        && tick > theAgent->infectedTime + config.infectionTime) {
+        && tick > theAgent->infectedTick + config.infectionTime) {
         theAgent->healthState = recovered;
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
@@ -439,50 +456,58 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
         }
     }
 
-    if (theAgent->isolatedTick == -1
-        || theAgent->isolatedTick + config.isolationTime < tick) {
+    if (theAgent->isolatedTick == -1) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,
-                      config.groupPercentageToInfect, tick,
+                      rndInt(config.groupMaxAmountToMeet[0]), tick,
                       theAgent, config);
         }
 
         if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
             meetGroup(theAgent->groups[1],
                       config.secondaryGroupRisk,
-                      config.groupPercentageToInfect, tick,
+                      rndInt(config.groupMaxAmountToMeet[1]), tick,
                       theAgent, config);
         }
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  config.groupPercentageToInfect, tick, theAgent, config);
+                  rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent, config);
     }
 
     return *theAgent;
 }
 
-void meetGroup(group * group, int infectionRisk, int percentageToMeet,
-               int tick, agent * theAgent, simConfig config)
+void meetGroup(group * group, int infectionRisk, int amountToMeet,
+               int tick, agent *theAgent, simConfig config)
 {
     int i = 0;
     int size = group->size;
 
-    for (i = 0; i < size; i++) {
-        agent *peer = *(group->members + i);
-        if (peer->ID != theAgent->ID) {
-            if (trueChance(percentageToMeet)) {
-                if (theAgent->healthState == infectious
-                    && trueChance(infectionRisk)) {
-                    *peer = infectAgent(config, tick, *peer);
+    for (i = 0; i < size && i < amountToMeet; i++) {
+        agent *peer;
+        int randomID = rand() % size;
 
-                }
+        do {
+            peer = *(group->members + randomID);
+            randomID = getNextID(randomID, size);
+        } while (theAgent->ID == peer->ID);
 
-                if (theAgent->app != NULL && peer->app != NULL) {
-                    addRecord(theAgent, peer, tick);
-                    addRecord(peer, theAgent, tick);
-                }
+        if (peer->isolatedTick == -1) {
+            if (theAgent->healthState == infectious
+                && trueChance(infectionRisk)) {
+                *peer = infectAgent(config, tick, *peer);
+            }
+
+            if (peer->healthState == infectious
+                && trueChance(infectionRisk)) {
+                *theAgent = infectAgent(config, tick, *theAgent);
+            }
+
+            if (theAgent->app != NULL && peer->app != NULL) {
+                addRecord(theAgent, peer, tick);
+                addRecord(peer, theAgent, tick);
             }
         }
     }
@@ -530,7 +555,7 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    if (getInfectious(agents, config) > 0) {
+    /*if (getInfectious(agents, config) > 0) {*/
         int a = 0;
 
         if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
@@ -540,5 +565,5 @@ void runEvent(agent agents[], simConfig config, int tick)
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a);
         }
-    }
+    /*}*/
 }
