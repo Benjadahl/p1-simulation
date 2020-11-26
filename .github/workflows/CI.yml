@@ -8,9 +8,6 @@ on:
   push:
     branches: 
       - '**'
-  pull_request:
-    branches:
-      - '**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -43,7 +40,7 @@ jobs:
         run: sudo apt install indent
 
       - name: Run GNU indent
-        run: indent -ts 2 -kr -nut main.c
+        run: indent -ts 2 -kr -nut ./*.c
 
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v4.7.2
