@@ -392,7 +392,8 @@ void handleParties(agent agents[], simConfig config, int tick)
 {
     int i;
     int agentsBeenToParty = 0;
-    int agentShouldParty = config.amountOfAgents / 100 * config.partyChance;
+    int agentShouldParty =
+        config.amountOfAgents / 100 * config.partyChance;
     int grpSize = 0;
 
     while (agentsBeenToParty < agentShouldParty) {
