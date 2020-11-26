@@ -58,8 +58,7 @@ int getNextID(int currentID, simConfig config);
 agent infectAgent(simConfig config, int tick, agent a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
-void computeAgent(agent agents[], simConfig config, int tick,
-                   int agentID, int *totalAgentsRecoveredInTick, int *totalRecoveredAgentsInfectedInInfectionTime);
+void computeAgent(agent agents[], simConfig config, int tick, int agentID, int *totalAgentsRecoveredInTick, int *totalRecoveredAgentsInfectedInInfectionTime);
 void meetGroup(group * group, int infectionRisk, int percentageToMeet,
                int tick, agent * theAgent, simConfig config);
 void addRecord(agent * recorder, agent * peer, int tick);
@@ -379,7 +378,9 @@ int isDay(int tick)
     return tick % 7;
 }
 
-void computeAgent(agent agents[], simConfig config, int tick, int agentID, int *totalAgentsRecoveredInTick, int *totalRecoveredAgentsInfectedInInfectionTime)
+void computeAgent(agent agents[], simConfig config, int tick, int agentID,
+                  int *totalAgentsRecoveredInTick,
+                  int *totalRecoveredAgentsInfectedInInfectionTime)
 {
     agent *theAgent = &agents[agentID];
 
@@ -492,9 +493,10 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0)
 {
 	int totalAgentsRecoveredInTick = 0;
 	int totalRecoveredAgentsInfectedInInfectionTime = 0;
+	int a;
     
     if (getInfectious(agents, config) > 0) {
-        int a = 0;
+        a = 0;
 
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a, &totalAgentsRecoveredInTick, &totalRecoveredAgentsInfectedInInfectionTime);
