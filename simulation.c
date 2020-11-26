@@ -391,11 +391,14 @@ int isDay(int tick)
 void handleParties(agent agents[], simConfig config, int tick)
 {
     int i;
-    int partyMemberCount = 0;
+    int agentsBeenToParty = 0;
+    int agentShouldParty = config.amountOfAgents / 100 * config.partyChance;
     int grpSize = 0;
-    int maxPartyMembers = config.amountOfAgents / 100 * config.partyChance;
-    group *groupPtr;
-    while (partyMemberCount < maxPartyMembers) {
+
+    while (agentsBeenToParty < agentShouldParty) {
+        group *groupPtr;
+
+        /* Create random group, meet it, then free it */
         grpSize =
             rndInt(config.maxPartySize - config.minPartySize) +
             config.minPartySize;
@@ -408,9 +411,10 @@ void handleParties(agent agents[], simConfig config, int tick)
         }
         free(groupPtr->members);
         free(groupPtr);
-        partyMemberCount += grpSize;
+        agentsBeenToParty += grpSize;
     }
 
+    /* Reset party groups for all agents, so that new parties can be created */
     for (i = 0; i < config.amountOfAgents; i++) {
         agents[i].groups[3] = NULL;
     }
