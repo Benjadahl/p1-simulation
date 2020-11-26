@@ -12,7 +12,7 @@ typedef struct simConfig {
     int partyChance;
     int maxPartySize;
     int minPartySize;
-    int partyTransmissionChance;
+    int partyRisk;
     int partyMeetChance;
     int willTestPercent;
     int seed;

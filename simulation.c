@@ -405,7 +405,7 @@ void handleParties(agent agents[], simConfig config, int tick)
 
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
-            meetGroup(groupPtr, config.partyTransmissionChance,
+            meetGroup(groupPtr, config.partyRisk,
                       config.partyMeetChance, tick, groupPtr->members[i],
                       config);
         }

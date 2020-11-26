@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     config.partyChance = 5;
     config.maxPartySize = 50;
     config.minPartySize = 5;
-    config.partyTransmissionChance = 75;
+    config.partyRisk = 75;
     config.partyMeetChance = 10;
     config.willIsolatePercent = 98;
     config.willTestPercent = 75;
