@@ -9,7 +9,7 @@ typedef struct simConfig {
     int symptomaticPercent;
     int maxIncubationTime;
     int willIsolatePercent;
-    int ParyChance;
+    int partyChance;
     int maxPartySize;
     int minPartySize;
     int partyTransmissionChance;

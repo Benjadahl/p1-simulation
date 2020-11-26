@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 50;
-    config.ParyChance = 5;
+    config.partyChance = 5;
     config.maxPartySize = 50;
     config.minPartySize = 5;
     config.partyTransmissionChance = 75;
