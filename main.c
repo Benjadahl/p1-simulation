@@ -20,8 +20,13 @@ int main(int argc, char *argv[])
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
     config.symptomaticPercent = 25;
-    config.maxIncubationTime = 12;
-    config.willIsolatePercent = 98;
+    config.maxIncubationTime = 14;
+    config.willIsolatePercent = 50;
+    config.partyChance = 5;
+    config.maxPartySize = 50;
+    config.minPartySize = 5;
+    config.partyRisk = 75;
+    config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 0;
     config.groupSize[0] = 15;

@@ -246,13 +246,15 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
+        (agents + i)->groups = malloc(sizeof(group **) * 4);
         (agents + i)->willTest = trueChance(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
-        (agents + i)->groups = malloc(sizeof(group **) * 3);
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
+        (agents + i)->groups[3] = NULL;
         (agents + i)->amountAgentHasinfected = 0;
+        
     }
 
     /*Initializing groups */
@@ -380,6 +382,40 @@ int isDay(int tick)
     return tick % 7;
 }
 
+
+void handleParties(agent agents[], simConfig config, int tick)
+{
+    int i;
+    int agentsBeenToParty = 0;
+    int agentShouldParty =
+        config.amountOfAgents / 100 * config.partyChance;
+    int grpSize = 0;
+
+    while (agentsBeenToParty < agentShouldParty) {
+        group *groupPtr;
+
+        /* Create random group, meet it, then free it */
+        grpSize =
+            rndInt(config.maxPartySize - config.minPartySize) +
+            config.minPartySize;
+
+        groupPtr = createGroup(agents, config, grpSize, 3);
+        for (i = 0; i < groupPtr->size; i++) {
+            meetGroup(groupPtr, config.partyRisk,
+                      config.partyMeetChance, tick, groupPtr->members[i],
+                      config);
+        }
+        free(groupPtr->members);
+        free(groupPtr);
+        agentsBeenToParty += grpSize;
+    }
+
+    /* Reset party groups for all agents, so that new parties can be created */
+    for (i = 0; i < config.amountOfAgents; i++) {
+        agents[i].groups[3] = NULL;
+    }
+}
+
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *totalAgentsRecoveredInTick,
                   int *totalRecoveredAgentsInfectedInInfectionTime)
@@ -500,6 +536,10 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0)
 
     if (getInfectious(agents, config) > 0) {
         a = 0;
+
+        if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+            handleParties(agents, config, tick);
+        }
 
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a,
