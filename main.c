@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
             } else {
 
                 if (argv[i][1] != 'g' && isdigit(argv[i + 1][0])
-                    && i + 1 != argc) {
+                    && i + 1 < argc) {
                     value = atoi(argv[i + 1]);
                 }
 
