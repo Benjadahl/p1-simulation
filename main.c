@@ -36,11 +36,15 @@ int main(int argc, char *argv[])
         if (argv[i][0] == '-') {
 
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
-            printf
-                ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nRunning simulation with user perameters op to %c.\nAlle other inputs will be defualt perameters.\n", argv[i][1]);
-            break;
+                printf
+                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nRunning simulation with user perameters op to %c.\nAlle other inputs will be defualt perameters.\n", argv[i][1]);
+                break;
+            } else {
+
+            if (argv[i][1] != 'g' && isdigit(argv[i +1][0]) && i + 1 != argc){
+            value = atoi(argv[i + 1]);
             }
-            value = atoi(argv[i+1]);
+
             switch (argv[i][1]) {
                 case 'z':          /*how many angents have sympums when infected */
                     config.symptomaticPercent = value;
@@ -89,6 +93,7 @@ int main(int argc, char *argv[])
                 case 'g':
                     graph = 1;
                     break;
+                }
             }
         }
 
@@ -105,7 +110,9 @@ int main(int argc, char *argv[])
     if (graph != 0) {
         ExportData(succeptible_data, infectious_data, recovered_data,
                    config.maxEvents);
+        printf("Creating graph...\n");
         CreatePlotFromCVS("out.csv", config);
+        printf("Graph.png created\n");
     }
     return 0;
 }
