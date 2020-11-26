@@ -38,9 +38,10 @@ agent infectAgent(agent agent, int tick);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 void computeAgent(agent agents[], simConfig config, int tick,
-                   int agentID, int *totalAgentsRecoveredInTick, int *totalRecoveredAgentsInfectedInInfectionTime);
-void infectGroup(group * group, int infectionRisk,
-                 int percentageToMeet, int tick, agent *theAgent);
+                  int agentID, int *totalAgentsRecoveredInTick,
+                  int *totalRecoveredAgentsInfectedInInfectionTime);
+void infectGroup(group * group, int infectionRisk, int percentageToMeet,
+                 int tick, agent * theAgent);
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick, double *R0);
@@ -167,8 +168,8 @@ void printStats(agent agents[], simConfig config, int tick, double *R0)
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
 
-    if (*R0 != 0 || totalRemoved > 0){
-    	printf("R0 = %f\n", *R0);
+    if (*R0 != 0 || totalRemoved > 0) {
+        printf("R0 = %f\n", *R0);
     }
 }
 
@@ -301,7 +302,9 @@ int isDay(int tick)
     return tick % 7;
 }
 
-void computeAgent(agent agents[], simConfig config, int tick, int agentID, int *totalAgentsRecoveredInTick, int *totalRecoveredAgentsInfectedInInfectionTime)
+void computeAgent(agent agents[], simConfig config, int tick, int agentID,
+                  int *totalAgentsRecoveredInTick,
+                  int *totalRecoveredAgentsInfectedInInfectionTime)
 {
     agent *theAgent = (agents + agentID);
 
@@ -332,13 +335,14 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID, int *
         } else {
             theAgent->healthState = recovered;
             (*totalAgentsRecoveredInTick)++;
-            (*totalRecoveredAgentsInfectedInInfectionTime) += theAgent->infected;
+            (*totalRecoveredAgentsInfectedInInfectionTime) +=
+                theAgent->infected;
         }
     }
 }
 
 void infectGroup(group * group, int infectionRisk,
-                 int percentageToMeet, int tick, agent *theAgent)
+                 int percentageToMeet, int tick, agent * theAgent)
 {
     int i = 0;
     int size = group->size;
@@ -375,13 +379,15 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0)
     int totalRecoveredAgentsInfectedInInfectionTime = 0;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        computeAgent(agents, config, tick, a, &totalAgentsRecoveredInTick, &totalRecoveredAgentsInfectedInInfectionTime);
+        computeAgent(agents, config, tick, a, &totalAgentsRecoveredInTick,
+                     &totalRecoveredAgentsInfectedInInfectionTime);
     }
 
-    if (totalRecoveredAgentsInfectedInInfectionTime == 0){
-    	*R0 = 0;
-    }
-    else if (totalAgentsRecoveredInTick != 0){
-    	*R0 = ((double) totalRecoveredAgentsInfectedInInfectionTime) / ((double) totalAgentsRecoveredInTick);
+    if (totalRecoveredAgentsInfectedInInfectionTime == 0) {
+        *R0 = 0;
+    } else if (totalAgentsRecoveredInTick != 0) {
+        *R0 =
+            ((double) totalRecoveredAgentsInfectedInInfectionTime) /
+            ((double) totalAgentsRecoveredInTick);
     }
 }
