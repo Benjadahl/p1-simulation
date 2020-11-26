@@ -47,8 +47,8 @@ typedef struct group {
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
-void getStats(agent agents[], simConfig config, int *succeptibleOut, int *exposedOut,
-              int *infectiousOut, int *removedOut);
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *exposedOut, int *infectiousOut, int *removedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
                 int tick);
 App *initApp();
@@ -172,19 +172,18 @@ void printStats(agent agents[], simConfig config, int tick)
     int totalInfectious = 0;
     int totalRemoved = 0;
 
-    getStats(agents, config, &totalSucceptible, &totalExposed, &totalInfectious,
-             &totalRemoved);
+    getStats(agents, config, &totalSucceptible, &totalExposed,
+             &totalInfectious, &totalRemoved);
 
     percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
-    percentExposed = totalExposed* 100 / config.amountOfAgents;
+    percentExposed = totalExposed * 100 / config.amountOfAgents;
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
     percentRemoved = totalRemoved * 100 / config.amountOfAgents;
 
     printf("\nTick: %d\n", tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
            percentSucceptible);
-    printf("Total exposed: %d (%f%%)\n", totalExposed,
-           percentExposed);
+    printf("Total exposed: %d (%f%%)\n", totalExposed, percentExposed);
     printf("Total infectious: %d (%f%%)\n", totalInfectious,
            percentInfectious);
     printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
@@ -201,8 +200,8 @@ void printStats(agent agents[], simConfig config, int tick)
     prevInfected = totalInfectious;
 }
 
-void getStats(agent agents[], simConfig config, int *succeptibleOut, int *exposedOut,
-              int *infectiousOut, int *removedOut)
+void getStats(agent agents[], simConfig config, int *succeptibleOut,
+              int *exposedOut, int *infectiousOut, int *removedOut)
 {
     int a = 0;
     int totalSucceptible = 0;
@@ -410,8 +409,8 @@ void handleParties(agent agents[], simConfig config, int tick)
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
             meetGroup(groupPtr, config.partyRisk,
-                      rndInt(config.groupMaxAmountToMeet[3]), tick, groupPtr->members[i],
-                      config);
+                      rndInt(config.groupMaxAmountToMeet[3]), tick,
+                      groupPtr->members[i], config);
         }
         free(groupPtr->members);
         free(groupPtr);
@@ -473,14 +472,15 @@ agent computeAgent(agent agents[], simConfig config, int tick, int agentID)
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent, config);
+                  rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent,
+                  config);
     }
 
     return *theAgent;
 }
 
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
-               int tick, agent *theAgent, simConfig config)
+               int tick, agent * theAgent, simConfig config)
 {
     int i = 0;
     int size = group->size;
@@ -555,15 +555,15 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    /*if (getInfectious(agents, config) > 0) {*/
-        int a = 0;
+    /*if (getInfectious(agents, config) > 0) { */
+    int a = 0;
 
-        if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
-            handleParties(agents, config, tick);
-        }
+    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+        handleParties(agents, config, tick);
+    }
 
-        for (a = 0; a < config.amountOfAgents; a++) {
-            computeAgent(agents, config, tick, a);
-        }
-    /*}*/
+    for (a = 0; a < config.amountOfAgents; a++) {
+        computeAgent(agents, config, tick, a);
+    }
+    /*} */
 }
