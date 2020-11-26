@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
+    config.willTestPercent = 75;
     config.seed = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
@@ -29,6 +30,10 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
+    config.chanceToHaveApp = 35;
+    config.contactTickLength = 7;
+    config.isolationTime = 15;
+    config.testResponseTime = 2;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
