@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
     config.symptomaticPercent = 25;
-    config.maxIncubationTime = 14;
+    config.maxIncubationTime = 12;
     config.willIsolatePercent = 98;
     config.seed = 0;
     config.groupSize[0] = 15;
