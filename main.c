@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
 
             if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
                 printf
-                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nRunning simulation with user perameters op to %c.\nAlle other inputs will be defualt perameters.\n",
+                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
                      argv[i][1]);
-                break;
+                return EXIT_FAILURE;
             } else {
 
                 if (argv[i][1] != 'g' && isdigit(argv[i + 1][0])
@@ -121,5 +121,5 @@ int main(int argc, char *argv[])
         CreatePlotFromCVS("out.csv", config);
         printf("Graph.png created\n");
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
