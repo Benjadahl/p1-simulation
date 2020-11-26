@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 98;
+    config.willTestPercent = 75;
     config.seed = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
@@ -29,6 +30,10 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
+    config.chanceToHaveApp = 35;
+    config.contactTickLength = 7;
+    config.isolationTime = 15;
+    config.testResponseTime = 2;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -40,56 +45,62 @@ int main(int argc, char *argv[])
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
                      argv[i][1]);
                 return EXIT_FAILURE;
-            }
-            value = atoi(argv[i + 1]);
-            switch (argv[i][1]) {
-            case 'z':          /*how many angents have sympums when infected */
-                config.symptomaticPercent = value;
-                break;
+            } else {
 
-            case 'w':          /*chanc that angent will isolate */
-                config.willIsolatePercent = value;
-                break;
+                if (argv[i][1] != 'g' && isdigit(argv[i + 1][0])
+                    && i + 1 < argc) {
+                    value = atoi(argv[i + 1]);
+                }
 
-            case 'c':          /*risk of infetion */
-                config.contactsRisk = value;
-                break;
+                switch (argv[i][1]) {
+                case 'z':      /*how many angents have sympums when infected */
+                    config.symptomaticPercent = value;
+                    break;
 
-            case 'k':          /*amount of contacts pr agent */
-                config.amountOfContacts = value;
-                break;
+                case 'w':      /*chanc that angent will isolate */
+                    config.willIsolatePercent = value;
+                    break;
 
-            case 't':          /*size of primary group */
-                config.groupSize[0] = value;
-                break;
+                case 'c':      /*risk of infetion */
+                    config.contactsRisk = value;
+                    break;
 
-            case 'y':          /*size of secound group */
-                config.groupSize[1] = value;
-                break;
+                case 'k':      /*amount of contacts pr agent */
+                    config.amountOfContacts = value;
+                    break;
 
-            case 'a':          /*amount of time incted */
-                config.infectionTime = value;
-                break;
+                case 't':      /*size of primary group */
+                    config.groupSize[0] = value;
+                    break;
 
-            case 'p':          /*total amount of agents */
-                config.amountOfAgents = value;
-                break;
+                case 'y':      /*size of secound group */
+                    config.groupSize[1] = value;
+                    break;
 
-            case 'i':          /*amount of infected at start of simulation */
-                config.amountOfStartInfected = value;
-                break;
+                case 'a':      /*amount of time incted */
+                    config.infectionTime = value;
+                    break;
 
-            case 'e':          /*lenght of simulation */
-                config.maxEvents = value;
-                break;
+                case 'p':      /*total amount of agents */
+                    config.amountOfAgents = value;
+                    break;
 
-            case 's':          /*seed */
-                config.seed = value;
-                break;
+                case 'i':      /*amount of infected at start of simulation */
+                    config.amountOfStartInfected = value;
+                    break;
 
-            case 'g':
-                graph = 1;
-                break;
+                case 'e':      /*lenght of simulation */
+                    config.maxEvents = value;
+                    break;
+
+                case 's':      /*seed */
+                    config.seed = value;
+                    break;
+
+                case 'g':
+                    graph = 1;
+                    break;
+                }
             }
         }
 
@@ -106,7 +117,9 @@ int main(int argc, char *argv[])
     if (graph != 0) {
         ExportData(succeptible_data, infectious_data, recovered_data,
                    config.maxEvents);
+        printf("Creating graph...\n");
         CreatePlotFromCVS("out.csv", config);
+        printf("Graph.png created\n");
     }
     return EXIT_SUCCESS;
 }
