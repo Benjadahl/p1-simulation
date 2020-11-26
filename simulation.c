@@ -254,7 +254,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->groups[2] = NULL;
         (agents + i)->groups[3] = NULL;
         (agents + i)->amountAgentHasinfected = 0;
-        
+
     }
 
     /*Initializing groups */
