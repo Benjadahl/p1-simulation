@@ -46,7 +46,8 @@ typedef struct group {
 
 
 void printAgent(agent * agent, simConfig config);
-void printStats(agent agents[], simConfig config, int tick, double *R0, double *avgR0);
+void printStats(agent agents[], simConfig config, int tick, double *R0,
+                double *avgR0);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *infectiosOut, int *removedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
@@ -68,7 +69,8 @@ void informContacts(App app, simConfig config, int tick);
 void isolate(agent * agent);
 int rndInt(int max);
 int trueChance(int percentage);
-void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0);
+void runEvent(agent agents[], simConfig config, int tick, double *R0,
+              double *avgR0);
 void PlotData(agent * agents, double *succeptible_data,
               double *infectious_data, double *recovered_data, int event,
               simConfig config);
@@ -78,7 +80,7 @@ void run_simulation(simConfig config, double *succeptible_data,
 {
     double R0 = 0;
     double avgR0 = 0;
-    
+
     int i;
     int tick = 1;
     int totalGroups;
@@ -159,7 +161,8 @@ void PlotData(agent * agents, double *succeptible_data,
     recovered_data[tick - 1] = recovered_p;
 }
 
-void printStats(agent agents[], simConfig config, int tick, double *R0, double *avgR0)
+void printStats(agent agents[], simConfig config, int tick, double *R0,
+                double *avgR0)
 {
 
     double percentSucceptible = 0;
@@ -531,7 +534,8 @@ int trueChance(int percentage)
     }
 }
 
-void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0)
+void runEvent(agent agents[], simConfig config, int tick, double *R0,
+              double *avgR0)
 {
     int recoveredInTick = 0;
     int infectedDuringInfection = 0;
@@ -560,8 +564,8 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0, double *av
     }
 
     if (*avgR0 == 0) {
-    	*avgR0 = *R0;
+        *avgR0 = *R0;
     } else {
-    	*avgR0 = (*avgR0 + *R0) / 2;
+        *avgR0 = (*avgR0 + *R0) / 2;
     }
 }
