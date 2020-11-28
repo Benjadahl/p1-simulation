@@ -420,8 +420,8 @@ void handleParties(agent agents[], simConfig config, int tick)
 }
 
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
-                  int *totalAgentsRecoveredInTick,
-                  int *totalRecoveredAgentsInfectedInInfectionTime)
+                  int *recoveredInTick,
+                  int *infectedDuringInfection)
 {
     agent *theAgent = &agents[agentID];
 
@@ -429,8 +429,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
     if (theAgent->healthState == infectious
         && tick > theAgent->infectedTime + config.infectionTime) {
         theAgent->healthState = recovered;
-        (*totalAgentsRecoveredInTick)++;
-        (*totalRecoveredAgentsInfectedInInfectionTime) +=
+        (*recoveredInTick)++;
+        (*infectedDuringInfection) +=
             theAgent->amountAgentHasinfected;
 
         if (theAgent->app != NULL)
@@ -533,8 +533,8 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0)
 {
-    int totalAgentsRecoveredInTick = 0;
-    int totalRecoveredAgentsInfectedInInfectionTime = 0;
+    int recoveredInTick = 0;
+    int infectedDuringInfection = 0;
     int a;
 
     if (getInfectious(agents, config) > 0) {
@@ -546,17 +546,17 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0, double *av
 
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a,
-                         &totalAgentsRecoveredInTick,
-                         &totalRecoveredAgentsInfectedInInfectionTime);
+                         &recoveredInTick,
+                         &infectedDuringInfection);
         }
     }
 
-    if (totalRecoveredAgentsInfectedInInfectionTime == 0) {
+    if (infectedDuringInfection == 0) {
         *R0 = 0;
-    } else if (totalAgentsRecoveredInTick != 0) {
+    } else if (recoveredInTick != 0) {
         *R0 =
-            ((double) totalRecoveredAgentsInfectedInInfectionTime) /
-            ((double) totalAgentsRecoveredInTick);
+            ((double) infectedDuringInfection) /
+            ((double) recoveredInTick);
     }
 
     if (*avgR0 == 0) {
