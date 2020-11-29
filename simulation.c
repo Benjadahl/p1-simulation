@@ -49,6 +49,7 @@ void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *exposedOut, int *infectiousOut, int *removedOut);
+int getExposedAndInfectious(agent agents[], simConfig config);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
                 int tick);
 App *initApp();
@@ -232,18 +233,19 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
     *removedOut = totalRemoved;
 }
 
-int getInfectious(agent agents[], simConfig config)
+int getExposedAndInfectious(agent agents[], simConfig config)
 {
     int a = 0;
-    int totalInfectious = 0;
+    int total = 0;
 
     for (a = 0; a < config.amountOfAgents; a++) {
-        if (agents[a].healthState == infectious) {
-            totalInfectious++;
+        HealthState hs = agents[a].healthState;
+        if (hs == infectious || hs == exposed) {
+            total++;
         }
     }
 
-    return totalInfectious;
+    return total;
 }
 
 void initAgents(agent * agents, group ** groupsPtrs,
@@ -555,15 +557,15 @@ int trueChance(int percentage)
 
 void runEvent(agent agents[], simConfig config, int tick)
 {
-    /*if (getInfectious(agents, config) > 0) { */
-    int a = 0;
+    if (getExposedAndInfectious(agents, config) > 0) {
+        int a = 0;
 
-    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
-        handleParties(agents, config, tick);
-    }
+        if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+            handleParties(agents, config, tick);
+        }
 
-    for (a = 0; a < config.amountOfAgents; a++) {
-        computeAgent(agents, config, tick, a);
-    }
-    /*} */
+        for (a = 0; a < config.amountOfAgents; a++) {
+            computeAgent(agents, config, tick, a);
+        }
+    } 
 }
