@@ -566,5 +566,5 @@ void runEvent(agent agents[], simConfig config, int tick)
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a);
         }
-    } 
+    }
 }
