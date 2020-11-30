@@ -3,12 +3,12 @@
 #include <time.h>
 #include <math.h>
 
-int bernoulli(double chanceForTrue);
 double randNumberZeroToOne();
-void uniform(double *arrayUniformDistribution, int lenghtOfArray,
-             double lowerBound, double upperBound);
+int bernoulli(double chanceForTrue);
+double uniform(double lowerBound, double upperBound);
 void exp_sim(double *arrayExpDistribution, int lenghtOfArray,
              double lambda);
+void gaussian(double expectedValue, double varians);
 
 double randNumberZeroToOne()
 {
@@ -26,13 +26,13 @@ int bernoulli(double chanceForTrue)
     }
 }
 
-void uniform(double *arrayUniformDistribution, int lenghtOfArray,
-             double lowerBound, double upperBound)
+double uniform(double lowerBound, double upperBound)
 {
-    for (int i = 0; i < lenghtOfArray; i++) {
-        arrayUniformDistribution[i] =
-            randNumberZeroToOne() * (upperBound - lowerBound) + lowerBound;
-    }
+    double result;
+
+    result = randNumberZeroToOne() * (upperBound - lowerBound) + lowerBound;
+
+    return result;
 }
 
 void exp_sim(double *arrayExpDistribution, int lenghtOfArray,
@@ -47,6 +47,17 @@ void exp_sim(double *arrayExpDistribution, int lenghtOfArray,
         arrayExpDistribution[i] =
             -(1.0 / lambda) * log(1 - numberOneToZero);
     }
+}
+
+void gaussian(double expectedValue, double varians)
+{
+    double result;
+
+    // result = (1 / sqrt(2*M_PI*pow(varians, 2))) * exp((-1 / (2 * pow(varians, 2)))*pow(rand() - expectedValue, 2));
+
+
+
+    return result;
 }
 
 
