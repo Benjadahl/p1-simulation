@@ -54,9 +54,12 @@ void gaussian(double varians, double expectedValue)
 {
     double result;
 
-    result = (1 / (varians*sqrt(2*M_PI))) * exp((-1 / (2*pow(varians,2))) * pow(randNumberZeroToOne() * expectedValue, 2));
+    result =
+        (1 / (varians * sqrt(2 * M_PI))) *
+        exp((-1 / (2 * pow(varians, 2))) *
+            pow(randNumberZeroToOne() * expectedValue, 2));
 
-    printf( "%f   %f\n", randNumberZeroToOne(), result);
+    printf("%f   %f\n", randNumberZeroToOne(), result);
 }
 
 
@@ -68,11 +71,10 @@ void main()
     // Set seed
     srand(time(0));
 
-    for (i = 0; i <= 100; i++)
-    {   
+    for (i = 0; i <= 100; i++) {
         gaussian(varians, expectedValue);
     }
-    
+
 
     // // initialise vector
     // int N = 1000;
