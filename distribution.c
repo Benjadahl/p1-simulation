@@ -8,11 +8,7 @@ int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
 void exp_sim(double *arrayExpDistribution, int lenghtOfArray,
              double lambda);
-<<<<<<< HEAD
 void gaussian(double expectedValue, double varians);
-=======
-void gaussian(double varians, double expectedValue);
->>>>>>> 32097d3a15cea0d66893d1cb0b122bdab81c5fea
 
 double randNumberZeroToOne()
 {
@@ -53,7 +49,6 @@ void exp_sim(double *arrayExpDistribution, int lenghtOfArray,
     }
 }
 
-<<<<<<< HEAD
 void gaussian(double expectedValue, double varians)
 {
     double result;
@@ -63,18 +58,6 @@ void gaussian(double expectedValue, double varians)
 
 
     return result;
-=======
-void gaussian(double varians, double expectedValue)
-{
-    double result;
-
-    result =
-        (1 / (varians * sqrt(2 * M_PI))) *
-        exp((-1 / (2 * pow(varians, 2))) *
-            pow(randNumberZeroToOne() * expectedValue, 2));
-
-    printf("%f   %f\n", randNumberZeroToOne(), result);
->>>>>>> 32097d3a15cea0d66893d1cb0b122bdab81c5fea
 }
 
 
