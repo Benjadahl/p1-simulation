@@ -1,20 +1,13 @@
 CC=gcc
 CFLAGS= -ansi -pedantic -Wall -Wextra -fsyntax-only
 
-all: build1 libs1 build2 libs2
+all: buildMain runTest libs
 
-TARGET1=main
+buildMain: libs
+	$(CC) main.c plot.c fileManagement.c graph.c simulation.c pbPlots.o supportLib.o -lm -o main.out && $(CC) simulation.c -o test $(CFLAGS)
 
-build1: libs1
-	$(CC) $(TARGET1).c plot.c fileManagement.c graph.c simulation.c pbPlots.o supportLib.o -lm -o $(TARGET1).out && $(CC) simulation.c -o test $(CFLAGS)
+runTest: libs
+	$(CC) autoTest.c simulation.c supportLib.o -lm -o autoTest.out && $(CC) simulation.c -o test $(CFLAGS)
 
-libs1:
+libs:
 	$(CC) -c lib/pbPlots.c lib/supportLib.c -lm
-
-TARGET2=autoTest
-
-build2: libs2
-	$(CC) $(TARGET2).c simulation.c supportLib.o -lm -o $(TARGET2).out && $(CC) simulation.c -o test $(CFLAGS)
-
-libs2:
-	$(CC) -c lib/supportLib.c -lm
