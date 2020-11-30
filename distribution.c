@@ -30,7 +30,8 @@ double uniform(double lowerBound, double upperBound)
 {
     double result;
 
-    result = randNumberZeroToOne() * (upperBound - lowerBound) + lowerBound;
+    result =
+        randNumberZeroToOne() * (upperBound - lowerBound) + lowerBound;
 
     return result;
 }
