@@ -1,31 +1,36 @@
 #include"import.h"
+#include"export.h"
 #include"plot.h"
 #include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name, char *output_name,
+void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
                        simConfig config);
 void CreatePlot(char *file_name, double succeptible_data[],
                 double infectious_data[], double recovered_data[],
                 double isolated_data[], int time_length);
 
-void CreatePlotFromCVS(char *file_name, char *output_name,
+void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
                        simConfig config)
 {
-    int i;
-    float data1[config.maxEvents], data2[config.maxEvents],
-        data3[config.maxEvents], data4[config.maxEvents];
-    double new_data1[config.maxEvents], new_data2[config.maxEvents],
-        new_data3[config.maxEvents], new_data4[config.maxEvents];
-    ReadFile(file_name, data1, data2, data3, data4);
+    int i, j;
+    DataSetRead data[dataCount];
+    DataSet newData[dataCount];
 
-    for (i = 0; i < config.maxEvents; i++) {
-        new_data1[i] = (double) data1[i];
-        new_data2[i] = (double) data2[i];
-        new_data3[i] = (double) data3[i];
-        new_data4[i] = (double) data4[i];
+    for (i = 0; i < dataCount; i++)
+    {
+        data[i].data = malloc(sizeof(float)*config.maxEvents);
+        newData[i].data = malloc(sizeof(double)*config.maxEvents);
     }
 
-    CreatePlot(output_name, new_data1, new_data2, new_data3, new_data4,
+    ReadFile(file_name, data, dataCount);
+
+    for (i = 0; i < config.maxEvents; i++) {
+        for (j = 0; j < dataCount; j++) {
+            newData[j].data[i] = (double) data[j].data[i];
+        }
+    }
+
+    CreatePlot(output_name, newData[0].data, newData[1].data, newData[2].data, newData[3].data,
                config.maxEvents);
 }
 

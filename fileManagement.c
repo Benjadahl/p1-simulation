@@ -2,37 +2,45 @@
 #include<string.h>
 #include<stdlib.h>
 #include <ctype.h>
+#include <time.h>
+#include <sys/stat.h>
 #include"import.h"
 #include"export.h"
+#include"simulation.h"
 
-void SplitLine(float *data1, float *data2, float *data3, float *data4,
-               char *t);
+void SplitLine(int dataCount, DataSetRead *data, int dataNum, char *t);
 
-void WriteFile(char *file_name, DataSet data_set1, DataSet data_set2,
-               DataSet data_set3, DataSet data_set4, int data_size)
+void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
+                       simConfig config);
+DataSet createDataSet(char *name, double *data);
+
+void WriteFile(char *fileName, DataSet *dataSets, int dataCount, int events)
 {
-    int i;
+    int i, j;
     char data_print[50];
-    FILE *file = fopen(file_name, "w+");
+    FILE *file = fopen(fileName, "w+");
 
-    snprintf(data_print, 50, "%s;%s;%s;%s;", data_set1.name,
-             data_set2.name, data_set3.name, data_set4.name);
-    fprintf(file, "\n%s", data_print);
-    for (i = 0; i < data_size; i++) {
-        snprintf(data_print, 50, "%f;%f;%f;%f", data_set1.data[i],
-                 data_set2.data[i], data_set3.data[i], data_set4.data[i]);
-        fprintf(file, "\n%s", data_print);
+    for (i = 0; i < dataCount; i++) {
+        fprintf(file, "%s;", dataSets[i].name);
     }
+    fprintf(file, "\n");
+
+    for (i = 0; i < events; i++) {
+        for (j = 0; j < dataCount; j++) {
+            fprintf(file, "%f;", dataSets[j].data[i]);
+        }    
+        fprintf(file, "\n");
+    }
+
     fclose(file);
     return;
 }
 
-void ReadFile(char *file_name, float *data1, float *data2, float *data3,
-              float *data4)
+void ReadFile(char *file_name, DataSetRead *data, int dataCount)
 {
     FILE *file = fopen(file_name, "r");
     char line[200];
-    int i = 0;
+    int i = 0, j;
     if (file == NULL) {
         printf("File %s not found.", file_name);
         return;
@@ -44,7 +52,7 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3,
         while (token != NULL) {
             char *token_token = strtok(token, "\n");
             if (isdigit(token[0])) {
-                SplitLine(&data1[i], &data2[i], &data3[i], &data4[i],
+                SplitLine(dataCount, data, i,
                           token_token);
                 i++;
             }
@@ -54,45 +62,61 @@ void ReadFile(char *file_name, float *data1, float *data2, float *data3,
     fclose(file);
 }
 
-void SplitLine(float *data1, float *data2, float *data3, float *data4,
-               char *t)
+void SplitLine(int dataCount, DataSetRead *data, int dataNum, char *t)
 {
     int data_set = 0;
     char *token = strtok(t, ";");
     while (token != NULL) {
-        switch (data_set) {
-        case 0:
-            *data1 = atof(token);
-            break;
-        case 1:
-            *data2 = atof(token);
-            break;
-        case 2:
-            *data3 = atof(token);
-            break;
-        case 3:
-            *data4 = atof(token);
-            break;
-        default:
-            break;
+        if(data_set < dataCount){
+            data[data_set].data[dataNum] = atof(token);
         }
         data_set++;
         token = strtok(NULL, ";");
     }
 }
 
-void ExportData(char *filename, double *data1, double *data2,
-                double *data3, double *data4, int events)
+void ExportData(int run, time_t runTime, double *data1, double *data2,
+                double *data3, double *data4, simConfig config)
 {
-    DataSet data_set1, data_set2, data_set3, data_set4;
-    data_set1.data = data1;
-    data_set1.name = "Succeptible";
-    data_set2.data = data2;
-    data_set2.name = "Exposed";
-    data_set3.data = data3;
-    data_set3.name = "Infectious";
-    data_set4.data = data4;
-    data_set4.name = "Recovered";
-    WriteFile(filename, data_set1, data_set2, data_set3, data_set4,
-              events);
+    char foldername[90], filename[100], graphname[100];
+    struct tm *currentTime;
+
+    currentTime = localtime(&runTime);
+    sprintf(foldername, "output/H%02dM%02dS%02d-%02d-%02d-%d",
+            currentTime->tm_hour, currentTime->tm_min, currentTime->tm_sec,
+            currentTime->tm_mday, currentTime->tm_mon + 1,
+            currentTime->tm_year - 100);
+    
+    if(run == 0) {
+        mkdir(foldername, 0777);
+    }
+
+    if(run == -1) {
+        sprintf(filename, "%s/avg.csv", foldername);
+    }
+    else{
+        sprintf(filename, "%s/%d.csv", foldername, run);
+    }
+
+    DataSet dataSets[4];
+    dataSets[0] = createDataSet("Succeptible", data1);
+    dataSets[1] = createDataSet("Exposed", data2);
+    dataSets[2] = createDataSet("Infectious", data3);
+    dataSets[3] = createDataSet("Recovered", data4);
+
+    WriteFile(filename, dataSets, 4,
+              config.maxEvents);
+    
+    if(run == -1) {
+        sprintf(graphname, "%s/avg-graph", foldername);
+        CreatePlotFromCVS(filename, 4, graphname, config);
+    }
+}
+
+DataSet createDataSet(char *name, double *data)
+{
+    DataSet newSet;
+    newSet.data = data;
+    newSet.name = name;
+    return newSet;
 }

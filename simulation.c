@@ -165,6 +165,30 @@ void PlotData(agent * agents, double *succeptible_data,
     recovered_data[tick - 1] = recovered_p;
 }
 
+void calculateAveragePlot(int run, int events, double avg_succeptible_data[], double avg_infectious_data[], double avg_recovered_data[], double avg_exposed_data[], double succeptible_data[], double infectious_data[], double recovered_data[], double exposed_data[])
+{
+    int e;
+    if (run == 0) {
+        for (e = 0; e < events; e++) {
+            avg_succeptible_data[e] = succeptible_data[e];
+            avg_infectious_data[e] = infectious_data[e];
+            avg_recovered_data[e] = recovered_data[e];
+            avg_exposed_data[e] = exposed_data[e];
+        }
+    } else {
+        for (e = 0; e < events; e++) {
+            avg_succeptible_data[e] =
+                (avg_succeptible_data[e] + succeptible_data[e]) / 2;
+            avg_infectious_data[e] =
+                (avg_infectious_data[e] + infectious_data[e]) / 2;
+            avg_recovered_data[e] =
+                (avg_recovered_data[e] + recovered_data[e]) / 2;
+            avg_exposed_data[e] =
+                (avg_exposed_data[e] + exposed_data[e]) / 2;
+        }
+    }
+}
+
 void printStats(agent agents[], simConfig config, int tick)
 {
 
