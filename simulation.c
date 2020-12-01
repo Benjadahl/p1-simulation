@@ -36,7 +36,7 @@ typedef struct agent {
     int willTest;
     int testedTick;
     struct group **groups;
-    int amountAgentHasinfected;
+    int amountAgentHasInfected;
 } agent;
 
 typedef struct group {
