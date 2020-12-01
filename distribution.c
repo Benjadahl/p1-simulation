@@ -7,7 +7,7 @@ double randNumberZeroToOne();
 int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
-             double lambda);
+            double lambda);
 void gaussian(double expectedValue, double varians);
 
 double randNumberZeroToOne()
@@ -36,8 +36,7 @@ double uniform(double lowerBound, double upperBound)
     return result;
 }
 
-void expSim(double *arrayExpDistribution, int lenghtOfArray,
-             double lambda)
+void expSim(double *arrayExpDistribution, int lenghtOfArray, double lambda)
 {
     double numberOneToZero;
     for (int i = 0; i < arrayExpDistribution; i++) {
@@ -59,13 +58,10 @@ void gaussian(double expectedValue, double varians)
     U = uniform(0, 1);
     V = uniform(0, 1);
 
-    if(V <= 0.5) 
-    {
+    if (V <= 0.5) {
         return abs(X);
-    } 
-    else 
-    {
-        return -1 * abs(X) ;
+    } else {
+        return -1 * abs(X);
     }
 
     // result = (1 / sqrt(2*M_PI*pow(varians, 2))) * exp((-1 / (2 * pow(varians, 2)))*pow(rand() - expectedValue, 2));
