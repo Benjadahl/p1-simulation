@@ -36,7 +36,7 @@ typedef struct agent {
     int willTest;
     int testedTick;
     struct group **groups;
-    int amountAgentHasinfected;
+    int amountAgentHasInfected;
 } agent;
 
 typedef struct group {
@@ -259,7 +259,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
         (agents + i)->groups[3] = NULL;
-        (agents + i)->amountAgentHasinfected = 0;
+        (agents + i)->amountAgentHasInfected = 0;
 
     }
 
@@ -434,7 +434,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) +=
-            theAgent->amountAgentHasinfected;
+            theAgent->amountAgentHasInfected;
 
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
@@ -481,7 +481,7 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
                 if (theAgent->healthState == infectious
                     && trueChance(infectionRisk)) {
                     *peer = infectAgent(config, tick, *peer);
-                    (theAgent->amountAgentHasinfected)++;
+                    (theAgent->amountAgentHasInfected)++;
 
                 }
 
