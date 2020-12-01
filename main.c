@@ -1,18 +1,17 @@
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
 #include "simulation.h"
 #include "export.h"
-#define maxOptions 7
-void createPlotFromCVS(char *file_name, simConfig config);
+
+void CreatePlotFromCVS(char *file_name, simConfig config);
 
 int main(int argc, char *argv[])
 {
     int i;
-    int j = 0;
-    int k = 0;
-    int seed;
-    int par[maxOptions];
-    char options[maxOptions];
+    int value;
+    int graph = 0;
+
     simConfig config;
 
     config.contactsRisk = 1;
@@ -22,7 +21,14 @@ int main(int argc, char *argv[])
     config.maxEvents = 100;
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
+    config.willIsolatePercent = 50;
+    config.partyChance = 5;
+    config.maxPartySize = 50;
+    config.minPartySize = 5;
+    config.partyRisk = 75;
+    config.partyMeetChance = 10;
     config.willIsolatePercent = 98;
+    config.willTestPercent = 75;
     config.seed = 0;
     config.print = 1;           /* Printer ikke hvis den er lig 0 */
     config.groupSize[0] = 15;
@@ -31,48 +37,78 @@ int main(int argc, char *argv[])
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
+    config.chanceToHaveApp = 35;
+    config.contactTickLength = 7;
+    config.isolationTime = 15;
+    config.testResponseTime = 2;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
+
         if (argv[i][0] == '-') {
-            options[j] = argv[i][1];
-            j++;
-        } else if (isdigit(argv[i][0])) {
-            par[k] = atoi(argv[i]);
-            k++;
-        }
-    }
 
-    /* Switch over command line options */
-    for (i = 0; i < maxOptions; i++) {
-        switch (options[i]) {
-        case 'c':
-            config.contactsRisk = par[i];
-            break;
+            if (argv[i][1] != 'g' && !isdigit(argv[i + 1][0])) {
+                printf
+                    ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
+                     argv[i][1]);
+                return EXIT_FAILURE;
+            } else {
 
-        case 'k':
-            config.amountOfContacts = par[i];
-            break;
+                if (argv[i][1] != 'g' && isdigit(argv[i + 1][0])
+                    && i + 1 < argc) {
+                    value = atoi(argv[i + 1]);
+                }
 
-        case 'a':
-            config.infectionTime = par[i];
-            break;
+                switch (argv[i][1]) {
+                case 'z':      /*how many angents have sympums when infected */
+                    config.symptomaticPercent = value;
+                    break;
 
-        case 'p':
-            config.amountOfAgents = par[i];
-            break;
+                case 'w':      /*chanc that angent will isolate */
+                    config.willIsolatePercent = value;
+                    break;
 
-        case 'i':
-            config.amountOfStartInfected = par[i];
-            break;
+                case 'c':      /*risk of infetion */
+                    config.contactsRisk = value;
+                    break;
 
-        case 't':
-            config.maxEvents = par[i];
-            break;
+                case 'k':      /*amount of contacts pr agent */
+                    config.amountOfContacts = value;
+                    break;
 
-        case 's':
-            config.seed = par[i];
-            break;
+                case 't':      /*size of primary group */
+                    config.groupSize[0] = value;
+                    break;
+
+                case 'y':      /*size of secound group */
+                    config.groupSize[1] = value;
+                    break;
+
+                case 'a':      /*amount of time incted */
+                    config.infectionTime = value;
+                    break;
+
+                case 'p':      /*total amount of agents */
+                    config.amountOfAgents = value;
+                    break;
+
+                case 'i':      /*amount of infected at start of simulation */
+                    config.amountOfStartInfected = value;
+                    break;
+
+                case 'e':      /*lenght of simulation */
+                    config.maxEvents = value;
+                    break;
+
+                case 's':      /*seed */
+                    config.seed = value;
+                    break;
+
+                case 'g':
+                    graph = 1;
+                    break;
+                }
+            }
         }
 
     }
@@ -83,11 +119,14 @@ int main(int argc, char *argv[])
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
 
-    runSimulation(config, succeptible_data, infectious_data,
-                  recovered_data);
-    exportData(succeptible_data, infectious_data, recovered_data,
-               config.maxEvents);
-    createPlotFromCVS("out.csv", config);
-
-    return 0;
+    run_simulation(config, succeptible_data, infectious_data,
+                   recovered_data);
+    if (graph != 0) {
+        ExportData(succeptible_data, infectious_data, recovered_data,
+                   config.maxEvents);
+        printf("Creating graph...\n");
+        CreatePlotFromCVS("out.csv", config);
+        printf("Graph.png created\n");
+    }
+    return EXIT_SUCCESS;
 }
