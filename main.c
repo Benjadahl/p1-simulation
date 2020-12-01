@@ -116,23 +116,31 @@ int main(int argc, char *argv[])
         }
 
     }
-    double succeptible_data[config.maxEvents], infectious_data[config.maxEvents], recovered_data[config.maxEvents], exposed_data[config.maxEvents];
+    double succeptible_data[config.maxEvents],
+        infectious_data[config.maxEvents],
+        recovered_data[config.maxEvents], exposed_data[config.maxEvents];
 
-    double avg_succeptible_data[config.maxEvents], avg_infectious_data[config.maxEvents], avg_recovered_data[config.maxEvents], avg_exposed_data[config.maxEvents];
+    double avg_succeptible_data[config.maxEvents],
+        avg_infectious_data[config.maxEvents],
+        avg_recovered_data[config.maxEvents],
+        avg_exposed_data[config.maxEvents];
 
     runTime = time(NULL);
-    
+
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, succeptible_data, infectious_data,
                        recovered_data, exposed_data);
         ExportData(i, runTime, succeptible_data, infectious_data,
                    recovered_data, exposed_data, config);
-        calculateAveragePlot(i, config.maxEvents, avg_succeptible_data, avg_infectious_data, avg_recovered_data, avg_exposed_data, succeptible_data, infectious_data, recovered_data, exposed_data);
+        calculateAveragePlot(i, config.maxEvents, avg_succeptible_data,
+                             avg_infectious_data, avg_recovered_data,
+                             avg_exposed_data, succeptible_data,
+                             infectious_data, recovered_data,
+                             exposed_data);
     }
     if (graph != 0) {
         ExportData(-1, runTime, avg_succeptible_data, avg_infectious_data,
-                   avg_recovered_data, avg_exposed_data,
-                   config);   
+                   avg_recovered_data, avg_exposed_data, config);
     }
     return EXIT_SUCCESS;
 }

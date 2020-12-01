@@ -16,10 +16,9 @@ void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
     DataSetRead data[dataCount];
     DataSet newData[dataCount];
 
-    for (i = 0; i < dataCount; i++)
-    {
-        data[i].data = malloc(sizeof(float)*config.maxEvents);
-        newData[i].data = malloc(sizeof(double)*config.maxEvents);
+    for (i = 0; i < dataCount; i++) {
+        data[i].data = malloc(sizeof(float) * config.maxEvents);
+        newData[i].data = malloc(sizeof(double) * config.maxEvents);
     }
 
     ReadFile(file_name, data, dataCount);
@@ -30,8 +29,8 @@ void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
         }
     }
 
-    CreatePlot(output_name, newData[0].data, newData[1].data, newData[2].data, newData[3].data,
-               config.maxEvents);
+    CreatePlot(output_name, newData[0].data, newData[1].data,
+               newData[2].data, newData[3].data, config.maxEvents);
 }
 
 void CreatePlot(char *file_name, double succeptible_data[],

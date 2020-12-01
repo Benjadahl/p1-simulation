@@ -8,13 +8,14 @@
 #include"export.h"
 #include"simulation.h"
 
-void SplitLine(int dataCount, DataSetRead *data, int dataNum, char *t);
+void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t);
 
 void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
                        simConfig config);
 DataSet createDataSet(char *name, double *data);
 
-void WriteFile(char *fileName, DataSet *dataSets, int dataCount, int events)
+void WriteFile(char *fileName, DataSet * dataSets, int dataCount,
+               int events)
 {
     int i, j;
     char data_print[50];
@@ -28,7 +29,7 @@ void WriteFile(char *fileName, DataSet *dataSets, int dataCount, int events)
     for (i = 0; i < events; i++) {
         for (j = 0; j < dataCount; j++) {
             fprintf(file, "%f;", dataSets[j].data[i]);
-        }    
+        }
         fprintf(file, "\n");
     }
 
@@ -36,7 +37,7 @@ void WriteFile(char *fileName, DataSet *dataSets, int dataCount, int events)
     return;
 }
 
-void ReadFile(char *file_name, DataSetRead *data, int dataCount)
+void ReadFile(char *file_name, DataSetRead * data, int dataCount)
 {
     FILE *file = fopen(file_name, "r");
     char line[200];
@@ -52,8 +53,7 @@ void ReadFile(char *file_name, DataSetRead *data, int dataCount)
         while (token != NULL) {
             char *token_token = strtok(token, "\n");
             if (isdigit(token[0])) {
-                SplitLine(dataCount, data, i,
-                          token_token);
+                SplitLine(dataCount, data, i, token_token);
                 i++;
             }
             token = strtok(NULL, ",");
@@ -62,12 +62,12 @@ void ReadFile(char *file_name, DataSetRead *data, int dataCount)
     fclose(file);
 }
 
-void SplitLine(int dataCount, DataSetRead *data, int dataNum, char *t)
+void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
 {
     int data_set = 0;
     char *token = strtok(t, ";");
     while (token != NULL) {
-        if(data_set < dataCount){
+        if (data_set < dataCount) {
             data[data_set].data[dataNum] = atof(token);
         }
         data_set++;
@@ -86,15 +86,14 @@ void ExportData(int run, time_t runTime, double *data1, double *data2,
             currentTime->tm_hour, currentTime->tm_min, currentTime->tm_sec,
             currentTime->tm_mday, currentTime->tm_mon + 1,
             currentTime->tm_year - 100);
-    
-    if(run == 0) {
+
+    if (run == 0) {
         mkdir(foldername, 0777);
     }
 
-    if(run == -1) {
+    if (run == -1) {
         sprintf(filename, "%s/avg.csv", foldername);
-    }
-    else{
+    } else {
         sprintf(filename, "%s/%d.csv", foldername, run);
     }
 
@@ -104,10 +103,9 @@ void ExportData(int run, time_t runTime, double *data1, double *data2,
     dataSets[2] = createDataSet("Infectious", data3);
     dataSets[3] = createDataSet("Recovered", data4);
 
-    WriteFile(filename, dataSets, 4,
-              config.maxEvents);
-    
-    if(run == -1) {
+    WriteFile(filename, dataSets, 4, config.maxEvents);
+
+    if (run == -1) {
         sprintf(graphname, "%s/avg-graph", foldername);
         CreatePlotFromCVS(filename, 4, graphname, config);
     }

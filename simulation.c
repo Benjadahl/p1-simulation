@@ -165,7 +165,14 @@ void PlotData(agent * agents, double *succeptible_data,
     recovered_data[tick - 1] = recovered_p;
 }
 
-void calculateAveragePlot(int run, int events, double avg_succeptible_data[], double avg_infectious_data[], double avg_recovered_data[], double avg_exposed_data[], double succeptible_data[], double infectious_data[], double recovered_data[], double exposed_data[])
+void calculateAveragePlot(int run, int events,
+                          double avg_succeptible_data[],
+                          double avg_infectious_data[],
+                          double avg_recovered_data[],
+                          double avg_exposed_data[],
+                          double succeptible_data[],
+                          double infectious_data[],
+                          double recovered_data[], double exposed_data[])
 {
     int e;
     if (run == 0) {
