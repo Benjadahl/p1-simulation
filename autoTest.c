@@ -1,0 +1,77 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <math.h>
+#include "simulation.h"
+
+int printCheck(int i, simConfig config, double input,
+               double expectedValue);
+
+int main()
+{
+    int seed;
+    int i;
+    int failures = 0;
+    double expectedValue[3] = { 84.20, 77.11, 79.55 };
+    double results[3] = { 0, 0, 0 };
+
+    simConfig config;
+
+    config.contactsRisk = 1;
+    config.amountOfAgents = 100000;
+    config.infectionTime = 4;
+    config.amountOfStartInfected = 20;
+    config.maxEvents = 100;
+    config.symptomaticPercent = 25;
+    config.maxIncubationTime = 14;
+    config.willIsolatePercent = 50;
+    config.partyChance = 5;
+    config.maxPartySize = 50;
+    config.minPartySize = 5;
+    config.partyRisk = 75;
+    config.partyMeetChance = 10;
+    config.willIsolatePercent = 98;
+    config.willTestPercent = 75;
+    config.seed = 1;
+    config.print = 0;
+    config.groupSize[0] = 15;
+    config.groupSize[1] = 10;
+    config.primaryGroupRisk = 5;
+    config.secondaryGroupRisk = 5;
+    config.amountOfContactsPerAgent = 5;
+    config.groupPercentageToInfect = 74;
+    config.chanceToHaveApp = 35;
+    config.contactTickLength = 7;
+    config.isolationTime = 15;
+    config.testResponseTime = 2;
+
+    double succeptible_data_test[config.maxEvents];
+    double infectious_data_test[config.maxEvents];
+    double recovered_data_test[config.maxEvents];
+
+    for (i = 0; i < 3; i++) {
+        config.amountOfAgents = 100 * pow(10, i + 1);
+        run_simulation(config, succeptible_data_test, infectious_data_test,
+                       recovered_data_test);
+        results[i] =
+            floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
+        failures += printCheck(i, config, results[i], expectedValue[i]);
+    }
+    printf(" %d", failures);
+    return failures;
+}
+
+int printCheck(int i, simConfig config, double input, double expectedValue)
+{
+
+    if (input == expectedValue) {
+        printf("The result haven't changed in test %d\n", i);
+        return 0;
+    } else {
+        /* This prints the value that needs to be used as the check */
+        printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
+               input);
+        printf(">> Program output an unexpected value in test %d <<\n", i);
+        return 1;
+    }
+}
