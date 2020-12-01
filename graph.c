@@ -49,7 +49,7 @@ void CreatePlot(char *file_name, double succeptible_data[], double exposed_data[
 
     canvasReference =
         PlotLineGraph(timeSeries, time_length, exposed_data, time_length,
-                      L"Isolated (%)", L"Number of exposed people (%)",
+                      L"Exposed (%)", L"Number of exposed people (%)",
                       L"Time (event)", time_length, 100);
     exposed_img = canvasReference.image;
 
