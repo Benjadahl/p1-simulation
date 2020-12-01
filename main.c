@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         }
 
     }
-  double succeptible_data[config.maxEvents];
+    double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
     double isolated_data[config.maxEvents];
