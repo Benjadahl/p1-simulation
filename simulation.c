@@ -107,8 +107,7 @@ void run_simulation(simConfig config, double *succeptible_data,
     initAgents(agents, groupPtrs, config, tick);
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-        if(config.print != 0)
-        {
+        if (config.print != 0) {
             printStats(agents, config, tick);
         }
         runEvent(agents, config, tick);
