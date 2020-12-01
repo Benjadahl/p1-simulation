@@ -71,11 +71,11 @@ void infectGroup(group * group, int infectionRisk,
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, double *succeptible_data,
+void PlotData(agent * agents, double *succeptible_data, double *exposed_data,
               double *infectious_data, double *recovered_data, int event,
               simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data,
+void run_simulation(simConfig config, double *succeptible_data, double *exposed_data,
                     double *infectious_data, double *recovered_data)
 {
     int i;
@@ -112,7 +112,7 @@ void run_simulation(simConfig config, double *succeptible_data,
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
         PlotData(agents,
-                 succeptible_data, infectious_data, recovered_data, tick,
+                 succeptible_data, exposed_data, infectious_data, recovered_data, tick,
                  config);
     }
 
@@ -127,18 +127,20 @@ void run_simulation(simConfig config, double *succeptible_data,
     free(agents);
 }
 
-void PlotData(agent * agents, double *succeptible_data,
+void PlotData(agent * agents, double *succeptible_data, double *exposed_data,
               double *infectious_data, double *recovered_data, int tick,
               simConfig config)
 {
-    double succeptible_p = 0, infectious_p = 0, recovered_p = 0;
-    double total_succeptible = 0, total_infectious = 0, total_recovered =
-        0;
+    double succeptible_p = 0, exposed_p = 0, infectious_p = 0, recovered_p = 0;
+    double total_succeptible = 0, total_exposed = 0, total_infectious = 0, total_recovered = 0;
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
             total_succeptible++;
+            break;
+        case exposed:
+            total_exposed++;
             break;
         case infectious:
             total_infectious++;
@@ -150,10 +152,12 @@ void PlotData(agent * agents, double *succeptible_data,
     }
 
     succeptible_p = total_succeptible * 100 / config.amountOfAgents;
+    exposed_p = total_exposed * 100 / config.amountOfAgents;
     infectious_p = total_infectious * 100 / config.amountOfAgents;
     recovered_p = total_recovered * 100 / config.amountOfAgents;
 
     succeptible_data[tick - 1] = succeptible_p;
+    exposed_data[tick - 1] = exposed_p;
     infectious_data[tick - 1] = infectious_p;
     recovered_data[tick - 1] = recovered_p;
 }

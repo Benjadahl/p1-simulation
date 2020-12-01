@@ -1,6 +1,7 @@
 #define amountOfGroups 4
 
 typedef struct simConfig {
+    int simulationRuns;
     int contactsRisk;
     int amountOfAgents;
     int infectionTime;
@@ -29,4 +30,4 @@ typedef struct simConfig {
     int groupAmounts[amountOfGroups];
     int groupMaxAmountToMeet[amountOfGroups];
 } simConfig;
-void run_simulation(simConfig config,double *succeptible_data, double *infectious_data, double *recovered_data);
+void run_simulation(simConfig config,double *succeptible_data, double *exposed_data, double *infectious_data, double *recovered_data);
