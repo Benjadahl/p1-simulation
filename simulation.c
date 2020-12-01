@@ -56,7 +56,7 @@ App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, simConfig config);
-agent infectAgent(simConfig config, int tick, agent a);
+void infectAgent(simConfig config, int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
@@ -352,35 +352,31 @@ int getNextID(int currentID, simConfig config)
     return (currentID + 1) % config.amountOfAgents;
 }
 
-agent infectAgent(simConfig config, int tick, agent a)
+void infectAgent(simConfig config, int tick, agent * theAgent)
 {
-    if (a.healthState == succeptible) {
-        a.healthState = infectious;
-        a.infectedTime = tick;
+    if (theAgent->healthState == succeptible) {
+        theAgent->healthState = infectious;
+        theAgent->infectedTime = tick;
 
-        if (a.willIsolate && a.symptomatic) {
-            a.isolatedTick = tick;
+        if (theAgent->willIsolate && theAgent->symptomatic) {
+            theAgent->isolatedTick = tick;
         }
 
-        if (a.app != NULL) {
-            informContacts(*(a.app), config, tick);
+        if (theAgent->app != NULL) {
+            informContacts(*(theAgent->app), config, tick);
         }
-
     }
-    return a;
 }
 
 void infectRandomAgent(agent agents[], simConfig config, int tick)
 {
     int randomID;
-    agent theAgent;
 
     do {
         randomID = rndInt(config.amountOfAgents);
-        theAgent = agents[randomID];
-    } while (theAgent.healthState == infectious);
+    } while (agents[randomID].healthState == infectious);
 
-    agents[randomID] = infectAgent(config, tick, theAgent);
+    infectAgent(config, tick, &agents[randomID]);
 }
 
 int isDay(int tick)
@@ -478,9 +474,8 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
             if (trueChance(percentageToMeet)) {
                 if (theAgent->healthState == infectious
                     && trueChance(infectionRisk)) {
-                    *peer = infectAgent(config, tick, *peer);
+                    infectAgent(config, tick, peer);
                     (theAgent->amountAgentHasInfected)++;
-
                 }
 
                 if (theAgent->app != NULL && peer->app != NULL) {
