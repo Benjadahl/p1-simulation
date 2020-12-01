@@ -5,7 +5,7 @@
 #include "simulation.h"
 
 int printCheck(int i, simConfig config, double input,
-                double expectedValue);
+               double expectedValue);
 
 int main()
 {
@@ -50,8 +50,7 @@ int main()
     return failures;
 }
 
-int printCheck(int i, simConfig config, double input,
-                double expectedValue)
+int printCheck(int i, simConfig config, double input, double expectedValue)
 {
 
     if (input == expectedValue) {
