@@ -37,8 +37,7 @@ double uniform(double lowerBound, double upperBound)
     return result;
 }
 
-void expSim(double *arrayExpDistribution, int lenghtOfArray,
-             double lambda)
+void expSim(double *arrayExpDistribution, int lenghtOfArray, double lambda)
 {
     double numberOneToZero;
     for (int i = 0; i < lenghtOfArray; i++) {
