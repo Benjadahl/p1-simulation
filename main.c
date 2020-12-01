@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
     config.minPartySize = 5;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
-    config.willIsolatePercent = 98;
     config.willTestPercent = 75;
     config.seed = 0;
+    config.print = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;

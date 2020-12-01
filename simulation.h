@@ -17,6 +17,7 @@ typedef struct simConfig {
     int partyMeetChance;
     int willTestPercent;
     int seed;
+    int print;
     int primaryGroupRisk;
     int secondaryGroupRisk;
     int amountOfContactsPerAgent;
