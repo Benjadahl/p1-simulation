@@ -432,8 +432,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         && tick > theAgent->infectedTime + config.infectionTime) {
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
-        (*infectedDuringInfection) +=
-            theAgent->amountAgentHasInfected;
+        (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
 
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
