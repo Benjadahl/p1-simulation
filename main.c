@@ -179,8 +179,7 @@ int main(int argc, char *argv[])
     if (graph != 0) {
         sprintf(filename, "%s/avg.csv", foldername);
         ExportData(filename, avg_succeptible_data, avg_infectious_data,
-                   avg_recovered_data, avg_exposed_data,
-                   config.maxEvents);
+                   avg_recovered_data, avg_exposed_data, config.maxEvents);
         sprintf(graphname, "%s/avg-graph", foldername);
         CreatePlotFromCVS(filename, graphname, config);
     }
