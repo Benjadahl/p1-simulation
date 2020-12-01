@@ -352,20 +352,19 @@ int getNextID(int currentID, simConfig config)
     return (currentID + 1) % config.amountOfAgents;
 }
 
-void infectAgent(simConfig config, int tick, agent *a)
+void infectAgent(simConfig config, int tick, agent *theAgent)
 {
-    if (a->healthState == succeptible) {
-        a->healthState = infectious;
-        a->infectedTime = tick;
+    if (theAgent->healthState == succeptible) {
+        theAgent->healthState = infectious;
+        theAgent->infectedTime = tick;
 
-        if (a->willIsolate && a->symptomatic) {
-            a->isolatedTick = tick;
+        if (theAgent->willIsolate && theAgent->symptomatic) {
+            theAgent->isolatedTick = tick;
         }
 
-        if (a->app != NULL) {
-            informContacts(*(a->app), config, tick);
+        if (theAgent->app != NULL) {
+            informContacts(*(theAgent->app), config, tick);
         }
-
     }
 }
 
