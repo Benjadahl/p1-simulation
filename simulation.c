@@ -54,7 +54,7 @@ App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, simConfig config);
-void infectAgent(simConfig config, int tick, agent *a);
+void infectAgent(simConfig config, int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 int isDay(int tick);
 agent computeAgent(agent agents[], simConfig config, int tick,
