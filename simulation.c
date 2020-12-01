@@ -423,8 +423,7 @@ void handleParties(agent agents[], simConfig config, int tick)
 }
 
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
-                  int *recoveredInTick,
-                  int *infectedDuringInfection)
+                  int *recoveredInTick, int *infectedDuringInfection)
 {
     agent *theAgent = &agents[agentID];
 
@@ -550,8 +549,7 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0,
 
         for (a = 0; a < config.amountOfAgents; a++) {
             computeAgent(agents, config, tick, a,
-                         &recoveredInTick,
-                         &infectedDuringInfection);
+                         &recoveredInTick, &infectedDuringInfection);
         }
     }
 
