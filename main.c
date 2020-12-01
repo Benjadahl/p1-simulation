@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 0;
-    config.print = 0;
+    config.print = 1;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
