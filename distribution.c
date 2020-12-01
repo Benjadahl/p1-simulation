@@ -8,7 +8,8 @@ int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
              double lambda);
-void gaussian(double expectedValue, double varians);
+double gaussian();
+double gaussianSpecific(double varians, double expectedValue);
 
 double randNumberZeroToOne()
 {
@@ -40,7 +41,7 @@ void expSim(double *arrayExpDistribution, int lenghtOfArray,
              double lambda)
 {
     double numberOneToZero;
-    for (int i = 0; i < arrayExpDistribution; i++) {
+    for (int i = 0; i < lenghtOfArray; i++) {
         do {
             numberOneToZero = randNumberZeroToOne();
         } while (numberOneToZero == 0);
@@ -50,65 +51,81 @@ void expSim(double *arrayExpDistribution, int lenghtOfArray,
     }
 }
 
-void gaussian(double expectedValue, double varians)
+double gaussian()
 {
-    double U, V, X, Y[10];
-
-    expSim(Y, 10, 1 / expectedValue);
-
-    U = uniform(0, 1);
+    double U, V, *X = NULL, Y[1];
+    
     V = uniform(0, 1);
+
+    while(X == NULL)
+    {
+        expSim(Y, 1, 1 / 1);
+        U = uniform(0, 1);
+
+        if(U <= exp(-1 * (pow(Y[0] - 1, 2) / 2)))
+        {
+            if (Y[0] <= 0)
+            {
+                X = (Y + 0); 
+            }
+            else
+            {
+                X = (Y + 0);
+                *X *= -1;
+            }
+        }
+    }
 
     if(V <= 0.5) 
     {
-        return abs(X);
+        if(*X >= 0)
+        {
+            printf(" %f\n", *X);
+            return *X;
+        }
+        else
+        {
+            printf(" %f\n", -1* (*X));
+            return -1 * (*X);
+        }
     } 
     else 
     {
-        return -1 * abs(X) ;
+        if(*X >= 0)
+        {
+            printf(" %f\n", *X);
+            return -1 * (*X);
+        }
+        else
+        {
+            printf(" %f\n", -1* (*X));
+            return *X;
+        }
     }
+}
 
-    // result = (1 / sqrt(2*M_PI*pow(varians, 2))) * exp((-1 / (2 * pow(varians, 2)))*pow(rand() - expectedValue, 2));
+double gaussianSpecific(double varians, double expectedValue)
+{
+    double Y;
 
-    return 0;
+    Y = gaussian();
+
+    return Y * pow(varians, 2) + expectedValue;
 }
 
 
 void main()
 {
     int i;
-    double varians = 0.2, expectedValue = 4.0, n;
+    double results[100];
+    double varians = 1, expectedValue = 4, n;
 
     // Set seed
     srand(time(0));
 
-    for (i = 0; i <= 100; i++) {
-        gaussian(varians, expectedValue);
+    for (i = 0; i < 100; i++) {
+        results[i] = gaussianSpecific(varians, expectedValue);
+        // printf(" %f\n", results[i]);
     }
 
-
-    // // initialise vector
-    // int N = 1000;
-    // double X[N];
-
-    // // Call random number generator
-
-    // //unif(X, N,0,10);
-    // exp_sim(X, N, 2);
-
-    // // print 
-    // for (int i = 0; i < N; i++) {
-    //     printf("%.6f, ", X[i]);
-    // }
-    // printf("\n");
-
-    // // Write to CSV file
-    // FILE *fp;
-
-    // fp = fopen("rnd.txt", "w+");
-    // for (int i = 0; i < N - 1; i++) {
-    //     fprintf(fp, "%.6f,", X[i]);
-    // }
-    // fprintf(fp, "%.6f", X[N - 1]);
-    // fclose(fp);
 }
