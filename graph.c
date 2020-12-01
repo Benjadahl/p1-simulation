@@ -29,16 +29,19 @@ void CreatePlotFromCVS(char *file_name, char *output_name,
                config.maxEvents);
 }
 
-void CreatePlot(char *file_name, double succeptible_data[], double exposed_data[],
-                double infectious_data[], double recovered_data[], int time_length)
+void CreatePlot(char *file_name, double succeptible_data[],
+                double exposed_data[], double infectious_data[],
+                double recovered_data[], int time_length)
 {
     double timeSeries[time_length];
-    char recoveredName[50], exposedName[50], infectiousName[50], succeptibleName[50];
+    char recoveredName[50], exposedName[50], infectiousName[50],
+        succeptibleName[50];
     for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
     RGBABitmapImageReference canvasReference;
-    RGBABitmapImage *succeptible_img, *exposed_img, *infectious_img, *recovered_img;
+    RGBABitmapImage *succeptible_img, *exposed_img, *infectious_img,
+        *recovered_img;
 
     canvasReference =
         PlotLineGraph(timeSeries, time_length, succeptible_data,
@@ -68,7 +71,7 @@ void CreatePlot(char *file_name, double succeptible_data[], double exposed_data[
 
 
     sprintf(succeptibleName, "%s-succeptible.png", file_name);
-        sprintf(exposedName, "%s-exposed.png", file_name);
+    sprintf(exposedName, "%s-exposed.png", file_name);
     sprintf(recoveredName, "%s-recovered.png", file_name);
     sprintf(infectiousName, "%s-infectious.png", file_name);
 

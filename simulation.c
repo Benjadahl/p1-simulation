@@ -71,12 +71,13 @@ void infectGroup(group * group, int infectionRisk,
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, double *succeptible_data, double *exposed_data,
-              double *infectious_data, double *recovered_data, int event,
-              simConfig config);
+void PlotData(agent * agents, double *succeptible_data,
+              double *exposed_data, double *infectious_data,
+              double *recovered_data, int event, simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data, double *exposed_data,
-                    double *infectious_data, double *recovered_data)
+void run_simulation(simConfig config, double *succeptible_data,
+                    double *exposed_data, double *infectious_data,
+                    double *recovered_data)
 {
     int i;
     int tick = 1;
@@ -112,8 +113,8 @@ void run_simulation(simConfig config, double *succeptible_data, double *exposed_
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
         PlotData(agents,
-                 succeptible_data, exposed_data, infectious_data, recovered_data, tick,
-                 config);
+                 succeptible_data, exposed_data, infectious_data,
+                 recovered_data, tick, config);
     }
 
     /*Freeing groups */
@@ -127,12 +128,14 @@ void run_simulation(simConfig config, double *succeptible_data, double *exposed_
     free(agents);
 }
 
-void PlotData(agent * agents, double *succeptible_data, double *exposed_data,
-              double *infectious_data, double *recovered_data, int tick,
-              simConfig config)
+void PlotData(agent * agents, double *succeptible_data,
+              double *exposed_data, double *infectious_data,
+              double *recovered_data, int tick, simConfig config)
 {
-    double succeptible_p = 0, exposed_p = 0, infectious_p = 0, recovered_p = 0;
-    double total_succeptible = 0, total_exposed = 0, total_infectious = 0, total_recovered = 0;
+    double succeptible_p = 0, exposed_p = 0, infectious_p =
+        0, recovered_p = 0;
+    double total_succeptible = 0, total_exposed = 0, total_infectious =
+        0, total_recovered = 0;
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
