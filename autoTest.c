@@ -12,8 +12,8 @@ int main()
     int seed;
     int i;
     int failures = 0;
-    double expectedValue[3] = { 84.20, 77.11, 79.55 };
     double results[3] = { 0, 0, 0 };
+    double expectedValue[3] = { 90.80, 88.19, 89.05 };
 
     simConfig config;
 
@@ -30,7 +30,6 @@ int main()
     config.minPartySize = 5;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
-    config.willIsolatePercent = 98;
     config.willTestPercent = 75;
     config.seed = 1;
     config.print = 0;
@@ -44,6 +43,10 @@ int main()
     config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
+    config.groupMaxAmountToMeet[0] = 10;
+    config.groupMaxAmountToMeet[1] = 5;
+    config.groupMaxAmountToMeet[2] = 3;
+    config.groupMaxAmountToMeet[3] = 20;
 
     double succeptible_data_test[config.maxEvents];
     double exposed_data_test[config.maxEvents];
