@@ -352,7 +352,7 @@ int getNextID(int currentID, simConfig config)
     return (currentID + 1) % config.amountOfAgents;
 }
 
-void infectAgent(simConfig config, int tick, agent *theAgent)
+void infectAgent(simConfig config, int tick, agent * theAgent)
 {
     if (theAgent->healthState == succeptible) {
         theAgent->healthState = infectious;
