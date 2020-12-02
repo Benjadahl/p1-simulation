@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "simulation.h"
+#include "distribution.h"
 
 typedef enum HealthState { succeptible, infectious,
     recovered

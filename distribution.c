@@ -7,9 +7,11 @@ double randNumberZeroToOne();
 int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
-             double lambda);
+            double lambda);
 double gaussian();
 double gaussianSpecific(double varians, double expectedValue);
+int gaussianTruncatedDiscrete(int lowerbound, int upperbound,
+                              double varians, double expectedValue);
 
 double randNumberZeroToOne()
 {
@@ -53,53 +55,27 @@ void expSim(double *arrayExpDistribution, int lenghtOfArray, double lambda)
 double gaussian()
 {
     double U, V, *X = NULL, Y[1];
-    
+
     V = uniform(0, 1);
 
-    while(X == NULL)
-    {
+    while (X == NULL) {
         expSim(Y, 1, 1 / 1);
         U = uniform(0, 1);
 
-        if(U <= exp(-1 * (pow(Y[0] - 1, 2) / 2)))
-        {
-            if (Y[0] <= 0)
-            {
-                X = (Y + 0); 
-            }
-            else
-            {
+        if (U <= exp(-1 * (pow(Y[0] - 1, 2) / 2))) {
+            if (Y[0] <= 0) {
+                X = (Y + 0);
+            } else {
                 X = (Y + 0);
                 *X *= -1;
             }
         }
     }
 
-    if(V <= 0.5) 
-    {
-        if(*X >= 0)
-        {
-            printf(" %f\n", *X);
-            return *X;
-        }
-        else
-        {
-            printf(" %f\n", -1* (*X));
-            return -1 * (*X);
-        }
-    } 
-    else 
-    {
-        if(*X >= 0)
-        {
-            printf(" %f\n", *X);
-            return -1 * (*X);
-        }
-        else
-        {
-            printf(" %f\n", -1* (*X));
-            return *X;
-        }
+    if (V <= 0.5) {
+        return *X;
+    } else {
+        return -1 * (*X);
     }
 }
 
@@ -109,22 +85,18 @@ double gaussianSpecific(double varians, double expectedValue)
 
     Y = gaussian();
 
-    return Y * pow(varians, 2) + expectedValue;
+    return Y * sqrt(varians) + expectedValue;
 }
 
-
-void main()
+int gaussianTruncatedDiscrete(int lowerbound, int upperbound,
+                              double varians, double expectedValue)
 {
-    int i;
-    double results[100];
-    double varians = 1, expectedValue = 4, n;
+    double result;
 
-    // Set seed
-    srand(time(0));
+    do {
+        result = gaussianSpecific(varians, expectedValue);
+        result = round(result);
+    } while (result < lowerbound || result > upperbound);
 
-    for (i = 0; i < 100; i++) {
-        results[i] = gaussianSpecific(varians, expectedValue);
-        // printf(" %f\n", results[i]);
-    }
-
+    return result;
 }
