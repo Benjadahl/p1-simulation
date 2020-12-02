@@ -51,7 +51,8 @@ void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick, double *R0,
                 double *avgR0);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *exposedOut, int *infectiousOut, int *removedOut, int *isolatedOut);
+              int *exposedOut, int *infectiousOut, int *removedOut,
+              int *isolatedOut);
 void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
                 int tick);
 App *initApp();
@@ -196,7 +197,7 @@ void printStats(agent agents[], simConfig config, int tick, double *R0,
     percentInfectious = totalInfectious * 100 / config.amountOfAgents;
     percentRemoved = totalRemoved * 100 / config.amountOfAgents;
     percentIsolated = totalIsolated * 100 / config.amountOfAgents;
-    
+
 
     printf("\nTick: %d\n", tick);
     printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
@@ -214,7 +215,8 @@ void printStats(agent agents[], simConfig config, int tick, double *R0,
 }
 
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *exposedOut, int *infectiousOut, int *removedOut, int *isolatedOut)
+              int *exposedOut, int *infectiousOut, int *removedOut,
+              int *isolatedOut)
 {
     int a = 0;
     int totalSucceptible = 0;
@@ -239,7 +241,8 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
             break;
         }
 
-        if (agents[a].isolatedTick != -1 && agents[a].healthState != recovered) {
+        if (agents[a].isolatedTick != -1
+            && agents[a].healthState != recovered) {
             totalIsolated++;
         }
     }
@@ -601,7 +604,7 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0,
 
     for (a = 0; a < config.amountOfAgents; a++) {
         computeAgent(agents, config, tick, a,
-                        &recoveredInTick, &infectedDuringInfection);
+                     &recoveredInTick, &infectedDuringInfection);
     }
 
     if (infectedDuringInfection == 0) {
