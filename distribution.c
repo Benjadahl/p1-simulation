@@ -44,11 +44,10 @@ int uniformTruncated(int lowerbound, int upperbound)
 {
     double result;
 
-    do
-    {
+    do {
         result =
-        randNumberZeroToOne() * (upperbound - lowerbound) + lowerbound;
-    }while(result < lowerbound || result > upperbound);
+            randNumberZeroToOne() * (upperbound - lowerbound) + lowerbound;
+    } while (result < lowerbound || result > upperbound);
 
     return result;
 }
