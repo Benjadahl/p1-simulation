@@ -52,8 +52,7 @@ void printStats(agent agents[], simConfig config, int tick, double *R0,
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *exposedOut, int *infectiousOut, int *removedOut);
 int getExposedAndInfectious(agent agents[], simConfig config);
-void initAgents(agent * agents, simConfig config,
-                int tick, group **head);
+void initAgents(agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
@@ -281,23 +280,35 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
 
     /*Initializing groups */
     for (i = 0; i <= 1; i++) {
-    	agentsLeft = config.amountOfAgents;
-    	while (agentsLeft){
-    		run = i == 0 ? agentsLeft > config.groupSizeMaxMin[1] : agentsLeft > config.groupSizeMaxMin[3];
-    		if (run){
-    			if (i == 0) thisGroupSize = rndInt(config.groupSizeMaxMin[1] - config.groupSizeMaxMin[0]) + config.groupSizeMaxMin[0];
-    			else if (i == 1)thisGroupSize = rndInt(config.groupSizeMaxMin[3] - config.groupSizeMaxMin[2]) + config.groupSizeMaxMin[2];
-        		agentsLeft -= thisGroupSize;
-        		/*printf("thisGroupSize = %d\n", thisGroupSize);*/
-    		}
-    		else {
-    			thisGroupSize = agentsLeft;
-        		agentsLeft = 0;
-        		/*printf("thisGroupSize = %d\n", thisGroupSize);*/
-    		}
-    		insertGroupToLinkedList(createGroup(agents, config, thisGroupSize, i), head);
-    		/*printf("agentsLeft = %d\n", agentsLeft);*/
-    	}
+        agentsLeft = config.amountOfAgents;
+        while (agentsLeft) {
+            run =
+                i == 0 ? agentsLeft >
+                config.groupSizeMaxMin[1] : agentsLeft >
+                config.groupSizeMaxMin[3];
+            if (run) {
+                if (i == 0)
+                    thisGroupSize =
+                        rndInt(config.groupSizeMaxMin[1] -
+                               config.groupSizeMaxMin[0]) +
+                        config.groupSizeMaxMin[0];
+                else if (i == 1)
+                    thisGroupSize =
+                        rndInt(config.groupSizeMaxMin[3] -
+                               config.groupSizeMaxMin[2]) +
+                        config.groupSizeMaxMin[2];
+                agentsLeft -= thisGroupSize;
+                /*printf("thisGroupSize = %d\n", thisGroupSize); */
+            } else {
+                thisGroupSize = agentsLeft;
+                agentsLeft = 0;
+                /*printf("thisGroupSize = %d\n", thisGroupSize); */
+            }
+            insertGroupToLinkedList(createGroup
+                                    (agents, config, thisGroupSize, i),
+                                    head);
+            /*printf("agentsLeft = %d\n", agentsLeft); */
+        }
     }
 
     /*Initializing contacts */
@@ -338,9 +349,10 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
     }
 }
 
-void insertGroupToLinkedList(group *groupToInsert, group **head){
-	groupToInsert->next = *head;
-	*head = groupToInsert;
+void insertGroupToLinkedList(group * groupToInsert, group ** head)
+{
+    groupToInsert->next = *head;
+    *head = groupToInsert;
 }
 
 App *initApp()
