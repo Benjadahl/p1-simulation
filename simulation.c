@@ -46,19 +46,13 @@ typedef struct group {
     struct group *next;
 } group;
 
-/*typedef struct llGroups {
-	group *thisGroup;
-	struct llGroups *next;
-} llGroups;*/
-
-
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick, double *R0,
                 double *avgR0);
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *exposedOut, int *infectiousOut, int *removedOut);
 int getExposedAndInfectious(agent agents[], simConfig config);
-void initAgents(agent * agents, /*group ** groupsPtrs,*/ simConfig config,
+void initAgents(agent * agents, simConfig config,
                 int tick, group **head);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
@@ -90,28 +84,14 @@ void run_simulation(simConfig config, double *succeptible_data,
     double R0 = 0;
     double avgR0 = 0;
 
-    /*int i;*/
     int tick = 1;
-    /*int totalGroups;
-    group **groupPtrs;*/
     agent *agents;
 
     group *head = NULL;
     group *current = head;
 
-    /*for (i = 0; i <= 1; i++) {
-        config.groupAmounts[i] =
-            config.amountOfAgents / config.groupSize[i];
-    }*/
-    /*config.groupAmounts[2] = config.amountOfAgents;*/
-
     config.amountOfContacts =
         config.amountOfContactsPerAgent * config.amountOfAgents;
-    /*totalGroups =
-        config.groupAmounts[0] + 1 + config.groupAmounts[1] + 1 +
-        config.groupAmounts[2];
-
-    groupPtrs = malloc(sizeof(group *) * totalGroups);*/
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -121,7 +101,7 @@ void run_simulation(simConfig config, double *succeptible_data,
         srand(config.seed);
     }
 
-    initAgents(agents, /*groupPtrs,*/ config, tick, &head);
+    initAgents(agents, config, tick, &head);
     current = head;
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
@@ -142,16 +122,6 @@ void run_simulation(simConfig config, double *succeptible_data,
        		current = current->next;
        	}
     } while (current->next != NULL);
-    /*do {
-    	free(current->thisGroup->members);
-    	free(current->thisGroup);
-       	if (current->next != NULL) current = current->next;
-    } while (current->next != NULL);*/
-    /*for (i = 3; i < amountOfGroups; i++) {
-        free((*(groupPtrs + i))->members);
-        free(*(groupPtrs + i));
-    }
-    free(groupPtrs);*/
 
     /*Freeing agents */
     free(agents);
@@ -331,15 +301,6 @@ void initAgents(agent * agents, /*group ** groupsPtrs,*/
     		insertGroupToLinkedList(createGroup(agents, config, thisGroupSize, i), head);
     		/*printf("agentsLeft = %d\n", agentsLeft);*/
     	}
-        /*int groupRemainder =
-            config.amountOfAgents % config.groupAmounts[i];
-
-        for (j = 0; j < config.groupAmounts[i]; j++, k++) {
-            *(groupsPtrs + k) =
-                createGroup(agents, config, config.groupSize[i], i);
-        }
-        *(groupsPtrs + k) = createGroup(agents, config, groupRemainder, i);
-        k++;*/
     }
 
     /*Initializing contacts */
@@ -383,11 +344,6 @@ void initAgents(agent * agents, /*group ** groupsPtrs,*/
 void insertGroupToLinkedList(group *groupToInsert, group **head){
 	groupToInsert->next = *head;
 	*head = groupToInsert;
-	/*group curGroup;
-
-	curGroup.thisGroup = groupToInsert;
-	curGroup.next = *head;
-	*head = &curGroup;*/
 }
 
 App *initApp()
