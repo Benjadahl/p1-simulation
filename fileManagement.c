@@ -15,8 +15,8 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events, int yMax);
 DataSet createDataSet(char *name, double *data);
 
-void WriteFile(char *fileName, DataSet * dataSets, int absolute, int dataCount,
-               int events)
+void WriteFile(char *fileName, DataSet * dataSets, int absolute,
+               int dataCount, int events)
 {
     int i, j;
     char data_print[50];
@@ -29,10 +29,9 @@ void WriteFile(char *fileName, DataSet * dataSets, int absolute, int dataCount,
 
     for (i = 0; i < events; i++) {
         for (j = 0; j < dataCount; j++) {
-            if(absolute){
+            if (absolute) {
                 fprintf(file, "%f;", dataSets[j].absoluteData[i]);
-            }
-            else{
+            } else {
                 fprintf(file, "%f;", dataSets[j].data[i]);
             }
         }
@@ -81,7 +80,8 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
     }
 }
 
-void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events, int yMax, int absolute)
+void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
+                int events, int yMax, int absolute)
 {
     char foldername[90], filename[100], graphname[100];
     struct tm *currentTime;
@@ -100,28 +100,25 @@ void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int e
     }
 
     if (run == -1) {
-        if(absolute){
+        if (absolute) {
             sprintf(filename, "%s/absolute-avg.csv", foldername);
-        }
-        else{
+        } else {
             sprintf(filename, "%s/avg.csv", foldername);
         }
     } else {
-        if(absolute){
+        if (absolute) {
             sprintf(filename, "%s/absolute-%d.csv", foldername, run);
-        }
-        else{
+        } else {
             sprintf(filename, "%s/%d.csv", foldername, run);
         }
     }
 
-    WriteFile(filename, dataSets,absolute, dataCount, events);
+    WriteFile(filename, dataSets, absolute, dataCount, events);
 
     if (run == -1) {
-        if(absolute){
+        if (absolute) {
             sprintf(graphname, "%s/absolute-avg-graph", foldername);
-        }
-        else{
+        } else {
             sprintf(graphname, "%s/avg-graph", foldername);
         }
         CreatePlotFromCSV(filename, dataCount, graphname, events, yMax);
