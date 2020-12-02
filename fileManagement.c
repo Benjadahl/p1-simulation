@@ -4,14 +4,15 @@
 #include <ctype.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include"import.h"
-#include"export.h"
 #include"simulation.h"
+#include"export.h"
 
 void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t);
 
-void CreatePlotFromCVS(char *file_name, int dataCount, char *output_name,
-                       simConfig config);
+void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
+                       int events);
 DataSet createDataSet(char *name, double *data);
 
 void WriteFile(char *fileName, DataSet * dataSets, int dataCount,
@@ -75,8 +76,7 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
     }
 }
 
-void ExportData(int run, time_t runTime, double *data1, double *data2,
-                double *data3, double *data4, simConfig config)
+void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events)
 {
     char foldername[90], filename[100], graphname[100];
     struct tm *currentTime;
@@ -88,6 +88,9 @@ void ExportData(int run, time_t runTime, double *data1, double *data2,
             currentTime->tm_year - 100);
 
     if (run == 0) {
+        if(opendir("output") == NULL){
+            mkdir("output", 0777);
+        }
         mkdir(foldername, 0777);
     }
 
@@ -97,17 +100,11 @@ void ExportData(int run, time_t runTime, double *data1, double *data2,
         sprintf(filename, "%s/%d.csv", foldername, run);
     }
 
-    DataSet dataSets[4];
-    dataSets[0] = createDataSet("Succeptible", data1);
-    dataSets[1] = createDataSet("Exposed", data2);
-    dataSets[2] = createDataSet("Infectious", data3);
-    dataSets[3] = createDataSet("Recovered", data4);
-
-    WriteFile(filename, dataSets, 4, config.maxEvents);
+    WriteFile(filename, dataSets, dataCount, events);
 
     if (run == -1) {
         sprintf(graphname, "%s/avg-graph", foldername);
-        CreatePlotFromCVS(filename, 4, graphname, config);
+        CreatePlotFromCSV(filename, dataCount, graphname, events);
     }
 }
 

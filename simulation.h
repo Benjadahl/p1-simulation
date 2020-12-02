@@ -30,5 +30,3 @@ typedef struct simConfig {
     int groupAmounts[amountOfGroups];
     int groupMaxAmountToMeet[amountOfGroups];
 } simConfig;
-void run_simulation(simConfig config,double *succeptible_data, double *exposed_data, double *infectious_data, double *recovered_data);
-void calculateAveragePlot(int run, int events, double avg_succeptible_data[], double avg_infectious_data[], double avg_recovered_data[], double avg_exposed_data[], double succeptible_data[], double infectious_data[], double recovered_data[], double exposed_data[]);

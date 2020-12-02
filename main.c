@@ -5,6 +5,11 @@
 #include "simulation.h"
 #include "export.h"
 
+#define PLOT_COUNT 5
+
+void run_simulation(simConfig config, DataSet *data, int dataCount);
+void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, int dataCount);
+
 int main(int argc, char *argv[])
 {
     int i;
@@ -116,31 +121,38 @@ int main(int argc, char *argv[])
         }
 
     }
-    double succeptible_data[config.maxEvents],
-        infectious_data[config.maxEvents],
-        recovered_data[config.maxEvents], exposed_data[config.maxEvents];
+    
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
 
-    double avg_succeptible_data[config.maxEvents],
-        avg_infectious_data[config.maxEvents],
-        avg_recovered_data[config.maxEvents],
-        avg_exposed_data[config.maxEvents];
+    for (i = 0; i < PLOT_COUNT; i++) {
+        data[i].data = calloc(config.maxEvents, sizeof(double));
+        avgData[i].data = calloc(config.maxEvents, sizeof(double));
+    } 
+
+    data[0].name = "Succeptible";
+    data[1].name = "Infectious";
+    data[2].name = "Recovered";
+    data[3].name = "Exposed";
+    data[4].name = "Isolated";
+
+    for (i = 0; i < PLOT_COUNT; i++) {
+        avgData[i].name = data[i].name;
+    }
 
     runTime = time(NULL);
 
     for (i = 0; i < config.simulationRuns; i++) {
-        run_simulation(config, succeptible_data, infectious_data,
-                       recovered_data, exposed_data);
-        ExportData(i, runTime, succeptible_data, infectious_data,
-                   recovered_data, exposed_data, config);
-        calculateAveragePlot(i, config.maxEvents, avg_succeptible_data,
-                             avg_infectious_data, avg_recovered_data,
-                             avg_exposed_data, succeptible_data,
-                             infectious_data, recovered_data,
-                             exposed_data);
+        run_simulation(config, data, PLOT_COUNT);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents);
+        calculateAveragePlot(i, config.maxEvents, data, avgData, PLOT_COUNT);
     }
     if (graph != 0) {
-        ExportData(-1, runTime, avg_succeptible_data, avg_infectious_data,
-                   avg_recovered_data, avg_exposed_data, config);
+        ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents);
+    }
+    for (i = 0; i < PLOT_COUNT; i++) {
+        free(data[i].data);
+        free(avgData[i].data);
     }
     return EXIT_SUCCESS;
 }
