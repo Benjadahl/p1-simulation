@@ -1,19 +1,27 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <time.h>
+#include <sys/stat.h>
 #include "simulation.h"
 #include "export.h"
 
-void CreatePlotFromCVS(char *file_name, simConfig config);
+void CreatePlotFromCVS(char *file_name, char *output_name,
+                       simConfig config);
 
 int main(int argc, char *argv[])
 {
-    int i;
+    int i, e;
     int value;
     int graph = 0;
+    char foldername[90];
+    char filename[100], graphname[100];
+    time_t runTime;
+    struct tm *currentTime;
 
     simConfig config;
 
+    config.simulationRuns = 3;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
@@ -29,7 +37,7 @@ int main(int argc, char *argv[])
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 0;
-    config.print = 0;
+    config.print = 1;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
@@ -40,6 +48,14 @@ int main(int argc, char *argv[])
     config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
+    config.groupMaxAmountToMeet[0] = 10;
+    config.groupMaxAmountToMeet[1] = 5;
+    config.groupMaxAmountToMeet[2] = 3;
+    config.groupMaxAmountToMeet[3] = 20;
+    config.groupSizeMaxMin[0] = 10;
+    config.groupSizeMaxMin[1] = 50;
+    config.groupSizeMaxMin[2] = 5;
+    config.groupSizeMaxMin[3] = 30;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -111,21 +127,65 @@ int main(int argc, char *argv[])
         }
 
     }
-
-
-
     double succeptible_data[config.maxEvents];
     double infectious_data[config.maxEvents];
     double recovered_data[config.maxEvents];
+    double exposed_data[config.maxEvents];
 
-    run_simulation(config, succeptible_data, infectious_data,
-                   recovered_data);
+    double avg_succeptible_data[config.maxEvents];
+    double avg_infectious_data[config.maxEvents];
+    double avg_recovered_data[config.maxEvents];
+    double avg_exposed_data[config.maxEvents];
+
+    for (i = 0; i < config.maxEvents; i++) {
+        avg_succeptible_data[i] = 0;
+        avg_infectious_data[i] = 0;
+        avg_recovered_data[i] = 0;
+        avg_exposed_data[i] = 0;
+    }
+
+    runTime = time(NULL);
+    currentTime = localtime(&runTime);
+    sprintf(foldername, "output/H%02dM%02dS%02d-%02d-%02d-%d",
+            currentTime->tm_hour, currentTime->tm_min, currentTime->tm_sec,
+            currentTime->tm_mday, currentTime->tm_mon + 1,
+            currentTime->tm_year - 100);
+    mkdir(foldername, 0777);
+    for (i = 0; i < config.simulationRuns; i++) {
+        sprintf(filename, "%s/%d.csv", foldername, i);
+        run_simulation(config, succeptible_data, infectious_data,
+                       recovered_data, exposed_data);
+        ExportData(filename, succeptible_data, infectious_data,
+                   recovered_data, exposed_data, config.maxEvents);
+
+        if (i == 0) {
+            for (e = 0; e < config.maxEvents; e++) {
+                avg_succeptible_data[e] = succeptible_data[e];
+                avg_infectious_data[e] = infectious_data[e];
+                avg_recovered_data[e] = recovered_data[e];
+                avg_exposed_data[e] = exposed_data[e];
+            }
+        } else {
+            for (e = 0; e < config.maxEvents; e++) {
+                avg_succeptible_data[e] =
+                    (avg_succeptible_data[e] + succeptible_data[e]) / 2;
+                avg_infectious_data[e] =
+                    (avg_infectious_data[e] + infectious_data[e]) / 2;
+                avg_recovered_data[e] =
+                    (avg_recovered_data[e] + recovered_data[e]) / 2;
+                avg_exposed_data[e] =
+                    (avg_exposed_data[e] + exposed_data[e]) / 2;
+            }
+
+
+        }
+    }
     if (graph != 0) {
-        ExportData(succeptible_data, infectious_data, recovered_data,
-                   config.maxEvents);
-        printf("Creating graph...\n");
-        CreatePlotFromCVS("out.csv", config);
-        printf("Graph.png created\n");
+        sprintf(filename, "%s/avg.csv", foldername);
+        ExportData(filename, avg_succeptible_data, avg_infectious_data,
+                   avg_recovered_data, avg_exposed_data, config.maxEvents);
+        sprintf(graphname, "%s/avg-graph", foldername);
+        CreatePlotFromCVS(filename, graphname, config);
     }
     return EXIT_SUCCESS;
 }
