@@ -7,10 +7,11 @@ double randNumberZeroToOne();
 int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
-             double lambda);
+            double lambda);
 double gaussian();
 double gaussianSpecific(double varians, double expectedValue);
-int gaussianTruncatedDiscrete(int lowerbound, int upperbound, double varians, double expectedValue);
+int gaussianTruncatedDiscrete(int lowerbound, int upperbound,
+                              double varians, double expectedValue);
 
 double randNumberZeroToOne()
 {
@@ -42,11 +43,11 @@ int uniformTruncted(int lowerbound, int upperbound)
 {
     double result;
 
-    do
-    {
-        result = randNumberZeroToOne() * (upperbound - lowerbound) + lowerbound;
+    do {
+        result =
+            randNumberZeroToOne() * (upperbound - lowerbound) + lowerbound;
         result = round(result);
-    }while(result < lowerbound || result > upperbound);
+    } while (result < lowerbound || result > upperbound);
 
     return result;
 }
@@ -68,34 +69,26 @@ void expSim(double *arrayExpDistribution, int lenghtOfArray, double lambda)
 double gaussian()
 {
     double U, V, *X = NULL, Y[1];
-    
+
     V = uniform(0, 1);
 
-    while(X == NULL)
-    {
+    while (X == NULL) {
         expSim(Y, 1, 1 / 1);
         U = uniform(0, 1);
 
-        if(U <= exp(-1 * (pow(Y[0] - 1, 2) / 2)))
-        {
-            if (Y[0] <= 0)
-            {
-                X = (Y + 0); 
-            }
-            else
-            {
+        if (U <= exp(-1 * (pow(Y[0] - 1, 2) / 2))) {
+            if (Y[0] <= 0) {
+                X = (Y + 0);
+            } else {
                 X = (Y + 0);
                 *X *= -1;
             }
         }
     }
 
-    if(V <= 0.5) 
-    {
+    if (V <= 0.5) {
         return *X;
-    } 
-    else 
-    {
+    } else {
         return -1 * (*X);
     }
 }
@@ -109,15 +102,15 @@ double gaussianSpecific(double varians, double expectedValue)
     return Y * sqrt(varians) + expectedValue;
 }
 
-int gaussianTruncatedDiscrete(int lowerbound, int upperbound, double varians, double expectedValue)
+int gaussianTruncatedDiscrete(int lowerbound, int upperbound,
+                              double varians, double expectedValue)
 {
     double result;
 
-    do
-    {
+    do {
         result = gaussianSpecific(varians, expectedValue);
         result = round(result);
-    } while(result < lowerbound || result > upperbound);
-    
+    } while (result < lowerbound || result > upperbound);
+
     return result;
 }
