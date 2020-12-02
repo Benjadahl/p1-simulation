@@ -3,7 +3,9 @@
 #include <ctype.h>
 #include <math.h>
 #include "simulation.h"
+#include "export.h"
 
+void run_simulation(simConfig config, DataSet *data, int dataCount);
 int printCheck(int i, simConfig config, double input,
                double expectedValue);
 
@@ -12,8 +14,8 @@ int main()
     int seed;
     int i;
     int failures = 0;
-    double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 90.20, 86.44, 43.56 };
+    double results[3] = {0, 0, 0};
+    double expectedValue[3] = {90.20, 86.44, 43.56};
 
     simConfig config;
 
@@ -32,7 +34,7 @@ int main()
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 1;
-    config.print = 0;
+    config.print = 1;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
@@ -48,17 +50,35 @@ int main()
     config.groupMaxAmountToMeet[2] = 3;
     config.groupMaxAmountToMeet[3] = 20;
 
-    double succeptible_data_test[config.maxEvents];
-    double exposed_data_test[config.maxEvents];
-    double infectious_data_test[config.maxEvents];
-    double recovered_data_test[config.maxEvents];
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
 
-    for (i = 0; i < 3; i++) {
+
+    for (i = 0; i < PLOT_COUNT; i++)
+    {
+        data[i].data = calloc(config.maxEvents, sizeof(double));
+        data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+        avgData[i].data = calloc(config.maxEvents, sizeof(double));
+        avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+    }
+
+    data[0].name = "Succeptible";
+    data[1].name = "Exposed";
+    data[2].name = "Infectious";
+    data[3].name = "Recovered";
+    data[4].name = "Isolated";
+
+    for (i = 0; i < PLOT_COUNT; i++)
+    {
+        avgData[i].name = data[i].name;
+    }
+
+    for (i = 0; i < 3; i++)
+    {
         config.amountOfAgents = 100 * pow(10, i + 1);
-        run_simulation(config, succeptible_data_test, exposed_data_test,
-                       infectious_data_test, recovered_data_test);
+        run_simulation(config, data, PLOT_COUNT);
         results[i] =
-            floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
+            floor(data[3].data[config.maxEvents - 1] * 100) / 100;
         failures += printCheck(i, config, results[i], expectedValue[i]);
     }
     printf(" %d", failures);
@@ -68,10 +88,13 @@ int main()
 int printCheck(int i, simConfig config, double input, double expectedValue)
 {
 
-    if (input == expectedValue) {
+    if (input == expectedValue)
+    {
         printf("The result haven't changed in test %d\n", i);
         return 0;
-    } else {
+    }
+    else
+    {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
                input);

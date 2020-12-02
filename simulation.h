@@ -1,4 +1,5 @@
 #define amountOfGroups 4
+#define PLOT_COUNT 5
 
 typedef struct simConfig {
     int simulationRuns;
@@ -33,4 +34,3 @@ typedef struct simConfig {
     int btThreshold;
     int btDecay;
 } simConfig;
-void run_simulation(simConfig config,double *succeptible_data, double *exposed_data, double *infectious_data, double *recovered_data);

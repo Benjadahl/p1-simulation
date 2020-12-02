@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "simulation.h"
+#include "export.h"
 
 #define MAX_CONTACTS_IN_APP 50
 
@@ -73,18 +74,15 @@ int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
-void PlotData(agent * agents, double *succeptible_data,
-              double *exposed_data, double *infectious_data,
-              double *recovered_data, int event, simConfig config);
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config);
 
-void run_simulation(simConfig config, double *succeptible_data,
-                    double *exposed_data, double *infectious_data,
-                    double *recovered_data)
+void run_simulation(simConfig config, DataSet * data, int dataCount)
 {
     double R0 = 0;
     double avgR0 = 0;
 
-    int i;
+    int i, j;
     int tick = 1;
     int totalGroups;
     group **groupPtrs;
@@ -114,14 +112,21 @@ void run_simulation(simConfig config, double *succeptible_data,
 
     initAgents(agents, groupPtrs, config, tick);
 
+    for (i = 0; i < dataCount; i++) {
+        for (j = 0; j < config.maxEvents; j++) {
+            data[i].absoluteData[j] = 0;
+            data[i].data[j] = 0;
+        }
+    }
+
+
     for (tick = 1; tick <= config.maxEvents; tick++) {
         if (config.print != 0) {
             printStats(agents, config, tick, &R0, &avgR0);
         }
         runEvent(agents, config, tick, &R0, &avgR0);
-        PlotData(agents,
-                 succeptible_data, exposed_data, infectious_data,
-                 recovered_data, tick, config);
+        PlotData(agents, data, dataCount, tick, config);
+
     }
 
     /*Freeing groups */
@@ -135,41 +140,61 @@ void run_simulation(simConfig config, double *succeptible_data,
     free(agents);
 }
 
-void PlotData(agent * agents, double *succeptible_data,
-              double *exposed_data, double *infectious_data,
-              double *recovered_data, int tick, simConfig config)
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config)
 {
-    double succeptible_p = 0, exposed_p = 0, infectious_p =
-        0, recovered_p = 0;
-    double total_succeptible = 0, total_exposed = 0, total_infectious =
-        0, total_recovered = 0;
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
-            total_succeptible++;
+            data[0].absoluteData[tick - 1]++;
             break;
         case exposed:
-            total_exposed++;
+            data[1].absoluteData[tick - 1]++;
             break;
         case infectious:
-            total_infectious++;
+            data[2].absoluteData[tick - 1]++;
             break;
         case recovered:
-            total_recovered++;
+            data[3].absoluteData[tick - 1]++;
             break;
         }
     }
+    if (agents[i].isolatedTick != -1
+        && agents[i].isolatedTick + config.isolationTime < tick)
+        data[4].absoluteData[tick - 1]++;
 
-    succeptible_p = total_succeptible * 100 / config.amountOfAgents;
-    exposed_p = total_exposed * 100 / config.amountOfAgents;
-    infectious_p = total_infectious * 100 / config.amountOfAgents;
-    recovered_p = total_recovered * 100 / config.amountOfAgents;
+    for (i = 0; i < dataCount; i++) {
+        if (data[i].absoluteData[tick - 1] != 0) {
+            data[i].data[tick - 1] =
+                data[i].absoluteData[tick -
+                                     1] * 100 / config.amountOfAgents;
+        }
+    }
+}
 
-    succeptible_data[tick - 1] = succeptible_p;
-    exposed_data[tick - 1] = exposed_p;
-    infectious_data[tick - 1] = infectious_p;
-    recovered_data[tick - 1] = recovered_p;
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
+{
+    int e, d;
+    if (run == 0) {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] = data[d].data[e];
+                avgData[d].absoluteData[e] = data[d].absoluteData[e];
+            }
+        }
+    } else {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] =
+                    (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].absoluteData[e] =
+                    (avgData[d].absoluteData[e] +
+                     data[d].absoluteData[e]) / 2;
+            }
+        }
+    }
 }
 
 void printStats(agent agents[], simConfig config, int tick, double *R0,
