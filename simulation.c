@@ -471,7 +471,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
 
         /*If threshold is greater than zero, BT is enabled, thus check */
-        if (theAgent->app->positiveMet >= config.btThreshold && config.btThreshold > 0) {
+        if (theAgent->app->positiveMet >= config.btThreshold
+            && config.btThreshold > 0) {
             theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
             theAgent->app->positiveMet = 0;
