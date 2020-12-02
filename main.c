@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
-    config.simulationRuns = 3;
+    config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
     config.groupMaxAmountToMeet[1] = 5;
     config.groupMaxAmountToMeet[2] = 3;
     config.groupMaxAmountToMeet[3] = 20;
+    config.btThreshold = 6;
+    config.btDecay = 3;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {

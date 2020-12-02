@@ -20,6 +20,7 @@ typedef struct ContactRecord {
 
 typedef struct App {
     int infected;
+    int positiveMet;
     ContactRecord records[MAX_CONTACTS_IN_APP];
     int recorded;
 } App;
@@ -339,6 +340,7 @@ App *initApp()
 {
     App *app = malloc(sizeof(App));
     app->infected = 0;
+    app->positiveMet = 0;
     (*app).recorded = 0;
     return app;
 }
@@ -376,8 +378,8 @@ int getNextID(int currentID, int size)
 void infectAgent(int tick, agent * theAgent)
 {
     if (theAgent->healthState == succeptible) {
-        theAgent->healthState = infectious;
-        theAgent->infectedTick = tick;
+        theAgent->healthState = exposed;
+        theAgent->exposedTick = tick;
 
         if (theAgent->willIsolate && theAgent->symptomatic) {
             theAgent->isolatedTick = tick;
@@ -465,9 +467,29 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
             theAgent->app->infected = 0;
     }
 
+    if (theAgent->app != NULL) {
+        /* If the decay day has been reached, decay one */
+        if (tick % config.btDecay == 0) {
+            if (theAgent->app->positiveMet > 0) {
+                theAgent->app->positiveMet--;
+            }
+        }
+
+        /*If threshold is greater than zero, BT is enabled, thus check */
+        if (theAgent->app->positiveMet >= config.btThreshold && config.btThreshold > 0) {
+            theAgent->testedTick = tick;
+            theAgent->isolatedTick = tick;
+            theAgent->app->positiveMet = 0;
+        }
+    }
+
+
+
     if (theAgent->testedTick + config.testResponseTime == tick) {
         if (theAgent->healthState == infectious && theAgent->willIsolate) {
             theAgent->isolatedTick = tick;
+        } else {
+            theAgent->isolatedTick = -1;
         }
     }
 
@@ -549,6 +571,7 @@ void informContacts(App app, simConfig config, int tick)
         if (tick - app.records[i].onContactTick < config.contactTickLength) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
+                app.records[i].peer->app->positiveMet++;
             }
         }
     }
