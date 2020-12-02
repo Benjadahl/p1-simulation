@@ -93,7 +93,7 @@ void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int e
             currentTime->tm_year - 100);
 
     if (run == 0) {
-        if(opendir("output") == NULL){
+        if (opendir("output") == NULL) {
             mkdir("output", 0777);
         }
         mkdir(foldername, 0777);

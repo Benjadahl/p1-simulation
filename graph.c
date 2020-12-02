@@ -4,8 +4,7 @@
 #include"plot.h"
 #include"simulation.h"
 
-typedef struct GraphData
-{
+typedef struct GraphData {
     double *data;
     wchar_t *title;
 } GraphData;

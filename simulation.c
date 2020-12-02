@@ -72,9 +72,10 @@ void infectGroup(group * group, int infectionRisk,
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig config);
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config);
 
-void run_simulation(simConfig config, DataSet *data, int dataCount)
+void run_simulation(simConfig config, DataSet * data, int dataCount)
 {
     int i, j;
     int tick = 1;
@@ -131,7 +132,8 @@ void run_simulation(simConfig config, DataSet *data, int dataCount)
     free(agents);
 }
 
-void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig config)
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config)
 {
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
@@ -160,7 +162,8 @@ void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig 
     }
 }
 
-void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, int dataCount)
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
 {
     int e, d;
     if (run == 0) {

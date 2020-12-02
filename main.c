@@ -7,8 +7,9 @@
 
 #define PLOT_COUNT 5
 
-void run_simulation(simConfig config, DataSet *data, int dataCount);
-void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, int dataCount);
+void run_simulation(simConfig config, DataSet * data, int dataCount);
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount);
 
 int main(int argc, char *argv[])
 {
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
         }
 
     }
-    
+
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
 
