@@ -72,9 +72,10 @@ void infectGroup(group * group, int infectionRisk,
 int rndInt(int max);
 int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig config);
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config);
 
-void run_simulation(simConfig config, DataSet *data, int dataCount)
+void run_simulation(simConfig config, DataSet * data, int dataCount)
 {
     int i;
     int tick = 1;
@@ -123,36 +124,40 @@ void run_simulation(simConfig config, DataSet *data, int dataCount)
     free(agents);
 }
 
-void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig config)
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config)
 {
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
-            data[0].data[tick-1]++;
+            data[0].data[tick - 1]++;
             break;
         case exposed:
-            data[1].data[tick-1]++;
+            data[1].data[tick - 1]++;
             break;
         case infectious:
-            data[2].data[tick-1]++;
+            data[2].data[tick - 1]++;
             break;
         case recovered:
-            data[3].data[tick-1]++;
+            data[3].data[tick - 1]++;
             break;
         }
     }
-    if(agents[i].isolatedTick != -1 && agents[i].isolatedTick + config.isolationTime < tick)
-        data[4].data[tick-1]++;
+    if (agents[i].isolatedTick != -1
+        && agents[i].isolatedTick + config.isolationTime < tick)
+        data[4].data[tick - 1]++;
 
     for (i = 0; i < dataCount; i++) {
-        if(data[i].data[tick-1] != 0){
-            data[i].data[tick-1] = data[i].data[tick-1] * 100 / config.amountOfAgents;
+        if (data[i].data[tick - 1] != 0) {
+            data[i].data[tick - 1] =
+                data[i].data[tick - 1] * 100 / config.amountOfAgents;
         }
     }
 }
 
-void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, int dataCount)
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
 {
     int e, d;
     if (run == 0) {
@@ -164,7 +169,8 @@ void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, 
     } else {
         for (e = 0; e < events; e++) {
             for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] = (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].data[e] =
+                    (avgData[d].data[e] + data[d].data[e]) / 2;
             }
         }
     }

@@ -4,13 +4,13 @@
 #include"plot.h"
 #include"simulation.h"
 
-typedef struct GraphData
-{
+typedef struct GraphData {
     double *data;
     wchar_t *title;
 } GraphData;
 
-void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length);
+void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+                int time_length);
 
 void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events)
@@ -39,14 +39,15 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     }
 
     CreatePlot(output_name, dataCount, newData, events);
-    
+
     for (i = 0; i < dataCount; i++) {
         free(data[i].data);
         free(newData[i].data);
     }
 }
 
-void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length)
+void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+                int time_length)
 {
     int i;
     size_t titleSize;
@@ -57,12 +58,12 @@ void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_le
 
     RGBABitmapImageReference canvasReference;
 
-    for (i = 0; i < dataCount; i++)
-    {
-        canvasReference = PlotLineGraph(timeSeries, time_length, dataSets[i].data,
-                      time_length, dataSets[i].title,
-                      L"Number of people (%)", L"Time (event)",
-                      time_length, 100);
+    for (i = 0; i < dataCount; i++) {
+        canvasReference =
+            PlotLineGraph(timeSeries, time_length, dataSets[i].data,
+                          time_length, dataSets[i].title,
+                          L"Number of people (%)", L"Time (event)",
+                          time_length, 100);
         titleSize = wcstombs(graphName, dataSets[i].title, 50);
         sprintf(graphNameFinal, "%s-%s.png", file_name, graphName);
         size_t length;

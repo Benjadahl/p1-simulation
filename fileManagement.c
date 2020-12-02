@@ -76,7 +76,8 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
     }
 }
 
-void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events)
+void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
+                int events)
 {
     char foldername[90], filename[100], graphname[100];
     struct tm *currentTime;
@@ -88,7 +89,7 @@ void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int e
             currentTime->tm_year - 100);
 
     if (run == 0) {
-        if(opendir("output") == NULL){
+        if (opendir("output") == NULL) {
             mkdir("output", 0777);
         }
         mkdir(foldername, 0777);

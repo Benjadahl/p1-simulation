@@ -7,8 +7,9 @@
 
 #define PLOT_COUNT 5
 
-void run_simulation(simConfig config, DataSet *data, int dataCount);
-void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, int dataCount);
+void run_simulation(simConfig config, DataSet * data, int dataCount);
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount);
 
 int main(int argc, char *argv[])
 {
@@ -121,14 +122,14 @@ int main(int argc, char *argv[])
         }
 
     }
-    
+
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
 
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
-    } 
+    }
 
     data[0].name = "Succeptible";
     data[1].name = "Infectious";
@@ -145,7 +146,8 @@ int main(int argc, char *argv[])
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents);
-        calculateAveragePlot(i, config.maxEvents, data, avgData, PLOT_COUNT);
+        calculateAveragePlot(i, config.maxEvents, data, avgData,
+                             PLOT_COUNT);
     }
     if (graph != 0) {
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents);
