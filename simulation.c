@@ -250,7 +250,8 @@ void initAgents(agent * agents, group ** groupsPtrs,
             (agents + i)->app = NULL;
         }
         (agents + i)->infectedTime = -1;
-        (agents + i)->infectedPeriod = gaussianTruncatedDiscrete(config.infectionTime);
+        (agents + i)->infectedPeriod =
+            gaussianTruncatedDiscrete(config.infectionTime);
         (agents + i)->symptomatic = bernoulli(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
@@ -428,7 +429,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
     /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
-        && tick > theAgent->infectedTime + agents->infectedPeriod) { 
+        && tick > theAgent->infectedTime + agents->infectedPeriod) {
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
