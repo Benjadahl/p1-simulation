@@ -30,5 +30,6 @@ typedef struct simConfig {
     int groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
     int groupMaxAmountToMeet[amountOfGroups];
+    int groupSizeMaxMin[amountOfGroups];
 } simConfig;
 void run_simulation(simConfig config,double *succeptible_data, double *exposed_data, double *infectious_data, double *recovered_data);
