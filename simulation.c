@@ -75,7 +75,7 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0,
 void PlotData(agent * agents, double *succeptible_data,
               double *exposed_data, double *infectious_data,
               double *recovered_data, int event, simConfig config);
-void insertGroupToLinkedList(group *groupToInsert, group **head);
+void insertGroupToLinkedList(group * groupToInsert, group ** head);
 
 void run_simulation(simConfig config, double *succeptible_data,
                     double *exposed_data, double *infectious_data,
@@ -89,9 +89,6 @@ void run_simulation(simConfig config, double *succeptible_data,
 
     group *head = NULL;
     group *current = head;
-
-    config.amountOfContacts =
-        config.amountOfContactsPerAgent * config.amountOfAgents;
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -116,11 +113,11 @@ void run_simulation(simConfig config, double *succeptible_data,
 
     /*Freeing groups */
     do {
-    	free(current->members);
-       	if (current->next != NULL) {
-       		free(current);
-       		current = current->next;
-       	}
+        free(current->members);
+        if (current->next != NULL) {
+            free(current);
+            current = current->next;
+        }
     } while (current->next != NULL);
 
     /*Freeing agents */
@@ -247,8 +244,8 @@ int getExposedAndInfectious(agent agents[], simConfig config)
     return total;
 }
 
-void initAgents(agent * agents, /*group ** groupsPtrs,*/
-                simConfig config, int tick, group **head)
+void initAgents(agent * agents, /*group ** groupsPtrs, */
+                simConfig config, int tick, group ** head)
 {
     int i, j, l, k = 0;
     int randomID;
