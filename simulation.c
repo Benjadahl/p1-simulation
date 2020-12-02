@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "simulation.h"
+#include "distribution.h"
 
 #define MAX_CONTACTS_IN_APP 50
 
