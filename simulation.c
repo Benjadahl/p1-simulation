@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "simulation.h"
-#include "distribution.h"
+
 
 #define MAX_CONTACTS_IN_APP 50
 
@@ -30,6 +30,7 @@ typedef struct agent {
     HealthState healthState;
     struct App *app;
     int infectedTime;
+    int infectedPeriod;
     int symptomatic;
     int incubationTime;
     int willIsolate;
@@ -68,8 +69,6 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
 void addRecord(agent * recorder, agent * peer, int tick);
 void informContacts(App app, simConfig config, int tick);
 void isolate(agent * agent);
-int rndInt(int max);
-int trueChance(int percentage);
 void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
 void PlotData(agent * agents, double *succeptible_data,
@@ -245,18 +244,19 @@ void initAgents(agent * agents, group ** groupsPtrs,
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
         (agents + i)->healthState = succeptible;
-        if (trueChance(config.chanceToHaveApp)) {
+        if (bernoulli(config.chanceToHaveApp)) {
             (agents + i)->app = initApp();
         } else {
             (agents + i)->app = NULL;
         }
-        (agents + i)->infectedTime = config.infectionTime;
-        (agents + i)->symptomatic = trueChance(config.symptomaticPercent);
+        (agents + i)->infectedTime = -1;
+        (agents + i)->infectedPeriod = gaussianTruncatedDiscrete(config.infectionTime);
+        (agents + i)->symptomatic = bernoulli(config.symptomaticPercent);
         (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
-        (agents + i)->willIsolate = trueChance(config.willIsolatePercent);
+        (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * 4);
-        (agents + i)->willTest = trueChance(config.willTestPercent);
+        (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
@@ -428,7 +428,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
     /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
-        && tick > theAgent->infectedTime + config.infectionTime) {
+        && tick > theAgent->infectedTime + agents->infectedPeriod) { 
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
@@ -474,9 +474,9 @@ void meetGroup(group * group, int infectionRisk, int percentageToMeet,
     for (i = 0; i < size; i++) {
         agent *peer = *(group->members + i);
         if (peer->ID != theAgent->ID) {
-            if (trueChance(percentageToMeet)) {
+            if (bernoulli(percentageToMeet)) {
                 if (theAgent->healthState == infectious
-                    && trueChance(infectionRisk)) {
+                    && bernoulli(infectionRisk)) {
                     infectAgent(config, tick, peer);
                     (theAgent->amountAgentHasInfected)++;
                 }
@@ -513,20 +513,6 @@ void informContacts(App app, simConfig config, int tick)
                 app.records[i].peer->testedTick = tick;
             }
         }
-    }
-}
-
-int rndInt(int max)
-{
-    return rand() % max;
-}
-
-int trueChance(int percentage)
-{
-    if (rndInt(100) < percentage) {
-        return 1;
-    } else {
-        return 0;
     }
 }
 

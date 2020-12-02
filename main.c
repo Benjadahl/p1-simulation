@@ -4,7 +4,6 @@
 #include "simulation.h"
 #include "export.h"
 
-
 void CreatePlotFromCVS(char *file_name, simConfig config);
 
 int main(int argc, char *argv[])
@@ -22,7 +21,7 @@ int main(int argc, char *argv[])
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
-    config.maxEvents = 500;
+    config.maxEvents = 100;
     config.symptomaticPercent = 25;
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 50;
@@ -32,7 +31,7 @@ int main(int argc, char *argv[])
     config.partyRisk = 75;
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
-    config.seed = 0;
+    config.seed = 1;
     config.print = 1;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;

@@ -2,15 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "distribution.h"
 
 double randNumberZeroToOne();
 int bernoulli(double chanceForTrue);
+int rndInt(int max);
 double uniform(double lowerBound, double upperBound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
              double lambda);
-double gaussian();
+double normal();
 double gaussianSpecific(double varians, double expectedValue);
-int gaussianTruncatedDiscrete(int lowerbound, int upperbound, double varians, double expectedValue);
+int gaussianTruncatedDiscrete(gaussian normal);
 
 double randNumberZeroToOne()
 {
@@ -21,11 +23,16 @@ double randNumberZeroToOne()
 
 int bernoulli(double chanceForTrue)
 {
-    if (randNumberZeroToOne() <= chanceForTrue) {
+    if (rndInt(100) <= chanceForTrue - 1) {
         return 1;
     } else {
         return 0;
     }
+}
+
+int rndInt(int max)
+{
+    return rand() % max;
 }
 
 double uniform(double lowerBound, double upperBound)
@@ -65,7 +72,7 @@ void expSim(double *arrayExpDistribution, int lenghtOfArray, double lambda)
     }
 }
 
-double gaussian()
+double normal()
 {
     double U, V, *X = NULL, Y[1];
     
@@ -104,20 +111,20 @@ double gaussianSpecific(double varians, double expectedValue)
 {
     double Y;
 
-    Y = gaussian();
+    Y = normal();
 
     return Y * sqrt(varians) + expectedValue;
 }
 
-int gaussianTruncatedDiscrete(int lowerbound, int upperbound, double varians, double expectedValue)
+int gaussianTruncatedDiscrete(gaussian normal)
 {
     double result;
 
     do
     {
-        result = gaussianSpecific(varians, expectedValue);
+        result = gaussianSpecific(normal.varians, normal.expectedValue);
         result = round(result);
-    } while(result < lowerbound || result > upperbound);
+    } while(result < normal.lowerbound || result > normal.upperbound);
     
     return result;
 }

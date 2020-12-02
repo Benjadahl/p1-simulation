@@ -19,7 +19,10 @@ int main()
 
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
-    config.infectionTime = 4;
+    config.infectionTime.lowerbound = 2;
+    config.infectionTime.upperbound = 12;
+    config.infectionTime.varians = 1;
+    config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
     config.maxEvents = 100;
     config.symptomaticPercent = 25;

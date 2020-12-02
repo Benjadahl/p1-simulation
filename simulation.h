@@ -1,9 +1,11 @@
+#include "distribution.h"
+
 #define amountOfGroups 3
 
 typedef struct simConfig {
     int contactsRisk;
     int amountOfAgents;
-    int infectionTime;
+    struct gaussian infectionTime;
     int amountOfStartInfected;
     int maxEvents;
     int symptomaticPercent;
