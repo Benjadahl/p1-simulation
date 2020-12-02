@@ -6,6 +6,7 @@
 double randNumberZeroToOne();
 int bernoulli(double chanceForTrue);
 double uniform(double lowerBound, double upperBound);
+int uniformTruncated(int lowerbound, int upperbound);
 void expSim(double *arrayExpDistribution, int lenghtOfArray,
             double lambda);
 double gaussian();
@@ -35,6 +36,19 @@ double uniform(double lowerBound, double upperBound)
 
     result =
         randNumberZeroToOne() * (upperBound - lowerBound) + lowerBound;
+
+    return result;
+}
+
+int uniformTruncated(int lowerbound, int upperbound)
+{
+    double result;
+
+    do
+    {
+        result =
+        randNumberZeroToOne() * (upperbound - lowerbound) + lowerbound;
+    }while(result < lowerbound || result > upperbound);
 
     return result;
 }
