@@ -76,7 +76,7 @@ void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig 
 
 void run_simulation(simConfig config, DataSet *data, int dataCount)
 {
-    int i;
+    int i, j;
     int tick = 1;
     int totalGroups;
     group **groupPtrs;
@@ -106,6 +106,14 @@ void run_simulation(simConfig config, DataSet *data, int dataCount)
 
     initAgents(agents, groupPtrs, config, tick);
 
+    for (i = 0; i < dataCount; i++) {
+        for (j = 0; j < config.maxEvents; j++) {
+            data[i].absoluteData[j] = 0;
+            data[i].data[j] = 0;
+        } 
+    }
+    
+
     for (tick = 1; tick <= config.maxEvents; tick++) {
         printStats(agents, config, tick);
         runEvent(agents, config, tick);
@@ -129,25 +137,25 @@ void PlotData(agent * agents, DataSet *data, int dataCount, int tick, simConfig 
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
-            data[0].data[tick-1]++;
+            data[0].absoluteData[tick-1]++;
             break;
         case exposed:
-            data[1].data[tick-1]++;
+            data[1].absoluteData[tick-1]++;
             break;
         case infectious:
-            data[2].data[tick-1]++;
+            data[2].absoluteData[tick-1]++;
             break;
         case recovered:
-            data[3].data[tick-1]++;
+            data[3].absoluteData[tick-1]++;
             break;
         }
     }
     if(agents[i].isolatedTick != -1 && agents[i].isolatedTick + config.isolationTime < tick)
-        data[4].data[tick-1]++;
+        data[4].absoluteData[tick-1]++;
 
     for (i = 0; i < dataCount; i++) {
-        if(data[i].data[tick-1] != 0){
-            data[i].data[tick-1] = data[i].data[tick-1] * 100 / config.amountOfAgents;
+        if(data[i].absoluteData[tick-1] != 0){
+            data[i].data[tick-1] = data[i].absoluteData[tick-1] * 100 / config.amountOfAgents;
         }
     }
 }
@@ -159,12 +167,14 @@ void calculateAveragePlot(int run, int events, DataSet *data, DataSet *avgData, 
         for (e = 0; e < events; e++) {
             for (d = 0; d < dataCount; d++) {
                 avgData[d].data[e] = data[d].data[e];
+                avgData[d].absoluteData[e] = data[d].absoluteData[e];
             }
         }
     } else {
         for (e = 0; e < events; e++) {
             for (d = 0; d < dataCount; d++) {
                 avgData[d].data[e] = (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].absoluteData[e] = (avgData[d].absoluteData[e] + data[d].absoluteData[e]) / 2;
             }
         }
     }

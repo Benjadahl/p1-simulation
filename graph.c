@@ -10,10 +10,10 @@ typedef struct GraphData
     wchar_t *title;
 } GraphData;
 
-void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length);
+void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length, int yMax);
 
 void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
-                       int events)
+                       int events, int yMax)
 {
     int i, j;
     DataSetRead data[dataCount];
@@ -38,7 +38,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
         }
     }
 
-    CreatePlot(output_name, dataCount, newData, events);
+    CreatePlot(output_name, dataCount, newData, events, yMax);
     
     for (i = 0; i < dataCount; i++) {
         free(data[i].data);
@@ -46,7 +46,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     }
 }
 
-void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length)
+void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_length, int yMax)
 {
     int i;
     size_t titleSize;
@@ -62,7 +62,7 @@ void CreatePlot(char *file_name, int dataCount, GraphData *dataSets, int time_le
         canvasReference = PlotLineGraph(timeSeries, time_length, dataSets[i].data,
                       time_length, dataSets[i].title,
                       L"Number of people (%)", L"Time (event)",
-                      time_length, 100);
+                      time_length, yMax);
         titleSize = wcstombs(graphName, dataSets[i].title, 50);
         sprintf(graphNameFinal, "%s-%s.png", file_name, graphName);
         size_t length;

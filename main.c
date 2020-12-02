@@ -127,7 +127,9 @@ int main(int argc, char *argv[])
 
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
+        data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
+        avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
     } 
 
     data[0].name = "Succeptible";
@@ -144,14 +146,17 @@ int main(int argc, char *argv[])
 
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, data, PLOT_COUNT);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, config.amountOfAgents, 1);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0);
         calculateAveragePlot(i, config.maxEvents, data, avgData, PLOT_COUNT);
     }
     if (graph != 0) {
-        ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents);
+        ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100, 0);
     }
     for (i = 0; i < PLOT_COUNT; i++) {
         free(data[i].data);
+        free(data[i].absoluteData);
+        free(avgData[i].absoluteData);
         free(avgData[i].data);
     }
     return EXIT_SUCCESS;
