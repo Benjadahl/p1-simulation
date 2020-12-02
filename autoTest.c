@@ -13,7 +13,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 90.80, 88.19, 89.05 };
+    double expectedValue[3] = { 90.20, 86.44, 43.56 };
 
     simConfig config;
 
