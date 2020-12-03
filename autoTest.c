@@ -15,10 +15,11 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 90.20, 86.44, 43.56 };
+    double expectedValue[3] = { 93.40, 88.40, 72.68 };
 
     simConfig config;
 
+    config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
@@ -34,7 +35,7 @@ int main()
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 1;
-    config.print = 1;
+    config.print = 0;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
@@ -49,6 +50,13 @@ int main()
     config.groupMaxAmountToMeet[1] = 5;
     config.groupMaxAmountToMeet[2] = 3;
     config.groupMaxAmountToMeet[3] = 20;
+    config.btThreshold = 6;
+    config.btDecay = 3;
+    config.groupSizeMaxMin[0] = 10;
+    config.groupSizeMaxMin[1] = 50;
+    config.groupSizeMaxMin[2] = 5;
+    config.groupSizeMaxMin[3] = 30;
+
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
