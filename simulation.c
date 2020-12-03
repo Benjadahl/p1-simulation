@@ -291,7 +291,8 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
         (agents + i)->infectedPeriod =
             gaussianTruncatedDiscrete(config.infectionTime);
         (agents + i)->symptomatic = bernoulli(config.symptomaticPercent);
-        (agents + i)->incubationTime = gaussianTruncatedDiscrete(config.incubationTime);
+        (agents + i)->incubationTime =
+            gaussianTruncatedDiscrete(config.incubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
@@ -338,10 +339,10 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
 
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
-        int contactsPerAgent = gaussianTruncatedDiscrete(config.amountOfContactsPerAgent);
+        int contactsPerAgent =
+            gaussianTruncatedDiscrete(config.amountOfContactsPerAgent);
         group *newGroup = malloc(sizeof(group));
-        agent **members =
-            malloc(sizeof(agent *) * contactsPerAgent);
+        agent **members = malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
         newGroup->size = contactsPerAgent;
 

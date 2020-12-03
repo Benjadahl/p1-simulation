@@ -30,9 +30,9 @@ int main()
     config.maxEvents = 100;
     config.symptomaticPercent = 25;
     config.incubationTime.lowerbound = 1; /* CDC.gov */
-    config.incubationTime.upperbound = 14; /* CDC.gov */
+    config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
-    config.incubationTime.expectedValue = 5.1; /* CDC.gov */
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
     config.willIsolatePercent = 50;
     config.partyChance = 5;
     config.partyDist.upperbound = 50;
