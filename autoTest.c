@@ -15,7 +15,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 93.40, 88.40, 72.68 };
+    double expectedValue[3] = { 93.40, 88.34, 78.46 };
 
     simConfig config;
 
@@ -78,6 +78,8 @@ int main()
     for (i = 0; i < PLOT_COUNT; i++) {
         avgData[i].name = data[i].name;
     }
+
+    srand(config.seed);
 
     for (i = 0; i < 3; i++) {
         config.amountOfAgents = 100 * pow(10, i + 1);

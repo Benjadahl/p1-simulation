@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
+    int seedUsed;
+
     config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
@@ -151,6 +153,14 @@ int main(int argc, char *argv[])
 
     runTime = time(NULL);
 
+    if (!config.seed) {
+        srand(runTime);
+        seedUsed = runTime;
+    } else {
+        srand(config.seed);
+        seedUsed = config.seed;
+    }
+
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
@@ -159,7 +169,11 @@ int main(int argc, char *argv[])
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
+
+    printf("\nSeed used: %d\n", seedUsed);
+
     if (graph != 0) {
+        printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0);
     }
