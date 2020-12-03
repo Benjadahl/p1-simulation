@@ -91,12 +91,6 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
-    if (!config.seed) {
-        srand(time(NULL));
-    } else {
-        srand(config.seed);
-    }
-
     initAgents(agents, config, tick, &head);
     current = head;
 
