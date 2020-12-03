@@ -34,4 +34,5 @@ typedef struct simConfig {
     int btThreshold;
     int btDecay;
     int groupSizeMaxMin[amountOfGroups];
+    int chanceOfFalseNegative;
 } simConfig;

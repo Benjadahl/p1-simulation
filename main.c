@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
     config.groupSizeMaxMin[1] = 50;
     config.groupSizeMaxMin[2] = 5;
     config.groupSizeMaxMin[3] = 30;
+    config.chanceOfFalseNegative = 95;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
