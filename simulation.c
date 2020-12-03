@@ -45,8 +45,8 @@ typedef struct agent {
 typedef struct group {
     int size;
     struct agent **members;
+    struct group *next;
 } group;
-
 
 void printAgent(agent * agent, simConfig config);
 void printStats(agent agents[], simConfig config, int tick, double *R0,
@@ -54,8 +54,7 @@ void printStats(agent agents[], simConfig config, int tick, double *R0,
 void getStats(agent agents[], simConfig config, int *succeptibleOut,
               int *exposedOut, int *infectiousOut, int *removedOut,
               int *isolatedOut);
-void initAgents(agent * agents, group ** groupsPtrs, simConfig config,
-                int tick);
+void initAgents(agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
@@ -76,6 +75,7 @@ void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
+void insertGroupToLinkedList(group * groupToInsert, group ** head);
 
 void run_simulation(simConfig config, DataSet * data, int dataCount)
 {
@@ -84,23 +84,10 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
 
     int i, j;
     int tick = 1;
-    int totalGroups;
-    group **groupPtrs;
     agent *agents;
 
-    for (i = 0; i <= 1; i++) {
-        config.groupAmounts[i] =
-            config.amountOfAgents / config.groupSize[i];
-    }
-    config.groupAmounts[2] = config.amountOfAgents;
-
-    config.amountOfContacts =
-        config.amountOfContactsPerAgent * config.amountOfAgents;
-    totalGroups =
-        config.groupAmounts[0] + 1 + config.groupAmounts[1] + 1 +
-        config.groupAmounts[2];
-
-    groupPtrs = malloc(sizeof(group *) * totalGroups);
+    group *head = NULL;
+    group *current = head;
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -110,7 +97,8 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
         srand(config.seed);
     }
 
-    initAgents(agents, groupPtrs, config, tick);
+    initAgents(agents, config, tick, &head);
+    current = head;
 
     for (i = 0; i < dataCount; i++) {
         for (j = 0; j < config.maxEvents; j++) {
@@ -130,11 +118,13 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
     }
 
     /*Freeing groups */
-    for (i = 0; i < amountOfGroups; i++) {
-        free((*(groupPtrs + i))->members);
-        free(*(groupPtrs + i));
-    }
-    free(groupPtrs);
+    do {
+        free(current->members);
+        if (current->next != NULL) {
+            free(current);
+            current = current->next;
+        }
+    } while (current->next != NULL);
 
     /*Freeing agents */
     free(agents);
@@ -279,10 +269,15 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
     *isolatedOut = totalIsolated;
 }
 
-void initAgents(agent * agents, group ** groupsPtrs,
-                simConfig config, int tick)
+void initAgents(agent * agents, /*group ** groupsPtrs, */
+                simConfig config, int tick, group ** head)
 {
     int i, j, l, k = 0;
+    int randomID;
+    int isReplica;
+    int thisGroupSize;
+    int agentsLeft;
+    int run;
 
     for (i = 0; i < config.amountOfAgents; i++) {
         (agents + i)->ID = i;
@@ -311,15 +306,35 @@ void initAgents(agent * agents, group ** groupsPtrs,
 
     /*Initializing groups */
     for (i = 0; i <= 1; i++) {
-        int groupRemainder =
-            config.amountOfAgents % config.groupAmounts[i];
-
-        for (j = 0; j < config.groupAmounts[i]; j++, k++) {
-            *(groupsPtrs + k) =
-                createGroup(agents, config, config.groupSize[i], i);
+        agentsLeft = config.amountOfAgents;
+        while (agentsLeft) {
+            run =
+                i == 0 ? agentsLeft >
+                config.groupSizeMaxMin[1] : agentsLeft >
+                config.groupSizeMaxMin[3];
+            if (run) {
+                if (i == 0)
+                    thisGroupSize =
+                        rndInt(config.groupSizeMaxMin[1] -
+                               config.groupSizeMaxMin[0]) +
+                        config.groupSizeMaxMin[0];
+                else if (i == 1)
+                    thisGroupSize =
+                        rndInt(config.groupSizeMaxMin[3] -
+                               config.groupSizeMaxMin[2]) +
+                        config.groupSizeMaxMin[2];
+                agentsLeft -= thisGroupSize;
+                /*printf("thisGroupSize = %d\n", thisGroupSize); */
+            } else {
+                thisGroupSize = agentsLeft;
+                agentsLeft = 0;
+                /*printf("thisGroupSize = %d\n", thisGroupSize); */
+            }
+            insertGroupToLinkedList(createGroup
+                                    (agents, config, thisGroupSize, i),
+                                    head);
+            /*printf("agentsLeft = %d\n", agentsLeft); */
         }
-        *(groupsPtrs + k) = createGroup(agents, config, groupRemainder, i);
-        k++;
     }
 
     /*Initializing contacts */
@@ -332,8 +347,7 @@ void initAgents(agent * agents, group ** groupsPtrs,
 
         for (j = 0; j < config.amountOfContactsPerAgent; j++) {
             agent *theAgent;
-            int randomID = rand() % config.amountOfAgents;
-            int isReplica;
+            randomID = rand() % config.amountOfAgents;
 
             do {
                 isReplica = 0;
@@ -350,14 +364,21 @@ void initAgents(agent * agents, group ** groupsPtrs,
 
             *(members + j) = theAgent;
         }
+        insertGroupToLinkedList(newGroup, head);
         (agents + i)->groups[2] = newGroup;
-        *(groupsPtrs + k) = newGroup;
+        /**(groupsPtrs + k) = newGroup;*/
     }
 
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
         infectRandomAgent(agents, config, tick - 1);
     }
+}
+
+void insertGroupToLinkedList(group * groupToInsert, group ** head)
+{
+    groupToInsert->next = *head;
+    *head = groupToInsert;
 }
 
 App *initApp()
@@ -374,12 +395,12 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 {
     group *newGroup = malloc(sizeof(group));
     agent **members = malloc(sizeof(agent *) * groupSize);
+    agent *theAgent;
     int i = 0;
     newGroup->members = members;
     newGroup->size = groupSize;
 
     for (i = 0; i < groupSize; i++) {
-        agent *theAgent;
         int randomID = rand() % config.amountOfAgents;
 
         do {

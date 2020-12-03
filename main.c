@@ -51,6 +51,10 @@ int main(int argc, char *argv[])
     config.groupMaxAmountToMeet[3] = 20;
     config.btThreshold = 6;
     config.btDecay = 3;
+    config.groupSizeMaxMin[0] = 10;
+    config.groupSizeMaxMin[1] = 50;
+    config.groupSizeMaxMin[2] = 5;
+    config.groupSizeMaxMin[3] = 30;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
