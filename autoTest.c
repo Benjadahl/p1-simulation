@@ -102,7 +102,8 @@ int printCheck(int i, simConfig config, double input, double expectedValue)
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
                input);
-        printf(">> Program output an unexpected value in test %d <<\n", i + 1);
+        printf(">> Program output an unexpected value in test %d <<\n",
+               i + 1);
         return 1;
     }
 }
