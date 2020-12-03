@@ -15,7 +15,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 93.40, 88.40, 72.68 };
+    double expectedValue[3] = { 63.50, 33.04, 11.74 };
 
     simConfig config;
 
@@ -96,13 +96,13 @@ int printCheck(int i, simConfig config, double input, double expectedValue)
 {
 
     if (input == expectedValue) {
-        printf("The result haven't changed in test %d\n", i);
+        printf("The result haven't changed in test %d\n", i + 1);
         return 0;
     } else {
         /* This prints the value that needs to be used as the check */
         printf("\nThis is the value of tick %d: %.2lf\n", config.maxEvents,
                input);
-        printf(">> Program output an unexpected value in test %d <<\n", i);
+        printf(">> Program output an unexpected value in test %d <<\n", i + 1);
         return 1;
     }
 }
