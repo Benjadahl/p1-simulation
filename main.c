@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
     config.amountOfContactsPerAgent.expectedValue = 5;
     config.groupPercentageToInfect = 74;
     config.chanceToHaveApp = 35;
-    config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
     config.groupMaxAmountToMeet[0] = 10;

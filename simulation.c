@@ -131,36 +131,37 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         case succeptible:
             data[0].absoluteData[tick - 1]++;
             if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime < tick) {
+                && agents[i].isolatedTick + config.isolationTime > tick) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         case exposed:
             data[1].absoluteData[tick - 1]++;
             if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime < tick) {
+                && agents[i].isolatedTick + config.isolationTime > tick) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case infectious:
             data[2].absoluteData[tick - 1]++;
             if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime < tick) {
+                && agents[i].isolatedTick + config.isolationTime > tick) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case recovered:
             data[3].absoluteData[tick - 1]++;
             if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime < tick) {
+                && agents[i].isolatedTick + config.isolationTime > tick) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         }
+        if (agents[i].isolatedTick != -1
+            && agents[i].isolatedTick + config.isolationTime > tick)
+            data[4].absoluteData[tick - 1]++;
     }
-    if (agents[i].isolatedTick != -1
-        && agents[i].isolatedTick + config.isolationTime < tick)
-        data[4].absoluteData[tick - 1]++;
+
 
     for (i = 0; i < dataCount; i++) {
         if (data[i].absoluteData[tick - 1] != 0) {
@@ -558,7 +559,8 @@ void informContacts(App app, simConfig config, int tick)
     }
 
     for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick < config.contactTickLength) {
+        if (tick - app.records[i].onContactTick <
+            config.testResponseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
                 app.records[i].peer->app->positiveMet++;

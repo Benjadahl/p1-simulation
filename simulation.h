@@ -24,7 +24,6 @@ typedef struct simConfig {
     int amountOfContacts;
     int groupPercentageToInfect;
     int chanceToHaveApp;
-    int contactTickLength;
     int isolationTime;
     int testResponseTime;
     int groupSize[amountOfGroups];
