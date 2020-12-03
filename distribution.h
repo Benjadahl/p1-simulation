@@ -1,4 +1,3 @@
-
 typedef struct gaussian {
     int lowerbound;
     int upperbound;
