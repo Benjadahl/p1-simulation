@@ -136,12 +136,14 @@ int main(int argc, char *argv[])
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
         avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
     }
-
+    
     data[0].name = "Succeptible";
     data[1].name = "Exposed";
     data[2].name = "Infectious";
     data[3].name = "Recovered";
     data[4].name = "Isolated";
+    data[5].name = "Healthy isolated";
+    data[6].name = "Exosed & infectious isolated";
 
     for (i = 0; i < PLOT_COUNT; i++) {
         avgData[i].name = data[i].name;
