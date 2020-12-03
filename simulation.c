@@ -63,7 +63,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 int getNextID(int currentID, int size);
 void infectAgent(int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
-int isDay(int tick);
+Day isDay(int tick);
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection);
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
@@ -447,7 +447,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     infectAgent(tick, &agents[randomID]);
 }
 
-int isDay(int tick)
+Day isDay(int tick)
 {                               /* Tager udagngspunkt i at tick == 1 er Mandag */
     return tick % 7;
 }
@@ -550,8 +550,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                       theAgent);
         }
 
-        if ((Day) isDay(tick) == theAgent->groups[1]->meetingDayOne
-            || (Day) isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
+        if (isDay(tick) == theAgent->groups[1]->meetingDayOne
+            || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
                       rndInt(config.groupMaxAmountToMeet[1]), tick,
                       theAgent);
