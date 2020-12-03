@@ -410,7 +410,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     }
 
     /*Giving secondary group random meeting days */
-    /*Note: Some secondary groups will only meet once a week, due to rndInt(7) may return the same number both times*/
+    /*Note: Some secondary groups will only meet once a week, due to rndInt(7) may return the same number both times */
     if (groupNr == 1) {
         newGroup->meetingDayOne = rndInt(7);
         newGroup->meetingDayTwo = rndInt(7);
