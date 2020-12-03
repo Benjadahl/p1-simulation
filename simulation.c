@@ -45,6 +45,8 @@ typedef struct agent {
 typedef struct group {
     int size;
     struct agent **members;
+    Day meetingDayOne;
+    Day meetingDayTwo;
     struct group *next;
 } group;
 
@@ -58,7 +60,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 int getNextID(int currentID, int size);
 void infectAgent(int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
-int isDay(int tick);
+Day isDay(int tick);
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection);
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
@@ -211,8 +213,7 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     }
 }
 
-void initAgents(agent * agents, /*group ** groupsPtrs, */
-                simConfig config, int tick, group ** head)
+void initAgents(agent * agents, simConfig config, int tick, group ** head)
 {
     int i, j, l, k = 0;
     int randomID;
@@ -266,16 +267,13 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
                                config.groupSizeMaxMin[2]) +
                         config.groupSizeMaxMin[2];
                 agentsLeft -= thisGroupSize;
-                /*printf("thisGroupSize = %d\n", thisGroupSize); */
             } else {
                 thisGroupSize = agentsLeft;
                 agentsLeft = 0;
-                /*printf("thisGroupSize = %d\n", thisGroupSize); */
             }
             insertGroupToLinkedList(createGroup
                                     (agents, config, thisGroupSize, i),
                                     head);
-            /*printf("agentsLeft = %d\n", agentsLeft); */
         }
     }
 
@@ -308,7 +306,6 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
         }
         insertGroupToLinkedList(newGroup, head);
         (agents + i)->groups[2] = newGroup;
-        /**(groupsPtrs + k) = newGroup;*/
     }
 
     /* Infect random agents */
@@ -354,6 +351,13 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
         *(members + i) = theAgent;
     }
 
+    /*Giving secondary group random meeting days */
+    /*Note: Some secondary groups will only meet once a week, due to rndInt(7) may return the same number both times */
+    if (groupNr == 1) {
+        newGroup->meetingDayOne = rndInt(7);
+        newGroup->meetingDayTwo = rndInt(7);
+    }
+
     return newGroup;
 }
 
@@ -385,7 +389,7 @@ void infectRandomAgent(agent agents[], simConfig config, int tick)
     infectAgent(tick, &agents[randomID]);
 }
 
-int isDay(int tick)
+Day isDay(int tick)
 {                               /* Tager udagngspunkt i at tick == 1 er Mandag */
     return tick % 7;
 }
@@ -488,9 +492,9 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                       theAgent);
         }
 
-        if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
-            meetGroup(theAgent->groups[1],
-                      config.secondaryGroupRisk,
+        if (isDay(tick) == theAgent->groups[1]->meetingDayOne
+            || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
+            meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
                       rndInt(config.groupMaxAmountToMeet[1]), tick,
                       theAgent);
         }
