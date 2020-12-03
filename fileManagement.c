@@ -46,22 +46,30 @@ void ReadFile(char *file_name, DataSetRead * data, int dataCount)
 {
     FILE *file = fopen(file_name, "r");
     char line[200];
-    int i = 0, j;
+    int i = 0, j = 0;
     if (file == NULL) {
         printf("File %s not found.", file_name);
         return;
     }
 
     while (fgets(line, sizeof(line), file)) {
-        char *token;
-        token = strtok(line, ",");
-        while (token != NULL) {
-            char *token_token = strtok(token, "\n");
-            if (isdigit(token[0])) {
-                SplitLine(dataCount, data, i, token_token);
+        char *lineToken;
+        lineToken = strtok(line, ",");
+        while (lineToken != NULL) {
+            char *dataToken = strtok(lineToken, "\n");
+            if (isdigit(lineToken[0])) {
+                SplitLine(dataCount, data, i, dataToken);
                 i++;
             }
-            token = strtok(NULL, ",");
+            else{
+                char *titleToken = strtok(lineToken, ";");
+                while (titleToken != NULL) {
+                    strcpy(data[j].name, titleToken);
+                    titleToken = strtok(NULL, ";");
+                    j++;
+                }
+            }
+            lineToken = strtok(NULL, ",");
         }
     }
     fclose(file);

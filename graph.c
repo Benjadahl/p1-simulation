@@ -6,7 +6,7 @@
 
 typedef struct GraphData {
     double *data;
-    wchar_t *title;
+    wchar_t title[14];
 } GraphData;
 
 void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
@@ -19,18 +19,16 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     DataSetRead data[dataCount];
     GraphData newData[dataCount];
 
-    newData[0].title = L"Succeptible";
-    newData[1].title = L"Exposed";
-    newData[2].title = L"Infectious";
-    newData[3].title = L"Recovered";
-    newData[4].title = L"Isolated";
-
     for (i = 0; i < dataCount; i++) {
         data[i].data = malloc(sizeof(float) * events);
         newData[i].data = malloc(sizeof(double) * events);
     }
 
     ReadFile(file_name, data, dataCount);
+
+    for (i = 0; i < dataCount; i++) {
+        mbstowcs(newData[i].title, data[i].name, 14);
+    }
 
     for (i = 0; i < events; i++) {
         for (j = 0; j < dataCount; j++) {
@@ -50,7 +48,6 @@ void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
                 int time_length, int yMax)
 {
     int i;
-    size_t titleSize;
     double timeSeries[time_length];
     char graphName[50], graphNameFinal[50];
     for (int i = 0; i < time_length; i++)
@@ -64,7 +61,7 @@ void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
                           time_length, dataSets[i].title,
                           L"Number of people (%)", L"Time (event)",
                           time_length, yMax);
-        titleSize = wcstombs(graphName, dataSets[i].title, 50);
+        wcstombs(graphName, dataSets[i].title, 50);
         sprintf(graphNameFinal, "%s-%s.png", file_name, graphName);
         size_t length;
         double *pngdata = ConvertToPNG(&length, canvasReference.image);
