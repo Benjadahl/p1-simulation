@@ -17,16 +17,16 @@ int main(int argc, char *argv[])
     time_t runTime;
 
     simConfig config;
-    /*party*/
+    /*party */
     config.partyChance = 5;
     config.maxPartySize = 50;
     config.minPartySize = 5;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
 
-    /*Groups*/
-    config.primaryGroupRisk = 5; /*can*/
-    config.secondaryGroupRisk = 5; /*can*/
+    /*Groups */
+    config.primaryGroupRisk = 5;  /*can */
+    config.secondaryGroupRisk = 5;  /*can */
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
@@ -40,28 +40,28 @@ int main(int argc, char *argv[])
     config.groupSizeMaxMin[2] = 5;
     config.groupSizeMaxMin[3] = 30;
 
-    /*App*/
-    config.chanceToHaveApp = 25; /*can*/
-    config.contactTickLength = 4; /*can*/
+    /*App */
+    config.chanceToHaveApp = 25;  /*can */
+    config.contactTickLength = 4; /*can */
     config.btThreshold = 6;
     config.btDecay = 3;
 
-    /*Infections*/
+    /*Infections */
     config.contactsRisk = 1;
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
-    config.symptomaticPercent = 84; /*can*/
-    config.maxIncubationTime = 14; /*can*/
+    config.symptomaticPercent = 84; /*can */
+    config.maxIncubationTime = 14;  /*can */
 
-    /*Misc*/
+    /*Misc */
     config.simulationRuns = 1;
     config.maxEvents = 100;
     config.seed = 0;
     config.print = 1;
     config.amountOfAgents = 100000;
-    config.willIsolatePercent = 90; /*can*/
+    config.willIsolatePercent = 90; /*can */
     config.willTestPercent = 75;
-    config.isolationTime = 7; /*can*/
+    config.isolationTime = 7;   /*can */
     config.testResponseTime = 2;
 
 
