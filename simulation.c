@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "distribution.h"
 #include "simulation.h"
 #include "export.h"
 
@@ -500,7 +501,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
     /* Move agent to recovered state if infectionTime has passed */
     if (theAgent->healthState == infectious
-        && tick > theAgent->infectedTick + agents->infectedPeriod) {
+        && tick > theAgent->infectedTick + theAgent->infectedPeriod) {
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) += theAgent->amountAgentHasInfected;

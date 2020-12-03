@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include "distribution.h"
 #include "simulation.h"
 #include "export.h"
 

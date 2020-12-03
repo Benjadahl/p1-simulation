@@ -1,5 +1,3 @@
-#include "distribution.h"
-
 #define amountOfGroups 4
 #define PLOT_COUNT 5
 
@@ -7,14 +5,14 @@ typedef struct simConfig {
     int simulationRuns;
     int contactsRisk;
     int amountOfAgents;
-    gaussian infectionTime;
+    struct gaussian infectionTime;
     int amountOfStartInfected;
     int maxEvents;
     int symptomaticPercent;
-    gaussian incubationTime;
+    struct gaussian incubationTime;
     int willIsolatePercent;
     int partyChance;
-    gaussian partyDist;
+    struct gaussian partyDist;
     int partyRisk;
     int partyMeetChance;
     int willTestPercent;
@@ -22,7 +20,7 @@ typedef struct simConfig {
     int print;
     int primaryGroupRisk;
     int secondaryGroupRisk;
-    gaussian amountOfContactsPerAgent;
+    struct gaussian amountOfContactsPerAgent;
     int amountOfContacts;
     int groupPercentageToInfect;
     int chanceToHaveApp;
@@ -34,6 +32,6 @@ typedef struct simConfig {
     int groupMaxAmountToMeet[amountOfGroups];
     int btThreshold;
     int btDecay;
-    gaussian primaryGroupSize;
-    gaussian secondaryGroupSize;
+    struct gaussian primaryGroupSize;
+    struct gaussian secondaryGroupSize;
 } simConfig;
