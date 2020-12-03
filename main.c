@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
         avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
     }
-    
+
     data[0].name = "Succeptible";
     data[1].name = "Exposed";
     data[2].name = "Infectious";

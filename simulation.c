@@ -134,30 +134,30 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         switch (agents[i].healthState) {
         case succeptible:
             data[0].absoluteData[tick - 1]++;
-            if(agents[i].isolatedTick != -1
-        && agents[i].isolatedTick + config.isolationTime < tick){
-                data[5].absoluteData[tick -1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[5].absoluteData[tick - 1]++;
             }
             break;
         case exposed:
             data[1].absoluteData[tick - 1]++;
-            if(agents[i].isolatedTick != -1
-        && agents[i].isolatedTick + config.isolationTime < tick){
-                data[6].absoluteData[tick -1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[6].absoluteData[tick - 1]++;
             }
             break;
         case infectious:
             data[2].absoluteData[tick - 1]++;
-            if(agents[i].isolatedTick != -1
-        && agents[i].isolatedTick + config.isolationTime < tick){
-                data[6].absoluteData[tick -1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[6].absoluteData[tick - 1]++;
             }
             break;
         case recovered:
             data[3].absoluteData[tick - 1]++;
-            if(agents[i].isolatedTick != -1
-        && agents[i].isolatedTick + config.isolationTime < tick){
-                data[5].absoluteData[tick -1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[5].absoluteData[tick - 1]++;
             }
             break;
         }
@@ -206,10 +206,12 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     printf("\nTick: %d\n", tick);
 
     for (i = 0; i < dataCount; i++) {
-        printf("Total %-30s: %-6d (%f%%)\n", data[i].name, (int)data[i].absoluteData[tick-1], data[i].data[tick-1]);
+        printf("Total %-30s: %-6d (%f%%)\n", data[i].name,
+               (int) data[i].absoluteData[tick - 1],
+               data[i].data[tick - 1]);
     }
 
-    if (*R0 != 0 || data[3].data[tick-1] > 0) {
+    if (*R0 != 0 || data[3].data[tick - 1] > 0) {
         printf("R0 = %41f\n", *R0);
         printf("Average R0 = %33f\n", *avgR0);
     }
