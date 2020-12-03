@@ -4,7 +4,6 @@
 #include "simulation.h"
 #include "export.h"
 
-
 #define MAX_CONTACTS_IN_APP 50
 
 typedef enum HealthState { succeptible, exposed, infectious,
