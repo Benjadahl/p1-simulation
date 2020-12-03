@@ -60,8 +60,7 @@ void ReadFile(char *file_name, DataSetRead * data, int dataCount)
             if (isdigit(lineToken[0])) {
                 SplitLine(dataCount, data, i, dataToken);
                 i++;
-            }
-            else{
+            } else {
                 char *titleToken = strtok(lineToken, ";");
                 while (titleToken != NULL) {
                     strcpy(data[j].name, titleToken);
