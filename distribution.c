@@ -22,7 +22,7 @@ double randNumberZeroToOne()
 
 int bernoulli(double chanceForTrue)
 {
-    if (rndInt(100) <= chanceForTrue - 1) {
+    if (randNumberZeroToOne() * 100 <= chanceForTrue && chanceForTrue != 0) {
         return 1;
     } else {
         return 0;
