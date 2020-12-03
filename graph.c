@@ -1,69 +1,70 @@
+#include<stdlib.h>
 #include"import.h"
+#include"export.h"
 #include"plot.h"
 #include"simulation.h"
 
-void CreatePlotFromCVS(char *file_name, simConfig config);
-void CreatePlot(char *file_name, double succeptible_data[],
-                double infectious_data[], double recovered_data[],
-                int time_length);
+typedef struct GraphData {
+    double *data;
+    wchar_t title[14];
+} GraphData;
 
-void CreatePlotFromCVS(char *file_name, simConfig config)
+void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+                int time_length, int yMax);
+
+void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
+                       int events, int yMax)
 {
-    int i;
-    float data1[config.maxEvents], data2[config.maxEvents],
-        data3[config.maxEvents];
-    double new_data1[config.maxEvents], new_data2[config.maxEvents],
-        new_data3[config.maxEvents];
-    ReadFile(file_name, data1, data2, data3);
+    int i, j;
+    DataSetRead data[dataCount];
+    GraphData newData[dataCount];
 
-    for (i = 0; i < config.maxEvents; i++) {
-        new_data1[i] = (double) data1[i];
-        new_data2[i] = (double) data2[i];
-        new_data3[i] = (double) data3[i];
+    for (i = 0; i < dataCount; i++) {
+        data[i].data = malloc(sizeof(float) * events);
+        newData[i].data = malloc(sizeof(double) * events);
     }
 
-    CreatePlot("Graph.png", new_data1, new_data2, new_data3,
-               config.maxEvents);
+    ReadFile(file_name, data, dataCount);
+
+    for (i = 0; i < dataCount; i++) {
+        mbstowcs(newData[i].title, data[i].name, 14);
+    }
+
+    for (i = 0; i < events; i++) {
+        for (j = 0; j < dataCount; j++) {
+            newData[j].data[i] = (double) data[j].data[i];
+        }
+    }
+
+    CreatePlot(output_name, dataCount, newData, events, yMax);
+
+    for (i = 0; i < dataCount; i++) {
+        free(data[i].data);
+        free(newData[i].data);
+    }
 }
 
-void CreatePlot(char *file_name, double succeptible_data[],
-                double infectious_data[], double recovered_data[],
-                int time_length)
+void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+                int time_length, int yMax)
 {
+    int i;
     double timeSeries[time_length];
+    char graphName[50], graphNameFinal[50];
     for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
     RGBABitmapImageReference canvasReference;
-    RGBABitmapImage *combined_plots = CreateImage(2000, 2000, GetWhite());
-    RGBABitmapImage *succeptible_img, *infectious_img, *recovered_img;
 
-    canvasReference =
-        PlotLineGraph(timeSeries, time_length, succeptible_data,
-                      time_length, L"Succeptible (%)",
-                      L"Number of succeptible people (%)", L"Time (event)",
-                      time_length, 100);
-    succeptible_img = canvasReference.image;
-
-    canvasReference =
-        PlotLineGraph(timeSeries, time_length, infectious_data,
-                      time_length, L"Infectious (%)",
-                      L"Number of infectious people (%)", L"Time (event)",
-                      time_length, 100);
-    infectious_img = canvasReference.image;
-
-    canvasReference =
-        PlotLineGraph(timeSeries, time_length, recovered_data, time_length,
-                      L"Recovered (%)", L"Number of recovered people (%)",
-                      L"Time (event)", time_length, 100);
-    recovered_img = canvasReference.image;
-
-    DrawImageOnImage(combined_plots, succeptible_img, 0, 0);
-    DrawImageOnImage(combined_plots, infectious_img, 0, 1000);
-    DrawImageOnImage(combined_plots, recovered_img, 1000, 0);
-
-    size_t length;
-    double *pngdata = ConvertToPNG(&length, combined_plots);
-    WriteToFile(pngdata, length, file_name);
-
+    for (i = 0; i < dataCount; i++) {
+        canvasReference =
+            PlotLineGraph(timeSeries, time_length, dataSets[i].data,
+                          time_length, dataSets[i].title,
+                          L"Number of people (%)", L"Time (event)",
+                          time_length, yMax);
+        wcstombs(graphName, dataSets[i].title, 50);
+        sprintf(graphNameFinal, "%s-%s.png", file_name, graphName);
+        size_t length;
+        double *pngdata = ConvertToPNG(&length, canvasReference.image);
+        WriteToFile(pngdata, length, graphNameFinal);
+    }
 }

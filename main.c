@@ -1,19 +1,24 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <time.h>
 #include "simulation.h"
 #include "export.h"
 
-void CreatePlotFromCVS(char *file_name, simConfig config);
+void run_simulation(simConfig config, DataSet * data, int dataCount);
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount);
 
 int main(int argc, char *argv[])
 {
     int i;
     int value;
     int graph = 0;
+    time_t runTime;
 
     simConfig config;
 
+    config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime = 4;
@@ -29,7 +34,7 @@ int main(int argc, char *argv[])
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 0;
-    config.print = 0;
+    config.print = 1;
     config.groupSize[0] = 15;
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
@@ -40,6 +45,16 @@ int main(int argc, char *argv[])
     config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
+    config.groupMaxAmountToMeet[0] = 10;
+    config.groupMaxAmountToMeet[1] = 5;
+    config.groupMaxAmountToMeet[2] = 3;
+    config.groupMaxAmountToMeet[3] = 20;
+    config.btThreshold = 6;
+    config.btDecay = 3;
+    config.groupSizeMaxMin[0] = 10;
+    config.groupSizeMaxMin[1] = 50;
+    config.groupSizeMaxMin[2] = 5;
+    config.groupSizeMaxMin[3] = 30;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -112,20 +127,45 @@ int main(int argc, char *argv[])
 
     }
 
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
 
+    for (i = 0; i < PLOT_COUNT; i++) {
+        data[i].data = calloc(config.maxEvents, sizeof(double));
+        data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+        avgData[i].data = calloc(config.maxEvents, sizeof(double));
+        avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+    }
 
-    double succeptible_data[config.maxEvents];
-    double infectious_data[config.maxEvents];
-    double recovered_data[config.maxEvents];
+    data[0].name = "Succeptible";
+    data[1].name = "Exposed";
+    data[2].name = "Infectious";
+    data[3].name = "Recovered";
+    data[4].name = "Isolated";
 
-    run_simulation(config, succeptible_data, infectious_data,
-                   recovered_data);
+    for (i = 0; i < PLOT_COUNT; i++) {
+        avgData[i].name = data[i].name;
+    }
+
+    runTime = time(NULL);
+
+    for (i = 0; i < config.simulationRuns; i++) {
+        run_simulation(config, data, PLOT_COUNT);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
+                   config.amountOfAgents, 1);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0);
+        calculateAveragePlot(i, config.maxEvents, data, avgData,
+                             PLOT_COUNT);
+    }
     if (graph != 0) {
-        ExportData(succeptible_data, infectious_data, recovered_data,
-                   config.maxEvents);
-        printf("Creating graph...\n");
-        CreatePlotFromCVS("out.csv", config);
-        printf("Graph.png created\n");
+        ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
+                   0);
+    }
+    for (i = 0; i < PLOT_COUNT; i++) {
+        free(data[i].data);
+        free(data[i].absoluteData);
+        free(avgData[i].absoluteData);
+        free(avgData[i].data);
     }
     return EXIT_SUCCESS;
 }
