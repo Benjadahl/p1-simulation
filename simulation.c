@@ -320,8 +320,8 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
                         gaussianTruncatedDiscrete(config.primaryGroupSize);
                 else if (i == 1)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete(config.
-                                                  secondaryGroupSize);
+                        gaussianTruncatedDiscrete
+                        (config.secondaryGroupSize);
                 agentsLeft -= thisGroupSize;
                 /*printf("thisGroupSize = %d\n", thisGroupSize); */
             } else {
