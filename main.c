@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
+    int seedUsed;
+
     config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
@@ -142,12 +144,22 @@ int main(int argc, char *argv[])
     data[2].name = "Infectious";
     data[3].name = "Recovered";
     data[4].name = "Isolated";
+    data[5].name = "Healthy isolated";
+    data[6].name = "Exosed & infectious isolated";
 
     for (i = 0; i < PLOT_COUNT; i++) {
         avgData[i].name = data[i].name;
     }
 
     runTime = time(NULL);
+
+    if (!config.seed) {
+        srand(runTime);
+        seedUsed = runTime;
+    } else {
+        srand(config.seed);
+        seedUsed = config.seed;
+    }
 
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, data, PLOT_COUNT);
@@ -157,7 +169,11 @@ int main(int argc, char *argv[])
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
+
+    printf("\nSeed used: %d\n", seedUsed);
+
     if (graph != 0) {
+        printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0);
     }
