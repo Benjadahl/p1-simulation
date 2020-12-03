@@ -43,8 +43,6 @@ int main(int argc, char *argv[])
     config.willTestPercent = 75;
     config.seed = 0;
     config.print = 1;
-    config.groupSize[0] = 15;
-    config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent.lowerbound = 0;

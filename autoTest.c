@@ -44,8 +44,6 @@ int main()
     config.willTestPercent = 75;
     config.seed = 1;
     config.print = 0;
-    config.groupSize[0] = 15;
-    config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
     config.amountOfContactsPerAgent.lowerbound = 0;
