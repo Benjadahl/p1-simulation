@@ -17,44 +17,53 @@ int main(int argc, char *argv[])
     time_t runTime;
 
     simConfig config;
-
-    config.simulationRuns = 1;
-    config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
-    config.infectionTime = 4;
-    config.amountOfStartInfected = 20;
-    config.maxEvents = 100;
-    config.symptomaticPercent = 25;
-    config.maxIncubationTime = 14;
-    config.willIsolatePercent = 50;
+    /*party*/
     config.partyChance = 5;
     config.maxPartySize = 50;
     config.minPartySize = 5;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
-    config.willTestPercent = 75;
-    config.seed = 0;
-    config.print = 1;
-    config.groupSize[0] = 15;
-    config.groupSize[1] = 10;
-    config.primaryGroupRisk = 5;
-    config.secondaryGroupRisk = 5;
+
+    /*Groups*/
+    config.primaryGroupRisk = 5; /*can*/
+    config.secondaryGroupRisk = 5; /*can*/
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
-    config.chanceToHaveApp = 35;
-    config.contactTickLength = 7;
-    config.isolationTime = 15;
-    config.testResponseTime = 2;
+
     config.groupMaxAmountToMeet[0] = 10;
     config.groupMaxAmountToMeet[1] = 5;
     config.groupMaxAmountToMeet[2] = 3;
     config.groupMaxAmountToMeet[3] = 20;
-    config.btThreshold = 6;
-    config.btDecay = 3;
+
     config.groupSizeMaxMin[0] = 10;
     config.groupSizeMaxMin[1] = 50;
     config.groupSizeMaxMin[2] = 5;
     config.groupSizeMaxMin[3] = 30;
+
+    /*App*/
+    config.chanceToHaveApp = 25; /*can*/
+    config.contactTickLength = 4; /*can*/
+    config.btThreshold = 6;
+    config.btDecay = 3;
+
+    /*Infections*/
+    config.contactsRisk = 1;
+    config.infectionTime = 4;
+    config.amountOfStartInfected = 20;
+    config.symptomaticPercent = 84; /*can*/
+    config.maxIncubationTime = 14; /*can*/
+
+    /*Misc*/
+    config.simulationRuns = 1;
+    config.maxEvents = 100;
+    config.seed = 0;
+    config.print = 1;
+    config.amountOfAgents = 100000;
+    config.willIsolatePercent = 90; /*can*/
+    config.willTestPercent = 75;
+    config.isolationTime = 7; /*can*/
+    config.testResponseTime = 2;
+
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
