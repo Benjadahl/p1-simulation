@@ -49,11 +49,8 @@ typedef struct group {
 } group;
 
 void printAgent(agent * agent, simConfig config);
-void printStats(agent agents[], simConfig config, int tick, double *R0,
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0);
-void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *exposedOut, int *infectiousOut, int *removedOut,
-              int *isolatedOut);
 void initAgents(agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
@@ -109,12 +106,11 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
 
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
+        PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
-            printStats(agents, config, tick, &R0, &avgR0);
+            printStats(data, dataCount, tick, &R0, &avgR0);
         }
         runEvent(agents, config, tick, &R0, &avgR0);
-        PlotData(agents, data, dataCount, tick, config);
-
     }
 
     /*Freeing groups */
@@ -138,15 +134,31 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         switch (agents[i].healthState) {
         case succeptible:
             data[0].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[5].absoluteData[tick - 1]++;
+            }
             break;
         case exposed:
             data[1].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[6].absoluteData[tick - 1]++;
+            }
             break;
         case infectious:
             data[2].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[6].absoluteData[tick - 1]++;
+            }
             break;
         case recovered:
             data[3].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1
+                && agents[i].isolatedTick + config.isolationTime < tick) {
+                data[5].absoluteData[tick - 1]++;
+            }
             break;
         }
     }
@@ -187,86 +199,22 @@ void calculateAveragePlot(int run, int events, DataSet * data,
     }
 }
 
-void printStats(agent agents[], simConfig config, int tick, double *R0,
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0)
 {
-
-    double percentSucceptible = 0;
-    double percentExposed = 0;
-    double percentInfectious = 0;
-    double percentRemoved = 0;
-    double percentIsolated = 0;
-
-    int totalSucceptible = 0;
-    int totalExposed = 0;
-    int totalInfectious = 0;
-    int totalRemoved = 0;
-    int totalIsolated = 0;
-
-
-    getStats(agents, config, &totalSucceptible, &totalExposed,
-             &totalInfectious, &totalRemoved, &totalIsolated);
-
-    percentSucceptible = totalSucceptible * 100 / config.amountOfAgents;
-    percentExposed = totalExposed * 100 / config.amountOfAgents;
-    percentInfectious = totalInfectious * 100 / config.amountOfAgents;
-    percentRemoved = totalRemoved * 100 / config.amountOfAgents;
-    percentIsolated = totalIsolated * 100 / config.amountOfAgents;
-
-
+    int i;
     printf("\nTick: %d\n", tick);
-    printf("Total succeptible: %d (%f%%)\n", totalSucceptible,
-           percentSucceptible);
-    printf("Total exposed: %d (%f%%)\n", totalExposed, percentExposed);
-    printf("Total infectious: %d (%f%%)\n", totalInfectious,
-           percentInfectious);
-    printf("Total removed: %d (%f%%)\n", totalRemoved, percentRemoved);
-    printf("Total isolated: %d (%f%%)\n", totalIsolated, percentIsolated);
 
-    if (*R0 != 0 || totalRemoved > 0) {
-        printf("R0 = %f\n", *R0);
-        printf("Average R0 = %f\n", *avgR0);
-    }
-}
-
-void getStats(agent agents[], simConfig config, int *succeptibleOut,
-              int *exposedOut, int *infectiousOut, int *removedOut,
-              int *isolatedOut)
-{
-    int a = 0;
-    int totalSucceptible = 0;
-    int totalExposed = 0;
-    int totalInfectious = 0;
-    int totalRemoved = 0;
-    int totalIsolated = 0;
-
-    for (a = 0; a < config.amountOfAgents; a++) {
-        switch (agents[a].healthState) {
-        case succeptible:
-            totalSucceptible++;
-            break;
-        case exposed:
-            totalExposed++;
-            break;
-        case infectious:
-            totalInfectious++;
-            break;
-        case recovered:
-            totalRemoved++;
-            break;
-        }
-
-        if (agents[a].isolatedTick != -1
-            && agents[a].healthState != recovered) {
-            totalIsolated++;
-        }
+    for (i = 0; i < dataCount; i++) {
+        printf("Total %-30s: %-6d (%f%%)\n", data[i].name,
+               (int) data[i].absoluteData[tick - 1],
+               data[i].data[tick - 1]);
     }
 
-    *succeptibleOut = totalSucceptible;
-    *exposedOut = totalExposed;
-    *infectiousOut = totalInfectious;
-    *removedOut = totalRemoved;
-    *isolatedOut = totalIsolated;
+    if (*R0 != 0 || data[3].data[tick - 1] > 0) {
+        printf("R0 = %41f\n", *R0);
+        printf("Average R0 = %33f\n", *avgR0);
+    }
 }
 
 void initAgents(agent * agents, /*group ** groupsPtrs, */
