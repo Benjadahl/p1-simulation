@@ -560,7 +560,8 @@ void informContacts(App app, simConfig config, int tick)
     }
 
     for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick < config.testResponseTime + 2) {
+        if (tick - app.records[i].onContactTick <
+            config.testResponseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
                 app.records[i].peer->app->positiveMet++;
