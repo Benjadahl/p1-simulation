@@ -49,7 +49,7 @@ void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
 {
     int i;
     double timeSeries[time_length];
-    char graphName[50], graphNameFinal[75];
+    char graphName[50], graphNameFinal[100];
     for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
