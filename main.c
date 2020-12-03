@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     config.symptomaticPercent = 25;
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
-    config.incubationTime.varians = 1;
+    config.incubationTime.varians = 20;
     config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
     config.willIsolatePercent = 50;
     config.partyChance = 5;
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     config.partyDist.lowerbound = 5;
     config.partyDist.expectedValue = (5 + 50) / 2;
     config.partyDist.varians = 1;
-    config.partyRisk = 75;
+    config.partyRisk = 10;
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
     config.seed = 0;
