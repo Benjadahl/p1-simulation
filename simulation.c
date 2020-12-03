@@ -312,19 +312,16 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
         while (agentsLeft) {
             run =
                 i == 0 ? agentsLeft >
-                config.groupSizeMaxMin[1] : agentsLeft >
-                config.groupSizeMaxMin[3];
+                config.primaryGroupSize.upperbound : agentsLeft >
+                config.secondaryGroupSize.upperbound;
             if (run) {
                 if (i == 0)
                     thisGroupSize =
-                        rndInt(config.groupSizeMaxMin[1] -
-                               config.groupSizeMaxMin[0]) +
-                        config.groupSizeMaxMin[0];
+                        gaussianTruncatedDiscrete(config.primaryGroupSize);
                 else if (i == 1)
                     thisGroupSize =
-                        rndInt(config.groupSizeMaxMin[3] -
-                               config.groupSizeMaxMin[2]) +
-                        config.groupSizeMaxMin[2];
+                        gaussianTruncatedDiscrete(config.
+                                                  secondaryGroupSize);
                 agentsLeft -= thisGroupSize;
                 /*printf("thisGroupSize = %d\n", thisGroupSize); */
             } else {

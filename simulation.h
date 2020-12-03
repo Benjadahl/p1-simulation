@@ -7,14 +7,14 @@ typedef struct simConfig {
     int simulationRuns;
     int contactsRisk;
     int amountOfAgents;
-    struct gaussian infectionTime;
+    gaussian infectionTime;
     int amountOfStartInfected;
     int maxEvents;
     int symptomaticPercent;
     int maxIncubationTime;
     int willIsolatePercent;
     int partyChance;
-    struct gaussian partyDist;
+    gaussian partyDist;
     int partyRisk;
     int partyMeetChance;
     int willTestPercent;
@@ -34,5 +34,6 @@ typedef struct simConfig {
     int groupMaxAmountToMeet[amountOfGroups];
     int btThreshold;
     int btDecay;
-    int groupSizeMaxMin[amountOfGroups];
+    gaussian primaryGroupSize;
+    gaussian secondaryGroupSize;
 } simConfig;

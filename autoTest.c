@@ -15,7 +15,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 63.50, 33.04, 11.74 };
+    double expectedValue[3] = { 66.40, 30.07, 10.88 };
 
     simConfig config;
 
@@ -57,10 +57,18 @@ int main()
     config.groupMaxAmountToMeet[3] = 20;
     config.btThreshold = 6;
     config.btDecay = 3;
-    config.groupSizeMaxMin[0] = 10;
-    config.groupSizeMaxMin[1] = 50;
-    config.groupSizeMaxMin[2] = 5;
-    config.groupSizeMaxMin[3] = 30;
+    config.primaryGroupSize.lowerbound = 10;
+    config.primaryGroupSize.upperbound = 50;
+    config.primaryGroupSize.varians = 1;
+    config.primaryGroupSize.expectedValue =
+        (config.primaryGroupSize.lowerbound +
+         config.primaryGroupSize.upperbound) / 2;
+    config.secondaryGroupSize.lowerbound = 5;
+    config.secondaryGroupSize.upperbound = 30;
+    config.secondaryGroupSize.varians = 1;
+    config.secondaryGroupSize.expectedValue =
+        (config.secondaryGroupSize.lowerbound +
+         config.secondaryGroupSize.upperbound) / 2;
 
 
     DataSet data[PLOT_COUNT];

@@ -56,10 +56,18 @@ int main(int argc, char *argv[])
     config.groupMaxAmountToMeet[3] = 20;
     config.btThreshold = 6;
     config.btDecay = 3;
-    config.groupSizeMaxMin[0] = 10;
-    config.groupSizeMaxMin[1] = 50;
-    config.groupSizeMaxMin[2] = 5;
-    config.groupSizeMaxMin[3] = 30;
+    config.primaryGroupSize.lowerbound = 10;
+    config.primaryGroupSize.upperbound = 50;
+    config.primaryGroupSize.varians = 1;
+    config.primaryGroupSize.expectedValue =
+        (config.primaryGroupSize.lowerbound +
+         config.primaryGroupSize.upperbound) / 2;
+    config.secondaryGroupSize.lowerbound = 5;
+    config.secondaryGroupSize.upperbound = 30;
+    config.secondaryGroupSize.varians = 1;
+    config.secondaryGroupSize.expectedValue =
+        (config.secondaryGroupSize.lowerbound +
+         config.secondaryGroupSize.upperbound) / 2;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
