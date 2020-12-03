@@ -30,15 +30,15 @@ int main(int argc, char *argv[])
     config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
-    config.groupMaxAmountToMeet[0] = 10; /*Prim*/
-    config.groupMaxAmountToMeet[1] = 5; /*second*/
-    config.groupMaxAmountToMeet[2] = 3; /*loos*/
-    config.groupMaxAmountToMeet[3] = 20; /*party*/
+    config.groupMaxAmountToMeet[0] = 10;  /*Prim */
+    config.groupMaxAmountToMeet[1] = 5; /*second */
+    config.groupMaxAmountToMeet[2] = 3; /*loos */
+    config.groupMaxAmountToMeet[3] = 20;  /*party */
 
-    config.groupSizeMaxMin[0] = 10; /*Prim*/
-    config.groupSizeMaxMin[1] = 50; /*second*/
-    config.groupSizeMaxMin[2] = 5; /*loos*/
-    config.groupSizeMaxMin[3] = 30; /*party*/
+    config.groupSizeMaxMin[0] = 10; /*Prim */
+    config.groupSizeMaxMin[1] = 50; /*second */
+    config.groupSizeMaxMin[2] = 5;  /*loos */
+    config.groupSizeMaxMin[3] = 30; /*party */
 
     /*App */
     config.chanceToHaveApp = 25;  /*can */
@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
     config.btThreshold = 6;
     config.btDecay = 3;
 
-    /*Infections*/
-    config.contactsRisk = 10;/*can*/
+    /*Infections */
+    config.contactsRisk = 10;   /*can */
     config.infectionTime = 4;
     config.amountOfStartInfected = 20;
     config.symptomaticPercent = 84; /*can */
@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.print = 1;
     config.amountOfAgents = 100000;
-    config.willIsolatePercent = 90; /*can*/
-    config.willTestPercent = 95; /*^^*/
-    config.isolationTime = 7; /*can*/
+    config.willIsolatePercent = 90; /*can */
+    config.willTestPercent = 95;  /*^^ */
+    config.isolationTime = 7;   /*can */
     config.testResponseTime = 2;
 
 
