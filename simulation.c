@@ -45,6 +45,8 @@ typedef struct agent {
 typedef struct group {
     int size;
     struct agent **members;
+    Day meetingDayOne;
+    Day meetingDayTwo;
     struct group *next;
 } group;
 
@@ -269,8 +271,7 @@ void getStats(agent agents[], simConfig config, int *succeptibleOut,
     *isolatedOut = totalIsolated;
 }
 
-void initAgents(agent * agents, /*group ** groupsPtrs, */
-                simConfig config, int tick, group ** head)
+void initAgents(agent * agents, simConfig config, int tick, group ** head)
 {
     int i, j, l, k = 0;
     int randomID;
@@ -324,16 +325,13 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
                                config.groupSizeMaxMin[2]) +
                         config.groupSizeMaxMin[2];
                 agentsLeft -= thisGroupSize;
-                /*printf("thisGroupSize = %d\n", thisGroupSize); */
             } else {
                 thisGroupSize = agentsLeft;
                 agentsLeft = 0;
-                /*printf("thisGroupSize = %d\n", thisGroupSize); */
             }
             insertGroupToLinkedList(createGroup
                                     (agents, config, thisGroupSize, i),
                                     head);
-            /*printf("agentsLeft = %d\n", agentsLeft); */
         }
     }
 
@@ -366,7 +364,6 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
         }
         insertGroupToLinkedList(newGroup, head);
         (agents + i)->groups[2] = newGroup;
-        /**(groupsPtrs + k) = newGroup;*/
     }
 
     /* Infect random agents */
@@ -410,6 +407,12 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
 
         theAgent->groups[groupNr] = newGroup;
         *(members + i) = theAgent;
+    }
+
+    /*Giving secondary group random meeting days*/
+    if (groupNr == 1) {
+    	newGroup->meetingDayOne = rndInt(7);
+    	newGroup->meetingDayTwo = rndInt(7);
     }
 
     return newGroup;
@@ -546,7 +549,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                       theAgent);
         }
 
-        if (isDay(tick) == Tuesday || isDay(tick) == Thursday) {
+        if ((Day) isDay(tick) == theAgent->groups[1]->meetingDayOne || (Day) isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(theAgent->groups[1],
                       config.secondaryGroupRisk,
                       rndInt(config.groupMaxAmountToMeet[1]), tick,
