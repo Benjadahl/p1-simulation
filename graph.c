@@ -2,6 +2,7 @@
 #include"import.h"
 #include"export.h"
 #include"plot.h"
+#include "distribution.h"
 #include"simulation.h"
 
 typedef struct GraphData {
