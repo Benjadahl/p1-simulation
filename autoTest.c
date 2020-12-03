@@ -15,7 +15,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 90.40, 88.04, 68.32 };
+    double expectedValue[3] = { 91.80, 87.67, 60.61 };
 
     simConfig config;
 
@@ -56,6 +56,7 @@ int main()
     config.groupSizeMaxMin[1] = 50;
     config.groupSizeMaxMin[2] = 5;
     config.groupSizeMaxMin[3] = 30;
+    config.chanceOfFalseNegative = 95;
 
 
     DataSet data[PLOT_COUNT];
