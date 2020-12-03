@@ -14,8 +14,7 @@ typedef struct simConfig {
     int maxIncubationTime;
     int willIsolatePercent;
     int partyChance;
-    int maxPartySize;
-    int minPartySize;
+    struct gaussian partyDist;
     int partyRisk;
     int partyMeetChance;
     int willTestPercent;

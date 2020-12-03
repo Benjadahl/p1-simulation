@@ -463,8 +463,7 @@ void handleParties(agent agents[], simConfig config, int tick)
 
         /* Create random group, meet it, then free it */
         grpSize =
-            rndInt(config.maxPartySize - config.minPartySize) +
-            config.minPartySize;
+            gaussianTruncatedDiscrete(config.partyDist);
 
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {

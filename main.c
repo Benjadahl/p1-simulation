@@ -31,8 +31,10 @@ int main(int argc, char *argv[])
     config.maxIncubationTime = 14;
     config.willIsolatePercent = 50;
     config.partyChance = 5;
-    config.maxPartySize = 50;
-    config.minPartySize = 5;
+    config.partyDist.upperbound = 50;
+    config.partyDist.lowerbound = 5;
+    config.partyDist.expectedValue = (5 + 50) / 2;
+    config.partyDist.varians = 1;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
