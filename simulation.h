@@ -22,7 +22,7 @@ typedef struct simConfig {
     int print;
     int primaryGroupRisk;
     int secondaryGroupRisk;
-    int amountOfContactsPerAgent;
+    gaussian amountOfContactsPerAgent;
     int amountOfContacts;
     int groupPercentageToInfect;
     int chanceToHaveApp;

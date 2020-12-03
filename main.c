@@ -47,7 +47,10 @@ int main(int argc, char *argv[])
     config.groupSize[1] = 10;
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
-    config.amountOfContactsPerAgent = 5;
+    config.amountOfContactsPerAgent.lowerbound = 0;
+    config.amountOfContactsPerAgent.upperbound = 10;
+    config.amountOfContactsPerAgent.varians = 1;
+    config.amountOfContactsPerAgent.expectedValue = 5;
     config.groupPercentageToInfect = 74;
     config.chanceToHaveApp = 35;
     config.contactTickLength = 7;

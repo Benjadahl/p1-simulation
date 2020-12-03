@@ -338,13 +338,14 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
 
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
+        int contactsPerAgent = gaussianTruncatedDiscrete(config.amountOfContactsPerAgent);
         group *newGroup = malloc(sizeof(group));
         agent **members =
-            malloc(sizeof(agent *) * config.amountOfContactsPerAgent);
+            malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
-        newGroup->size = config.amountOfContactsPerAgent;
+        newGroup->size = contactsPerAgent;
 
-        for (j = 0; j < config.amountOfContactsPerAgent; j++) {
+        for (j = 0; j < contactsPerAgent; j++) {
             agent *theAgent;
             randomID = rand() % config.amountOfAgents;
 
