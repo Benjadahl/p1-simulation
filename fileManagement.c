@@ -91,7 +91,7 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int absolute)
 {
-    char foldername[90], filename[100], graphname[100];
+    char foldername[90], filename[150], graphname[150];
     struct tm *currentTime;
 
     currentTime = localtime(&runTime);

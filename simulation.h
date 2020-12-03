@@ -1,5 +1,5 @@
 #define amountOfGroups 4
-#define PLOT_COUNT 5
+#define PLOT_COUNT 7
 
 typedef struct simConfig {
     int simulationRuns;
