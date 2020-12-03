@@ -61,9 +61,9 @@ int uniformTruncted(int lowerbound, int upperbound)
 double expSim(double expectedValue)
 {
     double result, numberOneToZero = randNumberZeroToOne();
-        
-    result = -(1.0 / (expectedValue+1)) * log(1 - numberOneToZero);      
-    
+
+    result = -(1.0 / (expectedValue + 1)) * log(1 - numberOneToZero);
+
     return result;
 }
 
