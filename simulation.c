@@ -409,10 +409,10 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
         *(members + i) = theAgent;
     }
 
-    /*Giving secondary group random meeting days*/
+    /*Giving secondary group random meeting days */
     if (groupNr == 1) {
-    	newGroup->meetingDayOne = rndInt(7);
-    	newGroup->meetingDayTwo = rndInt(7);
+        newGroup->meetingDayOne = rndInt(7);
+        newGroup->meetingDayTwo = rndInt(7);
     }
 
     return newGroup;
@@ -549,9 +549,9 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                       theAgent);
         }
 
-        if ((Day) isDay(tick) == theAgent->groups[1]->meetingDayOne || (Day) isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
-            meetGroup(theAgent->groups[1],
-                      config.secondaryGroupRisk,
+        if ((Day) isDay(tick) == theAgent->groups[1]->meetingDayOne
+            || (Day) isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
+            meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
                       rndInt(config.groupMaxAmountToMeet[1]), tick,
                       theAgent);
         }
