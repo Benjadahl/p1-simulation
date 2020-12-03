@@ -3,7 +3,9 @@
 #include <ctype.h>
 #include <math.h>
 #include "simulation.h"
+#include "export.h"
 
+void run_simulation(simConfig config, DataSet * data, int dataCount);
 int printCheck(int i, simConfig config, double input,
                double expectedValue);
 
@@ -12,11 +14,12 @@ int main()
     int seed;
     int i;
     int failures = 0;
-    double expectedValue[3] = { 84.20, 77.11, 79.55 };
     double results[3] = { 0, 0, 0 };
+    double expectedValue[3] = { 93.40, 88.40, 72.68 };
 
     simConfig config;
 
+    config.simulationRuns = 1;
     config.contactsRisk = 1;
     config.amountOfAgents = 100000;
     config.infectionTime.lowerbound = 2;
@@ -33,7 +36,6 @@ int main()
     config.minPartySize = 5;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
-    config.willIsolatePercent = 98;
     config.willTestPercent = 75;
     config.seed = 1;
     config.print = 0;
@@ -47,17 +49,43 @@ int main()
     config.contactTickLength = 7;
     config.isolationTime = 15;
     config.testResponseTime = 2;
+    config.groupMaxAmountToMeet[0] = 10;
+    config.groupMaxAmountToMeet[1] = 5;
+    config.groupMaxAmountToMeet[2] = 3;
+    config.groupMaxAmountToMeet[3] = 20;
+    config.btThreshold = 6;
+    config.btDecay = 3;
+    config.groupSizeMaxMin[0] = 10;
+    config.groupSizeMaxMin[1] = 50;
+    config.groupSizeMaxMin[2] = 5;
+    config.groupSizeMaxMin[3] = 30;
 
-    double succeptible_data_test[config.maxEvents];
-    double infectious_data_test[config.maxEvents];
-    double recovered_data_test[config.maxEvents];
+
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
+
+
+    for (i = 0; i < PLOT_COUNT; i++) {
+        data[i].data = calloc(config.maxEvents, sizeof(double));
+        data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+        avgData[i].data = calloc(config.maxEvents, sizeof(double));
+        avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+    }
+
+    data[0].name = "Succeptible";
+    data[1].name = "Exposed";
+    data[2].name = "Infectious";
+    data[3].name = "Recovered";
+    data[4].name = "Isolated";
+
+    for (i = 0; i < PLOT_COUNT; i++) {
+        avgData[i].name = data[i].name;
+    }
 
     for (i = 0; i < 3; i++) {
         config.amountOfAgents = 100 * pow(10, i + 1);
-        run_simulation(config, succeptible_data_test, infectious_data_test,
-                       recovered_data_test);
-        results[i] =
-            floor(recovered_data_test[config.maxEvents - 1] * 100) / 100;
+        run_simulation(config, data, PLOT_COUNT);
+        results[i] = floor(data[3].data[config.maxEvents - 1] * 100) / 100;
         failures += printCheck(i, config, results[i], expectedValue[i]);
     }
     printf(" %d", failures);

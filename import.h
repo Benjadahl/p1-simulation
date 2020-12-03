@@ -1,1 +1,7 @@
-void ReadFile(char *file_name, float *data1, float *data2, float *data3);
+typedef struct DataSetRead
+{
+    float *data;
+    char name[14];
+} DataSetRead;
+
+void ReadFile(char *file_name, DataSetRead *data, int dataCount);
