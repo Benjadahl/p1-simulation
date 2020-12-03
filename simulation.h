@@ -11,7 +11,7 @@ typedef struct simConfig {
     int amountOfStartInfected;
     int maxEvents;
     int symptomaticPercent;
-    int maxIncubationTime;
+    gaussian incubationTime;
     int willIsolatePercent;
     int partyChance;
     gaussian partyDist;

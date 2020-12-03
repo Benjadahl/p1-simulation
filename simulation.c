@@ -291,13 +291,13 @@ void initAgents(agent * agents, /*group ** groupsPtrs, */
         (agents + i)->infectedPeriod =
             gaussianTruncatedDiscrete(config.infectionTime);
         (agents + i)->symptomatic = bernoulli(config.symptomaticPercent);
-        (agents + i)->incubationTime = rndInt(config.maxIncubationTime);
+        (agents + i)->incubationTime = gaussianTruncatedDiscrete(config.incubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
-        (agents + i)->exposedTick = -1 * config.maxIncubationTime;
+        (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
@@ -484,7 +484,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
     agent *theAgent = &agents[agentID];
 
     /* Move agent to infectious state if incubationTime has passed */
-    if (theAgent->exposedTick + theAgent->incubationTime + 1 == tick) {
+    if (theAgent->exposedTick + theAgent->incubationTime == tick) {
         theAgent->healthState = infectious;
         theAgent->infectedTick = tick;
 
