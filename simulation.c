@@ -49,7 +49,7 @@ typedef struct group {
 } group;
 
 void printAgent(agent * agent, simConfig config);
-void printStats(DataSet *data, int dataCount, int tick, double *R0,
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0);
 void initAgents(agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
@@ -183,17 +183,19 @@ void calculateAveragePlot(int run, int events, DataSet * data,
     }
 }
 
-void printStats(DataSet *data, int dataCount, int tick, double *R0,
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0)
 {
     int i;
     printf("\nTick: %d\n", tick);
 
     for (i = 0; i < dataCount; i++) {
-        printf("Total %s: %d (%f%%)\n", data[i].name, (int)data[i].absoluteData[tick-1], data[i].data[tick-1]);
+        printf("Total %s: %d (%f%%)\n", data[i].name,
+               (int) data[i].absoluteData[tick - 1],
+               data[i].data[tick - 1]);
     }
 
-    if (*R0 != 0 || data[3].data[tick-1] > 0) {
+    if (*R0 != 0 || data[3].data[tick - 1] > 0) {
         printf("R0 = %f\n", *R0);
         printf("Average R0 = %f\n", *avgR0);
     }
