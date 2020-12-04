@@ -31,6 +31,7 @@ typedef struct simConfig {
     int groupMaxAmountToMeet[amountOfGroups];
     int btThreshold;
     int btDecay;
+    int chanceOfCorrectTest;
     struct gaussian primaryGroupSize;
     struct gaussian secondaryGroupSize;
     struct gaussian passerbys;

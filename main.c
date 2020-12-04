@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     config.groupMaxAmountToMeet[3] = 20;
     config.btThreshold = 6;
     config.btDecay = 3;
+    config.chanceOfCorrectTest = 95;
     config.primaryGroupSize.lowerbound = 10;
     config.primaryGroupSize.upperbound = 50;
     config.primaryGroupSize.varians = 1;
