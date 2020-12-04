@@ -54,7 +54,10 @@ int main()
     config.groupPercentageToInfect = 74;
     config.chanceToHaveApp = 35;
     config.isolationTime = 15;
-    config.testResponseTime = 2;
+    config.testResponseTime.upperbound = 3; /*can, this is a worst case */
+    config.testResponseTime.lowerbound = 1;
+    config.testResponseTime.expectedValue = 2;
+    config.testResponseTime.varians = 1; 
     config.groupMaxAmountToMeet[0] = 10;
     config.groupMaxAmountToMeet[1] = 5;
     config.groupMaxAmountToMeet[2] = 3;

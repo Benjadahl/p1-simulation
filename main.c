@@ -81,7 +81,10 @@ int main(int argc, char *argv[])
     config.willIsolatePercent = 90; /*can */
     config.willTestPercent = 95;  /*^^ */
     config.isolationTime = 7;   /*can */
-    config.testResponseTime = 3;  /*can, this is a worst case */
+    config.testResponseTime.upperbound = 3; /*can, this is a worst case */
+    config.testResponseTime.lowerbound = 1;
+    config.testResponseTime.expectedValue = 2;
+    config.testResponseTime.varians = 1;  
     config.chanceOfCorrectTest = 95;
 
 
