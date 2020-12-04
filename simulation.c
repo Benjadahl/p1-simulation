@@ -40,6 +40,7 @@ typedef struct agent {
     int isolatedTick;
     int willTest;
     int testedTick;
+    int testResult;             /* 1 positive, 0 negative */
     struct group **groups;
     int amountAgentHasInfected;
 } agent;
@@ -500,7 +501,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
 
     if (theAgent->testedTick + config.testResponseTime == tick) {
-        if (theAgent->healthState == infectious && theAgent->willIsolate
+        if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
             theAgent->isolatedTick = tick;
         } else {
@@ -597,6 +598,11 @@ void informContacts(App app, simConfig config, int tick)
             config.testResponseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
+                if (app.records[i].peer->healthState == infectious) {
+                    app.records[i].peer->testResult = 1;
+                } else {
+                    app.records[i].peer->testResult = 0;
+                }
                 app.records[i].peer->app->positiveMet++;
             }
         }
