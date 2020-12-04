@@ -413,7 +413,7 @@ void handleParties(agent agents[], simConfig config, int tick)
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
             meetGroup(groupPtr, config.partyRisk,
-                      gaussianTruncatedDiscrete(config.partyMeet), tick,
+                      gaussianTruncatedDiscrete(config.toMeet[3]), tick,
                       groupPtr->members[i]);
         }
         free(groupPtr->members);
@@ -489,20 +489,20 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,
-                      gaussianTruncatedDiscrete(config.primaryMeet), tick,
+                      gaussianTruncatedDiscrete(config.toMeet[0]), tick,
                       theAgent);
         }
 
         if (isDay(tick) == theAgent->groups[1]->meetingDayOne
             || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
-                      gaussianTruncatedDiscrete(config.secondaryMeet),
+                      gaussianTruncatedDiscrete(config.toMeet[1]),
                       tick, theAgent);
         }
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  gaussianTruncatedDiscrete(config.looseMeet), tick,
+                  gaussianTruncatedDiscrete(config.toMeet[3]), tick,
                   theAgent);
     }
 }

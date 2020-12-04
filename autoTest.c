@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 98.80, 98.77, 98.77 };
+    double expectedValue[3] = { 99.10, 98.98, 98.93 };
 
     simConfig config;
 
@@ -43,7 +43,7 @@ int main()
     config.partyRisk = 75;
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
-    config.seed = 0;
+    config.seed = 1;
     config.print = 0;
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
@@ -55,22 +55,22 @@ int main()
     config.chanceToHaveApp = 35;
     config.isolationTime = 15;
     config.testResponseTime = 2;
-    config.primaryMeet.upperbound = 10;
-    config.primaryMeet.lowerbound = 0;
-    config.primaryMeet.expectedValue = 10;
-    config.primaryMeet.varians = 25;
-    config.secondaryMeet.upperbound = 20;
-    config.secondaryMeet.lowerbound = 0;
-    config.secondaryMeet.expectedValue = 5;
-    config.secondaryMeet.varians = 25;
-    config.looseMeet.upperbound = 3;
-    config.looseMeet.lowerbound = 0;
-    config.looseMeet.expectedValue = 2;
-    config.looseMeet.varians = 2;
-    config.partyMeet.upperbound = 20;
-    config.partyMeet.lowerbound = 0;
-    config.partyMeet.expectedValue = 10;
-    config.partyMeet.varians = 49;
+    config.toMeet[0].upperbound = 10;
+    config.toMeet[0].lowerbound = 0;
+    config.toMeet[0].expectedValue = 10;
+    config.toMeet[0].varians = 25;
+    config.toMeet[1].upperbound = 20;
+    config.toMeet[1].lowerbound = 0;
+    config.toMeet[1].expectedValue = 5;
+    config.toMeet[1].varians = 25;
+    config.toMeet[2].upperbound = 3;
+    config.toMeet[2].lowerbound = 0;
+    config.toMeet[2].expectedValue = 2;
+    config.toMeet[2].varians = 2;
+    config.toMeet[3].upperbound = 20;
+    config.toMeet[3].lowerbound = 0;
+    config.toMeet[3].expectedValue = 10;
+    config.toMeet[3].varians = 49;
     config.btThreshold = 6;
     config.btDecay = 3;
     config.chanceOfCorrectTest = 95;

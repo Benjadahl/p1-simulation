@@ -32,6 +32,7 @@ typedef struct simConfig {
     struct gaussian secondaryMeet;
     struct gaussian looseMeet;
     struct gaussian partyMeet;
+    struct gaussian toMeet[amountOfGroups];
     int btThreshold;
     int btDecay;
     int chanceOfCorrectTest;
