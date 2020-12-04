@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 95.90, 96.32, 95.81 };
+    double expectedValue[3] = { 94.90, 95.90, 95.54 };
 
     simConfig config;
 
@@ -93,10 +93,17 @@ int main()
     config.seed = 1;
     config.print = 0;
     config.amountOfAgents = 100000;
+    config.testResponseTime.upperbound = 3; /*can, this is a worst case */
+    config.testResponseTime.lowerbound = 1;
+    config.testResponseTime.expectedValue = 2;
+    config.testResponseTime.varians = 1;
     config.willIsolatePercent = 90; /*can */
     config.willTestPercent = 60;  /*can */
     config.isolationTime = 7;   /*can */
-    config.testResponseTime = 3;  /*can, this is a worst case */
+    config.testResponseTime.upperbound = 3; /*can, this is a worst case */
+    config.testResponseTime.lowerbound = 1;
+    config.testResponseTime.expectedValue = 2;
+    config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 95;
 
     DataSet data[PLOT_COUNT];
