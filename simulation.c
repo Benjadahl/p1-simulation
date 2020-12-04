@@ -34,6 +34,7 @@ typedef struct agent {
     int infectedPeriod;
     int exposedTick;
     int infectedTick;
+    int testResponse;
     int symptomatic;
     int isolationDelay;
     int incubationTime;
@@ -75,7 +76,7 @@ void meeting(agent * theAgent, agent * peer, double infectionRisk,
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
-void informContacts(App app, simConfig config, int tick);
+void informContacts(agent * theAgent, App app, int tick);
 void isolate(agent * agent);
 void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
@@ -246,7 +247,9 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
-        (agents + i)->testedTick = -1 * config.testResponseTime;
+        (agents + i)->testResponse =
+            gaussianTruncatedDiscrete(config.testResponseTime);
+        (agents + i)->testedTick = -1 * (agents + i)->testResponse;
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
         (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
@@ -263,16 +266,15 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
         while (agentsLeft) {
             run =
                 i == 0 ? agentsLeft >
-                config.primaryGroupSize.upperbound : agentsLeft >
-                config.secondaryGroupSize.upperbound;
+                config.groupSize[0].upperbound : agentsLeft >
+                config.groupSize[1].upperbound;
             if (run) {
                 if (i == 0)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete(config.primaryGroupSize);
+                        gaussianTruncatedDiscrete(config.groupSize[0]);
                 else if (i == 1)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete
-                        (config.secondaryGroupSize);
+                        gaussianTruncatedDiscrete(config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
             } else {
                 thisGroupSize = agentsLeft;
@@ -287,7 +289,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
         int contactsPerAgent =
-            gaussianTruncatedDiscrete(config.amountOfContactsPerAgent);
+            gaussianTruncatedDiscrete(config.groupSize[3]);
         group *newGroup = malloc(sizeof(group));
         agent **members = malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
@@ -410,12 +412,12 @@ void handleParties(agent agents[], simConfig config, int tick)
         group *groupPtr;
 
         /* Create random group, meet it, then free it */
-        grpSize = gaussianTruncatedDiscrete(config.partyDist);
+        grpSize = gaussianTruncatedDiscrete(config.groupSize[3]);
 
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
             meetGroup(groupPtr, config.partyRisk,
-                      rndInt(config.groupMaxAmountToMeet[3]), tick,
+                      gaussianTruncatedDiscrete(config.toMeet[3]), tick,
                       groupPtr->members[i]);
         }
         free(groupPtr->members);
@@ -463,7 +465,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->infectedTick = tick;
 
         if (theAgent->app != NULL) {
-            informContacts(*(theAgent->app), config, tick);
+            informContacts(theAgent, *(theAgent->app), tick);
         }
     }
 
@@ -501,7 +503,9 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
     }
 
-    if (theAgent->testedTick + config.testResponseTime == tick) {
+
+
+    if (theAgent->testedTick + theAgent->testResponse == tick) {
         if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
             if (theAgent->healthState == infectious)
@@ -515,20 +519,21 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,
-                      rndInt(config.groupMaxAmountToMeet[0]), tick,
+                      gaussianTruncatedDiscrete(config.toMeet[0]), tick,
                       theAgent);
         }
 
         if (isDay(tick) == theAgent->groups[1]->meetingDayOne
             || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
-                      rndInt(config.groupMaxAmountToMeet[1]), tick,
-                      theAgent);
+                      gaussianTruncatedDiscrete(config.toMeet[1]),
+                      tick, theAgent);
         }
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent);
+                  gaussianTruncatedDiscrete(config.toMeet[3]), tick,
+                  theAgent);
     }
 
     handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
@@ -587,17 +592,18 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recorder->app->recorded++;
 }
 
-void informContacts(App app, simConfig config, int tick)
+void informContacts(agent * theAgent, App app, int tick)
 {
     int i;
     int contacts = MAX_CONTACTS_IN_APP;
+
     if (app.recorded < MAX_CONTACTS_IN_APP) {
         contacts = app.recorded;
     }
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <
-            config.testResponseTime + 2) {
+            theAgent->testResponse + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
                 if (app.records[i].peer->healthState == infectious) {
