@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
 
     /*party */
     config.partyChance = 5;
-    config.partyRisk = 10;
+    config.partyRisk = 5;
 
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
-    config.secondaryGroupRisk = 5;  /*can */
-    config.groupPercentageToInfect = 66;
+    config.secondaryGroupRisk = 2.5;  /*can */
+    config.contactsRisk = 3;   /*can */
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
@@ -44,38 +44,37 @@ int main(int argc, char *argv[])
     config.groupSize[2].upperbound = 10;
     config.groupSize[2].varians = 9;
     config.groupSize[2].expectedValue = 5;
-    config.groupSize[3].upperbound = 50;
-    config.groupSize[3].lowerbound = 5;
-    config.groupSize[3].expectedValue = (5 + 50) / 2;
-    config.groupSize[3].varians = 1;
+    config.groupSize[3].upperbound = 20;
+    config.groupSize[3].lowerbound = 2;
+    config.groupSize[3].expectedValue = 6;
+    config.groupSize[3].varians = 9;
     config.toMeet[0].upperbound = 10;
     config.toMeet[0].lowerbound = 0;
-    config.toMeet[0].expectedValue = 10;
-    config.toMeet[0].varians = 25;
+    config.toMeet[0].expectedValue = 5;
+    config.toMeet[0].varians = 9;
     config.toMeet[1].upperbound = 20;
     config.toMeet[1].lowerbound = 0;
-    config.toMeet[1].expectedValue = 5;
-    config.toMeet[1].varians = 25;
+    config.toMeet[1].expectedValue = 3;
+    config.toMeet[1].varians = 9;
     config.toMeet[2].upperbound = 3;
     config.toMeet[2].lowerbound = 0;
-    config.toMeet[2].expectedValue = 2;
+    config.toMeet[2].expectedValue = 1;
     config.toMeet[2].varians = 2;
-    config.toMeet[3].upperbound = 20;
+    config.toMeet[3].upperbound = 15;
     config.toMeet[3].lowerbound = 0;
-    config.toMeet[3].expectedValue = 10;
-    config.toMeet[3].varians = 49;
+    config.toMeet[3].expectedValue = 3;
+    config.toMeet[3].varians = 9;
     config.passerbys.lowerbound = 0;
     config.passerbys.upperbound = 25;
-    config.passerbys.varians = 20;
-    config.passerbys.expectedValue = 7;
+    config.passerbys.varians = 16;
+    config.passerbys.expectedValue = 4;
 
     /*App */
-    config.chanceToHaveApp = 25;  /*can */
-    config.btThreshold = 6;
-    config.btDecay = 3;
+    config.chanceToHaveApp = 0;  /*can */
+    config.btThreshold = 0;
+    config.btDecay = 7;
 
     /*Infections */
-    config.contactsRisk = 10;   /*can */
     config.infectionTime.lowerbound = 2;
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
@@ -86,6 +85,10 @@ int main(int argc, char *argv[])
     config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
     config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
+    config.isolationDelay.upperbound = 5;
+    config.isolationDelay.lowerbound = 0;
+    config.isolationDelay.expectedValue = 1;
+    config.isolationDelay.varians = 1;
 
     /*Misc */
     config.simulationRuns = 1;
@@ -95,7 +98,6 @@ int main(int argc, char *argv[])
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 90; /*can */
     config.willTestPercent = 60;  /*can */
-    config.isolationTime = 7;   /*can */
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
