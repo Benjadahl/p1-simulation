@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 97.10, 96.91, 97.28 };
+    double expectedValue[3] = { 95.90, 96.32, 95.81 };
 
     simConfig config;
 
@@ -128,7 +128,7 @@ int main()
         results[i] = floor(data[3].data[config.maxEvents - 1] * 100) / 100;
         failures += printCheck(i, config, results[i], expectedValue[i]);
     }
-    printf(" %d", failures);
+    printf("Failures = %d\n", failures);
     return failures;
 }
 
