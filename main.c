@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     config.print = 1;
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 90; /*can */
-    config.willTestPercent = 60;  /*can*/
+    config.willTestPercent = 60;  /*can */
     config.isolationTime = 7;   /*can */
     config.testResponseTime = 3;  /*can, this is a worst case */
     config.chanceOfCorrectTest = 95;
