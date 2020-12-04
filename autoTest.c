@@ -46,8 +46,8 @@ int main()
     config.groupSize[2].expectedValue = 5;
     config.groupSize[3].upperbound = 50;
     config.groupSize[3].lowerbound = 5;
-    config.groupSize[3].expectedValue = (5 + 50) / 2;
-    config.groupSize[3].varians = 1;
+    config.groupSize[3].expectedValue = 12;
+    config.groupSize[3].varians = 49;
     config.toMeet[0].upperbound = 10;
     config.toMeet[0].lowerbound = 0;
     config.toMeet[0].expectedValue = 10;
