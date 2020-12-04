@@ -22,7 +22,7 @@ double randNumberZeroToOne()
 
 int bernoulli(double chanceForTrue)
 {
-    if (rndInt(100) <= chanceForTrue - 1) {
+    if (randNumberZeroToOne() * 100 <= chanceForTrue && chanceForTrue != 0) {
         return 1;
     } else {
         return 0;
@@ -62,7 +62,7 @@ double expSim(double expectedValue)
 {
     double result, numberOneToZero = randNumberZeroToOne();
 
-    result = -(1.0 / (expectedValue + 1)) * log(1 - numberOneToZero);
+    result = -(1.0 / ((1 / expectedValue) + 1)) * log(1 - numberOneToZero);
 
     return result;
 }

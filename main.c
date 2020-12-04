@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     config.partyDist.lowerbound = 5;
     config.partyDist.expectedValue = (5 + 50) / 2;
     config.partyDist.varians = 1;
-    config.partyRisk = 75;
+    config.partyRisk = 10;
     config.partyMeetChance = 10;
 
     /*Groups */
@@ -53,6 +53,10 @@ int main(int argc, char *argv[])
     config.secondaryGroupSize.expectedValue =
         (config.secondaryGroupSize.lowerbound +
          config.secondaryGroupSize.upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 25;
+    config.passerbys.varians = 20;
+    config.passerbys.expectedValue = 7;
 
     /*App */
     config.chanceToHaveApp = 25;  /*can */
