@@ -103,6 +103,7 @@ int main()
     config.testResponseTime.expectedValue = 2;
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 95;
+    config.passerByRisk = 0.48;
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];

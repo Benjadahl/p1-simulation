@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
     config.testResponseTime.expectedValue = 2;
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 95;
+    config.passerByRisk = 0.48;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
