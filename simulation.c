@@ -40,7 +40,7 @@ typedef struct agent {
     int isolatedTick;
     int willTest;
     int testedTick;
-    int testResult; /* 1 positive, 0 negative */
+    int testResult;             /* 1 positive, 0 negative */
     struct group **groups;
     int amountAgentHasInfected;
 } agent;
