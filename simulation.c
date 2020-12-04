@@ -137,44 +137,39 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         switch (agents[i].healthState) {
         case succeptible:
             data[0].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         case exposed:
             data[1].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case infectious:
             data[2].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case recovered:
             data[3].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         }
-        if (agents[i].isolatedTick != -1
-            && agents[i].isolatedTick + config.isolationTime > tick)
+        if (agents[i].isolatedTick != -1) {
             data[4].absoluteData[tick - 1]++;
+        }        
     }
 
 
     for (i = 0; i < dataCount; i++) {
         if (data[i].absoluteData[tick - 1] != 0) {
             data[i].data[tick - 1] =
-                data[i].absoluteData[tick -
-                                     1] * 100 / config.amountOfAgents;
+                data[i].absoluteData[tick-1] * 100 / config.amountOfAgents;
         }
     }
 }
@@ -252,6 +247,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
         (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
+        (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
@@ -382,10 +378,6 @@ void infectAgent(int tick, agent * theAgent)
     if (theAgent->healthState == succeptible) {
         theAgent->healthState = exposed;
         theAgent->exposedTick = tick;
-
-        /*if (theAgent->willIsolate && theAgent->symptomatic) {
-           theAgent->isolatedTick = tick;
-           } */
     }
 }
 
@@ -459,7 +451,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 {
     agent *theAgent = &agents[agentID];
 
-    if(theAgent->willIsolate && theAgent->symptomatic && theAgent->healthState == infectious && theAgent->isolationDelay + theAgent->infectedTick < tick) {
+    if(theAgent->isolationDelay + theAgent->infectedTick == tick && theAgent->healthState == infectious && theAgent->willIsolate) {
         theAgent->isolatedTick = tick;
     }
 
@@ -479,7 +471,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
-
+        theAgent->isolatedTick = -1;
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
     }
@@ -497,16 +489,20 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
             && config.btThreshold > 0) {
             theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
+            if(theAgent->healthState == infectious)
+                theAgent->testResult = 1;
+            else
+             theAgent->testResult = 0;
+            
             theAgent->app->positiveMet = 0;
         }
     }
 
-
-
     if (theAgent->testedTick + config.testResponseTime == tick) {
         if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
-            theAgent->isolatedTick = tick;
+            if(theAgent->healthState == infectious)
+                theAgent->isolatedTick = tick;
         } else {
             theAgent->isolatedTick = -1;
         }
