@@ -435,14 +435,14 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 {
     agent *theAgent = &agents[agentID];
 
+    if(theAgent->willIsolate && theAgent->symptomatic && theAgent->healthState == infectious && theAgent->isolationDelay + theAgent->infectedTick < tick) {
+        theAgent->isolatedTick = tick;
+    }
+
     /* Move agent to infectious state if incubationTime has passed */
     if (theAgent->exposedTick + theAgent->incubationTime == tick) {
         theAgent->healthState = infectious;
         theAgent->infectedTick = tick;
-
-        if (theAgent->willIsolate && theAgent->symptomatic) {
-            theAgent->isolatedTick = tick + theAgent->isolationDelay;
-        }
 
         if (theAgent->app != NULL) {
             informContacts(*(theAgent->app), config, tick);
@@ -488,7 +488,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
     }
 
-    if (theAgent->isolatedTick == -1 || theAgent->isolatedTick > tick) {
+    if (theAgent->isolatedTick == -1) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,
