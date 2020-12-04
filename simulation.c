@@ -56,22 +56,30 @@ typedef struct group {
 
 void initAgents(agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
-group *createGroup(agent * agents, simConfig config, int groupSize, int groupNr);
+group *createGroup(agent * agents, simConfig config, int groupSize,
+                   int groupNr);
 int getNextID(int currentID, int size);
 void insertGroupToLinkedList(group * groupToInsert, group ** head);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
-void PlotData(agent * agents, DataSet * data, int dataCount, int tick, simConfig config);
-void printStats(DataSet * data, int dataCount, int tick, double *R0, double *avgR0);
-void runEvent(agent agents[], simConfig config, int tick, double *R0, double *avgR0);
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config);
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
+                double *avgR0);
+void runEvent(agent agents[], simConfig config, int tick, double *R0,
+              double *avgR0);
 Day isDay(int tick);
 void handleParties(agent agents[], simConfig config, int tick);
-void meetGroup(group * group, int infectionRisk, int amountToMeet, int tick, agent * theAgent);
-void meeting(agent * theAgent, agent * peer, double infectionRisk, int tick, int recordInApp);
+void meetGroup(group * group, int infectionRisk, int amountToMeet,
+               int tick, agent * theAgent);
+void meeting(agent * theAgent, agent * peer, double infectionRisk,
+             int tick, int recordInApp);
 void infectAgent(int tick, agent * a);
 void addRecord(agent * recorder, agent * peer, int tick);
-void computeAgent(agent agents[], simConfig config, int tick, int agentID, int *recoveredInTick, int *infectedDuringInfection);
+void computeAgent(agent agents[], simConfig config, int tick, int agentID,
+                  int *recoveredInTick, int *infectedDuringInfection);
 void informContacts(agent * theAgent, App app, int tick);
-void handlePasserBys(agent agents[], int toMeet, agent * theAgent, int tick, simConfig config);
+void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
+                     int tick, simConfig config);
 
 void run_simulation(simConfig config, DataSet * data, int dataCount)
 {
@@ -178,7 +186,9 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
                 thisGroupSize = agentsLeft;
                 agentsLeft = 0;
             }
-            insertGroupToLinkedList(createGroup(agents, config, thisGroupSize, i), head);
+            insertGroupToLinkedList(createGroup
+                                    (agents, config, thisGroupSize, i),
+                                    head);
         }
     }
 
