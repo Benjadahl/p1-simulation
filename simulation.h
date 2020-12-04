@@ -28,7 +28,10 @@ typedef struct simConfig {
     int testResponseTime;
     int groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
-    int groupMaxAmountToMeet[amountOfGroups];
+    struct gaussian primaryMeet;
+    struct gaussian secondaryMeet;
+    struct gaussian looseMeet;
+    struct gaussian partyMeet;
     int btThreshold;
     int btDecay;
     int chanceOfCorrectTest;
