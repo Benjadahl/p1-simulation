@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 99.10, 98.98, 98.93 };
+    double expectedValue[3] = { 98.50, 99.04, 98.97 };
 
     simConfig config;
 
@@ -36,21 +36,21 @@ int main()
     config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
     config.willIsolatePercent = 50;
     config.partyChance = 5;
-    config.partyDist.upperbound = 50;
-    config.partyDist.lowerbound = 5;
-    config.partyDist.expectedValue = (5 + 50) / 2;
-    config.partyDist.varians = 1;
+    config.groupSize[3].upperbound = 50;
+    config.groupSize[3].lowerbound = 5;
+    config.groupSize[3].expectedValue = (5 + 50) / 2;
+    config.groupSize[3].varians = 1;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
     config.willTestPercent = 75;
-    config.seed = 1;
+    config.seed = 0;
     config.print = 0;
     config.primaryGroupRisk = 5;
     config.secondaryGroupRisk = 5;
-    config.amountOfContactsPerAgent.lowerbound = 0;
-    config.amountOfContactsPerAgent.upperbound = 10;
-    config.amountOfContactsPerAgent.varians = 9;
-    config.amountOfContactsPerAgent.expectedValue = 5;
+    config.groupSize[2].lowerbound = 0;
+    config.groupSize[2].upperbound = 10;
+    config.groupSize[2].varians = 9;
+    config.groupSize[2].expectedValue = 5;
     config.groupPercentageToInfect = 74;
     config.chanceToHaveApp = 35;
     config.isolationTime = 15;
@@ -74,19 +74,18 @@ int main()
     config.btThreshold = 6;
     config.btDecay = 3;
     config.chanceOfCorrectTest = 95;
-    config.primaryGroupSize.lowerbound = 10;
-    config.primaryGroupSize.upperbound = 50;
-    config.primaryGroupSize.varians = 400;
-    config.primaryGroupSize.expectedValue =
-        (config.primaryGroupSize.lowerbound +
-         config.primaryGroupSize.upperbound) / 2;
-    config.secondaryGroupSize.lowerbound = 5;
-    config.secondaryGroupSize.upperbound = 30;
-    config.secondaryGroupSize.varians = 100;
-    config.secondaryGroupSize.expectedValue =
-        (config.secondaryGroupSize.lowerbound +
-         config.secondaryGroupSize.upperbound) / 2;
-
+    config.groupSize[0].lowerbound = 10;
+    config.groupSize[0].upperbound = 50;
+    config.groupSize[0].varians = 400;
+    config.groupSize[0].expectedValue =
+        (config.groupSize[0].lowerbound +
+         config.groupSize[0].upperbound) / 2;
+    config.groupSize[1].lowerbound = 5;
+    config.groupSize[1].upperbound = 30;
+    config.groupSize[1].varians = 100;
+    config.groupSize[1].expectedValue =
+        (config.groupSize[1].lowerbound +
+         config.groupSize[1].upperbound) / 2;
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
