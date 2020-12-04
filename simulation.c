@@ -271,8 +271,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
                         gaussianTruncatedDiscrete(config.groupSize[0]);
                 else if (i == 1)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete
-                        (config.groupSize[1]);
+                        gaussianTruncatedDiscrete(config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
             } else {
                 thisGroupSize = agentsLeft;
