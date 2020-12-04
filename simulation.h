@@ -29,4 +29,5 @@ typedef struct simConfig {
     int btThreshold;
     int btDecay;
     int chanceOfCorrectTest;
+    struct gaussian passerbys;
 } simConfig;

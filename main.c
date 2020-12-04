@@ -64,6 +64,10 @@ int main(int argc, char *argv[])
     config.toMeet[3].lowerbound = 0;
     config.toMeet[3].expectedValue = 10;
     config.toMeet[3].varians = 49;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 25;
+    config.passerbys.varians = 20;
+    config.passerbys.expectedValue = 7;
 
     /*App */
     config.chanceToHaveApp = 25;  /*can */
