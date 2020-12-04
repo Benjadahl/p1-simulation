@@ -56,7 +56,7 @@ int main()
     config.groupSizeMaxMin[1] = 50;
     config.groupSizeMaxMin[2] = 5;
     config.groupSizeMaxMin[3] = 30;
-    config.chanceOfFalseNegative = 95;
+    config.chanceOfCorrectTest = 95;
 
 
     DataSet data[PLOT_COUNT];

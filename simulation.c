@@ -478,7 +478,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
     if (theAgent->testedTick + config.testResponseTime == tick) {
         if (theAgent->healthState == infectious && theAgent->willIsolate
-            && trueChance(config.chanceOfFalseNegative)) {
+            && trueChance(config.chanceOfCorrectTest)) {
             theAgent->isolatedTick = tick;
         } else {
             theAgent->isolatedTick = -1;
