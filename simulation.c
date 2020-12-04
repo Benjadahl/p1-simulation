@@ -41,6 +41,7 @@ typedef struct agent {
     int isolatedTick;
     int willTest;
     int testedTick;
+    int testResult;             /* 1 positive, 0 negative */
     struct group **groups;
     int amountAgentHasInfected;
 } agent;
@@ -64,8 +65,13 @@ int getNextID(int currentID, int size);
 void infectAgent(int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 Day isDay(int tick);
+void handleParties(agent agents[], simConfig config, int tick);
+void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
+                     int tick, simConfig config);
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection);
+void meeting(agent * theAgent, agent * peer, double infectionRisk,
+             int tick, int recordInApp);
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
@@ -430,6 +436,24 @@ void handleParties(agent agents[], simConfig config, int tick)
     }
 }
 
+void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
+                     int tick, simConfig config)
+{
+    agent *peer;
+    int i = 0;
+
+    for (i = 0; i < toMeet; i++) {
+        int randomID = rand() % config.amountOfAgents;
+
+        do {
+            peer = agents + randomID;
+            randomID = getNextID(randomID, config.amountOfAgents);
+        } while (theAgent->ID == peer->ID);
+
+        meeting(theAgent, peer, 0.48, tick, 0);
+    }
+}
+
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection)
 {
@@ -480,7 +504,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
 
     if (theAgent->testedTick + config.testResponseTime == tick) {
-        if (theAgent->healthState == infectious && theAgent->willIsolate
+        if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
             theAgent->isolatedTick = tick;
         } else {
@@ -507,6 +531,33 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   config.contactsRisk,
                   rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent);
     }
+
+    handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
+                    theAgent, tick, config);
+}
+
+void meeting(agent * theAgent, agent * peer, double infectionRisk,
+             int tick, int recordInApp)
+{
+    if (peer->isolatedTick == -1) {
+        if (theAgent->healthState == infectious
+            && bernoulli(infectionRisk)) {
+            infectAgent(tick, peer);
+            (theAgent->amountAgentHasInfected)++;
+        }
+
+        if (peer->healthState == infectious && bernoulli(infectionRisk)) {
+            infectAgent(tick, theAgent);
+            (peer->amountAgentHasInfected)++;
+        }
+
+        if (recordInApp) {
+            if (theAgent->app != NULL && peer->app != NULL) {
+                addRecord(theAgent, peer, tick);
+                addRecord(peer, theAgent, tick);
+            }
+        }
+    }
 }
 
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
@@ -524,24 +575,7 @@ void meetGroup(group * group, int infectionRisk, int amountToMeet,
             randomID = getNextID(randomID, size);
         } while (theAgent->ID == peer->ID);
 
-        if (peer->isolatedTick == -1) {
-            if (theAgent->healthState == infectious
-                && bernoulli(infectionRisk)) {
-                infectAgent(tick, peer);
-                (theAgent->amountAgentHasInfected)++;
-            }
-
-            if (peer->healthState == infectious
-                && bernoulli(infectionRisk)) {
-                infectAgent(tick, theAgent);
-                (peer->amountAgentHasInfected)++;
-            }
-
-            if (theAgent->app != NULL && peer->app != NULL) {
-                addRecord(theAgent, peer, tick);
-                addRecord(peer, theAgent, tick);
-            }
-        }
+        meeting(theAgent, peer, infectionRisk, tick, 1);
     }
 }
 
@@ -567,6 +601,11 @@ void informContacts(App app, simConfig config, int tick)
             config.testResponseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
+                if (app.records[i].peer->healthState == infectious) {
+                    app.records[i].peer->testResult = 1;
+                } else {
+                    app.records[i].peer->testResult = 0;
+                }
                 app.records[i].peer->app->positiveMet++;
             }
         }
