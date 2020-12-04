@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     time_t runTime;
 
     simConfig config;
- 
+
     /*party */
     config.partyChance = 5;
     config.partyDist.upperbound = 50;
@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 5;  /*can */
     config.groupPercentageToInfect = 74;
-    config.groupMaxAmountToMeet[0] = 10; /*Prim*/
-    config.groupMaxAmountToMeet[1] = 5; /*second*/
-    config.groupMaxAmountToMeet[2] = 3; /*loos*/
-    config.groupMaxAmountToMeet[3] = 20; /*party*/
+    config.groupMaxAmountToMeet[0] = 10;  /*Prim */
+    config.groupMaxAmountToMeet[1] = 5; /*second */
+    config.groupMaxAmountToMeet[2] = 3; /*loos */
+    config.groupMaxAmountToMeet[3] = 20;  /*party */
     config.amountOfContactsPerAgent.lowerbound = 0;
     config.amountOfContactsPerAgent.upperbound = 10;
     config.amountOfContactsPerAgent.varians = 1;
@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
     config.btThreshold = 6;
     config.btDecay = 3;
 
-    /*Infections*/
-    config.contactsRisk = 10;/*can*/
+    /*Infections */
+    config.contactsRisk = 10;   /*can */
     config.infectionTime.lowerbound = 2;
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
-    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */  /*can */
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
 
     /*Misc */
     config.simulationRuns = 1;
