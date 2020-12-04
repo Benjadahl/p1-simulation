@@ -210,8 +210,8 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     }
 
     if (*R0 != 0 || data[3].data[tick - 1] > 0) {
-        printf("R0 = %41f\n", *R0);
-        printf("Average R0 = %33f\n", *avgR0);
+        printf("%-36s: %-6f \n", "R0", *R0);
+        printf("%-36s: %-6f \n", "Average R0", *avgR0);
     }
 }
 

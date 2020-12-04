@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
     data[3].name = "Recovered";
     data[4].name = "Isolated";
     data[5].name = "Healthy isolated";
-    data[6].name = "Exosed & infectious isolated";
+    data[6].name = "Exposed & infectious isolated";
 
     for (i = 0; i < PLOT_COUNT; i++) {
         avgData[i].name = data[i].name;
