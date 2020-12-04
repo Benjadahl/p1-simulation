@@ -5,7 +5,7 @@
 #include "simulation.h"
 #include "export.h"
 
-#define MAX_CONTACTS_IN_APP 50
+#define MAX_CONTACTS_IN_APP 200
 
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
@@ -486,7 +486,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
         /*If threshold is greater than zero, BT is enabled, thus check */
         if (theAgent->app->positiveMet >= config.btThreshold
-            && config.btThreshold > 0) {
+            && config.btThreshold > 0 && theAgent->willIsolate && theAgent->willTest) {
             theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
             if(theAgent->healthState == infectious)
