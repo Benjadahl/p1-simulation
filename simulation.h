@@ -33,4 +33,5 @@ typedef struct simConfig {
     int btDecay;
     struct gaussian primaryGroupSize;
     struct gaussian secondaryGroupSize;
+    struct gaussian passerbys;
 } simConfig;

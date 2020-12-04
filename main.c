@@ -74,6 +74,10 @@ int main(int argc, char *argv[])
     config.secondaryGroupSize.expectedValue =
         (config.secondaryGroupSize.lowerbound +
          config.secondaryGroupSize.upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 25;
+    config.passerbys.varians = 20;
+    config.passerbys.expectedValue = 7;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
