@@ -16,7 +16,11 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
+<<<<<<< HEAD
     double expectedValue[3] = { 98.50, 99.04, 98.97 };
+=======
+    double expectedValue[3] = { 97.10, 96.91, 97.28 };
+>>>>>>> main
 
     simConfig config;
 
@@ -74,6 +78,7 @@ int main()
     config.btThreshold = 6;
     config.btDecay = 3;
     config.chanceOfCorrectTest = 95;
+<<<<<<< HEAD
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
@@ -86,6 +91,25 @@ int main()
     config.groupSize[1].expectedValue =
         (config.groupSize[1].lowerbound +
          config.groupSize[1].upperbound) / 2;
+=======
+    config.primaryGroupSize.lowerbound = 10;
+    config.primaryGroupSize.upperbound = 50;
+    config.primaryGroupSize.varians = 1;
+    config.primaryGroupSize.expectedValue =
+        (config.primaryGroupSize.lowerbound +
+         config.primaryGroupSize.upperbound) / 2;
+    config.secondaryGroupSize.lowerbound = 5;
+    config.secondaryGroupSize.upperbound = 30;
+    config.secondaryGroupSize.varians = 1;
+    config.secondaryGroupSize.expectedValue =
+        (config.secondaryGroupSize.lowerbound +
+         config.secondaryGroupSize.upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 50;
+    config.passerbys.varians = 1;
+    config.passerbys.expectedValue = 25;
+
+>>>>>>> main
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];

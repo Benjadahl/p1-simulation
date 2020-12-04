@@ -13,7 +13,6 @@ typedef struct simConfig {
     int willIsolatePercent;
     int partyChance;
     int partyRisk;
-    int partyMeetChance;
     int willTestPercent;
     int seed;
     int print;

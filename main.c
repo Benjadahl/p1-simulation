@@ -15,47 +15,39 @@ int main(int argc, char *argv[])
     int i;
     int value;
     int graph = 0;
+    int seedUsed;
     time_t runTime;
 
     simConfig config;
 
-    int seedUsed;
-
-    config.simulationRuns = 1;
-    config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
-    config.infectionTime.lowerbound = 2;
-    config.infectionTime.upperbound = 12;
-    config.infectionTime.varians = 1;
-    config.infectionTime.expectedValue = 4;
-    config.amountOfStartInfected = 20;
-    config.maxEvents = 100;
-    config.symptomaticPercent = 25;
-    config.incubationTime.lowerbound = 1; /* CDC.gov */
-    config.incubationTime.upperbound = 14;  /* CDC.gov */
-    config.incubationTime.varians = 1;
-    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
-    config.willIsolatePercent = 50;
+    /*party */
     config.partyChance = 5;
-    config.groupSize[3].upperbound = 50;
-    config.groupSize[3].lowerbound = 5;
-    config.groupSize[3].expectedValue = (5 + 50) / 2;
-    config.groupSize[3].varians = 1;
-    config.partyRisk = 75;
-    config.partyMeetChance = 10;
-    config.willTestPercent = 75;
-    config.seed = 0;
-    config.print = 1;
-    config.primaryGroupRisk = 5;
-    config.secondaryGroupRisk = 5;
+    config.partyRisk = 10;
+
+    /*Groups */
+    config.primaryGroupRisk = 5;  /*can */
+    config.secondaryGroupRisk = 5;  /*can */
+    config.groupPercentageToInfect = 66;
+    config.groupSize[0].lowerbound = 10;
+    config.groupSize[0].upperbound = 50;
+    config.groupSize[0].varians = 400;
+    config.groupSize[0].expectedValue =
+        (config.groupSize[0].lowerbound +
+         config.groupSize[0].upperbound) / 2;
+    config.groupSize[1].lowerbound = 5;
+    config.groupSize[1].upperbound = 30;
+    config.groupSize[1].varians = 100;
+    config.groupSize[1].expectedValue =
+        (config.groupSize[1].lowerbound +
+         config.groupSize[1].upperbound) / 2;
     config.groupSize[2].lowerbound = 0;
     config.groupSize[2].upperbound = 10;
     config.groupSize[2].varians = 9;
     config.groupSize[2].expectedValue = 5;
-    config.groupPercentageToInfect = 74;
-    config.chanceToHaveApp = 35;
-    config.isolationTime = 15;
-    config.testResponseTime = 2;
+    config.groupSize[3].upperbound = 50;
+    config.groupSize[3].lowerbound = 5;
+    config.groupSize[3].expectedValue = (5 + 50) / 2;
+    config.groupSize[3].varians = 1;
     config.toMeet[0].upperbound = 10;
     config.toMeet[0].lowerbound = 0;
     config.toMeet[0].expectedValue = 10;
@@ -72,21 +64,36 @@ int main(int argc, char *argv[])
     config.toMeet[3].lowerbound = 0;
     config.toMeet[3].expectedValue = 10;
     config.toMeet[3].varians = 49;
+
+    /*App */
+    config.chanceToHaveApp = 25;  /*can */
     config.btThreshold = 6;
     config.btDecay = 3;
+
+    /*Infections */
+    config.contactsRisk = 10;   /*can */
+    config.infectionTime.lowerbound = 2;
+    config.infectionTime.upperbound = 12;
+    config.infectionTime.varians = 1;
+    config.infectionTime.expectedValue = 4;
+    config.amountOfStartInfected = 20;
+    config.symptomaticPercent = 84; /*can */
+    config.incubationTime.lowerbound = 1; /* CDC.gov */
+    config.incubationTime.upperbound = 14;  /* CDC.gov */
+    config.incubationTime.varians = 1;
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
+
+    /*Misc */
+    config.simulationRuns = 1;
+    config.maxEvents = 100;
+    config.seed = 0;
+    config.print = 1;
+    config.amountOfAgents = 100000;
+    config.willIsolatePercent = 90; /*can */
+    config.willTestPercent = 60;  /*can */
+    config.isolationTime = 7;   /*can */
+    config.testResponseTime = 3;  /*can, this is a worst case */
     config.chanceOfCorrectTest = 95;
-    config.groupSize[0].lowerbound = 10;
-    config.groupSize[0].upperbound = 50;
-    config.groupSize[0].varians = 400;
-    config.groupSize[0].expectedValue =
-        (config.groupSize[0].lowerbound +
-         config.groupSize[0].upperbound) / 2;
-    config.groupSize[1].lowerbound = 5;
-    config.groupSize[1].upperbound = 30;
-    config.groupSize[1].varians = 100;
-    config.groupSize[1].expectedValue =
-        (config.groupSize[1].lowerbound +
-         config.groupSize[1].upperbound) / 2;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
