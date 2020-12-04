@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 5;  /*can */
-    config.groupPercentageToInfect = 74;
+    config.groupPercentageToInfect = 66;
     config.groupMaxAmountToMeet[0] = 10;  /*Prim */
     config.groupMaxAmountToMeet[1] = 5; /*second */
     config.groupMaxAmountToMeet[2] = 3; /*loos */
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     config.print = 1;
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 90; /*can */
-    config.willTestPercent = 95;  /*^^ */
+    config.willTestPercent = 60;  /*can*/
     config.isolationTime = 7;   /*can */
     config.testResponseTime = 3; /*can, this is a worst case*/
     config.chanceOfCorrectTest = 95;
