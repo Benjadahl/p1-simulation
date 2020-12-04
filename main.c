@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 2.5;  /*can */
-    config.contactsRisk = 3;   /*can */
+    config.contactsRisk = 3;    /*can */
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     config.passerbys.expectedValue = 4;
 
     /*App */
-    config.chanceToHaveApp = 0;  /*can */
+    config.chanceToHaveApp = 0; /*can */
     config.btThreshold = 0;
     config.btDecay = 7;
 
