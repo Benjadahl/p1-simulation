@@ -96,7 +96,7 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
 
     currentTime = localtime(&runTime);
     sprintf(foldername, "output/%d-%02d-%02d-H%02dM%02dS%02d", 
-            currentTime->tm_year - 100, currentTime->tm_mon + 1, currentTime->tm_mday, 
+            currentTime->tm_year + 1900, currentTime->tm_mon + 1, currentTime->tm_mday, 
             currentTime->tm_hour, currentTime->tm_min, currentTime->tm_sec);
 
     if (run == 0) {
