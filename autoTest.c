@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 92.80, 91.95, 90.93 };
+    double expectedValue[3] = { 97.10, 96.91, 97.28 };
 
     simConfig config;
 
@@ -74,6 +74,10 @@ int main()
     config.secondaryGroupSize.expectedValue =
         (config.secondaryGroupSize.lowerbound +
          config.secondaryGroupSize.upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 50;
+    config.passerbys.varians = 1;
+    config.passerbys.expectedValue = 25;
 
 
     DataSet data[PLOT_COUNT];
