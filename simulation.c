@@ -162,14 +162,15 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         }
         if (agents[i].isolatedTick != -1) {
             data[4].absoluteData[tick - 1]++;
-        }        
+        }
     }
 
 
     for (i = 0; i < dataCount; i++) {
         if (data[i].absoluteData[tick - 1] != 0) {
             data[i].data[tick - 1] =
-                data[i].absoluteData[tick-1] * 100 / config.amountOfAgents;
+                data[i].absoluteData[tick -
+                                     1] * 100 / config.amountOfAgents;
         }
     }
 }
@@ -451,7 +452,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 {
     agent *theAgent = &agents[agentID];
 
-    if(theAgent->isolationDelay + theAgent->infectedTick == tick && theAgent->healthState == infectious && theAgent->willIsolate) {
+    if (theAgent->isolationDelay + theAgent->infectedTick == tick
+        && theAgent->healthState == infectious && theAgent->willIsolate) {
         theAgent->isolatedTick = tick;
     }
 
@@ -486,14 +488,15 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
         /*If threshold is greater than zero, BT is enabled, thus check */
         if (theAgent->app->positiveMet >= config.btThreshold
-            && config.btThreshold > 0 && theAgent->willIsolate && theAgent->willTest) {
+            && config.btThreshold > 0 && theAgent->willIsolate
+            && theAgent->willTest) {
             theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
-            if(theAgent->healthState == infectious)
+            if (theAgent->healthState == infectious)
                 theAgent->testResult = 1;
             else
-             theAgent->testResult = 0;
-            
+                theAgent->testResult = 0;
+
             theAgent->app->positiveMet = 0;
         }
     }
@@ -501,7 +504,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
     if (theAgent->testedTick + config.testResponseTime == tick) {
         if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
-            if(theAgent->healthState == infectious)
+            if (theAgent->healthState == infectious)
                 theAgent->isolatedTick = tick;
         } else {
             theAgent->isolatedTick = -1;
