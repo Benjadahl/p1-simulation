@@ -5,7 +5,7 @@
 #include "simulation.h"
 #include "export.h"
 
-#define MAX_CONTACTS_IN_APP 50
+#define MAX_CONTACTS_IN_APP 200
 
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
@@ -36,6 +36,7 @@ typedef struct agent {
     int infectedTick;
     int testResponse;
     int symptomatic;
+    int isolationDelay;
     int incubationTime;
     int willIsolate;
     int isolatedTick;
@@ -137,36 +138,32 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
         switch (agents[i].healthState) {
         case succeptible:
             data[0].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         case exposed:
             data[1].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case infectious:
             data[2].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[6].absoluteData[tick - 1]++;
             }
             break;
         case recovered:
             data[3].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1
-                && agents[i].isolatedTick + config.isolationTime > tick) {
+            if (agents[i].isolatedTick != -1) {
                 data[5].absoluteData[tick - 1]++;
             }
             break;
         }
-        if (agents[i].isolatedTick != -1
-            && agents[i].isolatedTick + config.isolationTime > tick)
+        if (agents[i].isolatedTick != -1) {
             data[4].absoluteData[tick - 1]++;
+        }
     }
 
 
@@ -216,8 +213,8 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     }
 
     if (*R0 != 0 || data[3].data[tick - 1] > 0) {
-        printf("R0 = %41f\n", *R0);
-        printf("Average R0 = %33f\n", *avgR0);
+        printf("%-36s: %-6f \n", "R0", *R0);
+        printf("%-36s: %-6f \n", "Average R0", *avgR0);
     }
 }
 
@@ -246,12 +243,15 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.incubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
+        (agents + i)->isolationDelay =
+            gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testResponse =
             gaussianTruncatedDiscrete(config.testResponseTime);
         (agents + i)->testedTick = -1 * (agents + i)->testResponse;
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
+        (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
         (agents + i)->groups[2] = NULL;
@@ -381,10 +381,6 @@ void infectAgent(int tick, agent * theAgent)
     if (theAgent->healthState == succeptible) {
         theAgent->healthState = exposed;
         theAgent->exposedTick = tick;
-
-        if (theAgent->willIsolate && theAgent->symptomatic) {
-            theAgent->isolatedTick = tick;
-        }
     }
 }
 
@@ -458,14 +454,15 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 {
     agent *theAgent = &agents[agentID];
 
+    if (theAgent->isolationDelay + theAgent->infectedTick == tick
+        && theAgent->healthState == infectious && theAgent->willIsolate) {
+        theAgent->isolatedTick = tick;
+    }
+
     /* Move agent to infectious state if incubationTime has passed */
     if (theAgent->exposedTick + theAgent->incubationTime == tick) {
         theAgent->healthState = infectious;
         theAgent->infectedTick = tick;
-
-        if (theAgent->willIsolate && theAgent->symptomatic) {
-            theAgent->isolatedTick = tick;
-        }
 
         if (theAgent->app != NULL) {
             informContacts(theAgent, *(theAgent->app), tick);
@@ -478,7 +475,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->healthState = recovered;
         (*recoveredInTick)++;
         (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
-
+        theAgent->isolatedTick = -1;
         if (theAgent->app != NULL)
             theAgent->app->infected = 0;
     }
@@ -493,9 +490,15 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
         /*If threshold is greater than zero, BT is enabled, thus check */
         if (theAgent->app->positiveMet >= config.btThreshold
-            && config.btThreshold > 0) {
+            && config.btThreshold > 0 && theAgent->willIsolate
+            && theAgent->willTest) {
             theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
+            if (theAgent->healthState == infectious)
+                theAgent->testResult = 1;
+            else
+                theAgent->testResult = 0;
+
             theAgent->app->positiveMet = 0;
         }
     }
@@ -505,7 +508,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
     if (theAgent->testedTick + theAgent->testResponse == tick) {
         if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
-            theAgent->isolatedTick = tick;
+            if (theAgent->healthState == infectious)
+                theAgent->isolatedTick = tick;
         } else {
             theAgent->isolatedTick = -1;
         }

@@ -22,6 +22,7 @@ typedef struct simConfig {
     int groupPercentageToInfect;
     int chanceToHaveApp;
     int isolationTime;
+    struct gaussian isolationDelay; 
     struct gaussian testResponseTime;
     struct gaussian groupSize[amountOfGroups];
     int groupAmounts[amountOfGroups];
