@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
-    config.testResponseTime.varians = 1;  
+    config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 95;
 
 
