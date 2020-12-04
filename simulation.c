@@ -69,7 +69,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
-void informContacts(agent *theAgent, App app, simConfig config, int tick);
+void informContacts(agent *theAgent, App app, int tick);
 void isolate(agent * agent);
 void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
@@ -444,7 +444,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
 
         if (theAgent->app != NULL) {
-            informContacts(theAgent, *(theAgent->app), config, tick);
+            informContacts(theAgent, *(theAgent->app), tick);
         }
     }
 
@@ -553,7 +553,7 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recorder->app->recorded++;
 }
 
-void informContacts(agent *theAgent, App app, simConfig config, int tick)
+void informContacts(agent *theAgent, App app, int tick)
 {
     int i;
     int contacts = MAX_CONTACTS_IN_APP;
