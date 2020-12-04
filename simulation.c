@@ -64,10 +64,12 @@ void infectAgent(int tick, agent * a);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 Day isDay(int tick);
 void handleParties(agent agents[], simConfig config, int tick);
-void handlePasserBys (agent agents[], int toMeet, agent *theAgent, int tick, simConfig config);
+void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
+                     int tick, simConfig config);
 void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection);
-void meeting(agent *theAgent, agent *peer, double infectionRisk, int tick, int recordInApp);
+void meeting(agent * theAgent, agent * peer, double infectionRisk,
+             int tick, int recordInApp);
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
@@ -430,12 +432,13 @@ void handleParties(agent agents[], simConfig config, int tick)
     }
 }
 
-void handlePasserBys (agent agents[], int toMeet, agent *theAgent, int tick, simConfig config) {
+void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
+                     int tick, simConfig config)
+{
     agent *peer;
     int i = 0;
 
-    for (i = 0; i < toMeet; i++)
-    {
+    for (i = 0; i < toMeet; i++) {
         int randomID = rand() % config.amountOfAgents;
 
         do {
@@ -523,11 +526,14 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   config.contactsRisk,
                   rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent);
     }
-    
-    handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys), theAgent, tick, config);
+
+    handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
+                    theAgent, tick, config);
 }
 
-void meeting(agent *theAgent, agent *peer, double infectionRisk, int tick, int recordInApp) {
+void meeting(agent * theAgent, agent * peer, double infectionRisk,
+             int tick, int recordInApp)
+{
     if (peer->isolatedTick == -1) {
         if (theAgent->healthState == infectious
             && bernoulli(infectionRisk)) {
@@ -535,8 +541,7 @@ void meeting(agent *theAgent, agent *peer, double infectionRisk, int tick, int r
             (theAgent->amountAgentHasInfected)++;
         }
 
-        if (peer->healthState == infectious
-            && bernoulli(infectionRisk)) {
+        if (peer->healthState == infectious && bernoulli(infectionRisk)) {
             infectAgent(tick, theAgent);
             (peer->amountAgentHasInfected)++;
         }
