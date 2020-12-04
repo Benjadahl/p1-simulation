@@ -242,7 +242,8 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
         (agents + i)->isolatedTick = -1;
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
-        (agents + i)->testResponse = gaussianTruncatedDiscrete(config.testResponseTime);
+        (agents + i)->testResponse =
+            gaussianTruncatedDiscrete(config.testResponseTime);
         (agents + i)->testedTick = -1 * (agents + i)->testResponse;
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
         (agents + i)->groups[0] = NULL;
