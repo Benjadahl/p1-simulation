@@ -16,7 +16,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 92.50, 89.75, 86.61 };
+    double expectedValue[3] = { 91.10, 90.72, 85.54 };
 
     simConfig config;
 
@@ -61,6 +61,7 @@ int main()
     config.groupMaxAmountToMeet[3] = 20;
     config.btThreshold = 6;
     config.btDecay = 3;
+    config.chanceOfCorrectTest = 95;
     config.primaryGroupSize.lowerbound = 10;
     config.primaryGroupSize.upperbound = 50;
     config.primaryGroupSize.varians = 1;
