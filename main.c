@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
+#include "distribution.h"
 #include "simulation.h"
 #include "export.h"
 
@@ -14,44 +15,63 @@ int main(int argc, char *argv[])
     int i;
     int value;
     int graph = 0;
+    int seedUsed;
     time_t runTime;
 
     simConfig config;
+ 
     /*party */
     config.partyChance = 5;
-    config.maxPartySize = 50;
-    config.minPartySize = 5;
+    config.partyDist.upperbound = 50;
+    config.partyDist.lowerbound = 5;
+    config.partyDist.expectedValue = (5 + 50) / 2;
+    config.partyDist.varians = 1;
     config.partyRisk = 75;
     config.partyMeetChance = 10;
 
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 5;  /*can */
-    config.amountOfContactsPerAgent = 5;
     config.groupPercentageToInfect = 74;
 
     config.groupMaxAmountToMeet[0] = 10; /*Prim*/
     config.groupMaxAmountToMeet[1] = 5; /*second*/
     config.groupMaxAmountToMeet[2] = 3; /*loos*/
     config.groupMaxAmountToMeet[3] = 20; /*party*/
-
-    config.groupSizeMaxMin[0] = 10; /*Prim*/
-    config.groupSizeMaxMin[1] = 50; /*second*/
-    config.groupSizeMaxMin[2] = 5; /*loos*/
-    config.groupSizeMaxMin[3] = 30; /*party*/
+    config.amountOfContactsPerAgent.lowerbound = 0;
+    config.amountOfContactsPerAgent.upperbound = 10;
+    config.amountOfContactsPerAgent.varians = 1;
+    config.amountOfContactsPerAgent.expectedValue = 5;
+    config.primaryGroupSize.lowerbound = 10;
+    config.primaryGroupSize.upperbound = 50;
+    config.primaryGroupSize.varians = 1;
+    config.primaryGroupSize.expectedValue =
+        (config.primaryGroupSize.lowerbound +
+         config.primaryGroupSize.upperbound) / 2;
+    config.secondaryGroupSize.lowerbound = 5;
+    config.secondaryGroupSize.upperbound = 30;
+    config.secondaryGroupSize.varians = 1;
+    config.secondaryGroupSize.expectedValue =
+        (config.secondaryGroupSize.lowerbound +
+         config.secondaryGroupSize.upperbound) / 2;
 
     /*App */
     config.chanceToHaveApp = 25;  /*can */
-    config.contactTickLength = 4; /*can */
     config.btThreshold = 6;
     config.btDecay = 3;
 
     /*Infections*/
     config.contactsRisk = 10;/*can*/
-    config.infectionTime = 4;
+    config.infectionTime.lowerbound = 2;
+    config.infectionTime.upperbound = 12;
+    config.infectionTime.varians = 1;
+    config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
     config.symptomaticPercent = 84; /*can */
-    config.maxIncubationTime = 14;  /*can */
+    config.incubationTime.lowerbound = 1; /* CDC.gov */
+    config.incubationTime.upperbound = 14;  /* CDC.gov */
+    config.incubationTime.varians = 1;
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */  /*can */
 
     /*Misc */
     config.simulationRuns = 1;
@@ -63,7 +83,19 @@ int main(int argc, char *argv[])
     config.willTestPercent = 95; /*^^*/
     config.isolationTime = 7; /*can*/
     config.testResponseTime = 2;
+    config.chanceOfCorrectTest = 95;
 
+
+
+    
+
+
+
+
+   
+    
+
+    
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -108,7 +140,7 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'a':      /*amount of time incted */
-                    config.infectionTime = value;
+                    config.infectionTime.expectedValue = value;
                     break;
 
                 case 'p':      /*total amount of agents */
@@ -151,12 +183,22 @@ int main(int argc, char *argv[])
     data[2].name = "Infectious";
     data[3].name = "Recovered";
     data[4].name = "Isolated";
+    data[5].name = "Healthy isolated";
+    data[6].name = "Exosed & infectious isolated";
 
     for (i = 0; i < PLOT_COUNT; i++) {
         avgData[i].name = data[i].name;
     }
 
     runTime = time(NULL);
+
+    if (!config.seed) {
+        srand(runTime);
+        seedUsed = runTime;
+    } else {
+        srand(config.seed);
+        seedUsed = config.seed;
+    }
 
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(config, data, PLOT_COUNT);
@@ -166,7 +208,11 @@ int main(int argc, char *argv[])
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
+
+    printf("\nSeed used: %d\n", seedUsed);
+
     if (graph != 0) {
+        printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0);
     }

@@ -2,11 +2,12 @@
 #include"import.h"
 #include"export.h"
 #include"plot.h"
+#include "distribution.h"
 #include"simulation.h"
 
 typedef struct GraphData {
     double *data;
-    wchar_t title[14];
+    wchar_t title[100];
 } GraphData;
 
 void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
@@ -27,7 +28,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     ReadFile(file_name, data, dataCount);
 
     for (i = 0; i < dataCount; i++) {
-        mbstowcs(newData[i].title, data[i].name, 14);
+        mbstowcs(newData[i].title, data[i].name, 30);
     }
 
     for (i = 0; i < events; i++) {
@@ -49,7 +50,7 @@ void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
 {
     int i;
     double timeSeries[time_length];
-    char graphName[50], graphNameFinal[50];
+    char graphName[100], graphNameFinal[105];
     for (int i = 0; i < time_length; i++)
         timeSeries[i] = (double) i + 1;
 
@@ -61,7 +62,7 @@ void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
                           time_length, dataSets[i].title,
                           L"Number of people (%)", L"Time (event)",
                           time_length, yMax);
-        wcstombs(graphName, dataSets[i].title, 50);
+        wcstombs(graphName, dataSets[i].title, 100);
         sprintf(graphNameFinal, "%s-%s.png", file_name, graphName);
         size_t length;
         double *pngdata = ConvertToPNG(&length, canvasReference.image);
