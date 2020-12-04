@@ -35,6 +35,7 @@ typedef struct agent {
     int exposedTick;
     int infectedTick;
     int symptomatic;
+    int isolationDelay;
     int incubationTime;
     int willIsolate;
     int isolatedTick;
@@ -239,6 +240,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.incubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
+        (agents + i)->isolationDelay = gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
@@ -374,9 +376,9 @@ void infectAgent(int tick, agent * theAgent)
         theAgent->healthState = exposed;
         theAgent->exposedTick = tick;
 
-        if (theAgent->willIsolate && theAgent->symptomatic) {
+        /*if (theAgent->willIsolate && theAgent->symptomatic) {
             theAgent->isolatedTick = tick;
-        }
+        }*/
     }
 }
 
@@ -438,7 +440,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->infectedTick = tick;
 
         if (theAgent->willIsolate && theAgent->symptomatic) {
-            theAgent->isolatedTick = tick;
+            theAgent->isolatedTick = tick + theAgent->isolationDelay;
         }
 
         if (theAgent->app != NULL) {
@@ -485,7 +487,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
     }
 
-    if (theAgent->isolatedTick == -1) {
+    if (theAgent->isolatedTick == -1 || theAgent->isolatedTick > tick) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(theAgent->groups[0],
                       config.primaryGroupRisk,

@@ -60,6 +60,10 @@ int main(int argc, char *argv[])
     config.groupMaxAmountToMeet[1] = 5;
     config.groupMaxAmountToMeet[2] = 3;
     config.groupMaxAmountToMeet[3] = 20;
+    config.isolationDelay.lowerbound = 0;
+    config.isolationDelay.upperbound = 7;
+    config.isolationDelay.varians = 1;
+    config.isolationDelay.expectedValue = 2;
     config.btThreshold = 6;
     config.btDecay = 3;
     config.chanceOfCorrectTest = 95;
