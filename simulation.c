@@ -496,13 +496,14 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         if (isDay(tick) == theAgent->groups[1]->meetingDayOne
             || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(theAgent->groups[1], config.secondaryGroupRisk,
-                      gaussianTruncatedDiscrete(config.secondaryMeet), tick,
-                      theAgent);
+                      gaussianTruncatedDiscrete(config.secondaryMeet),
+                      tick, theAgent);
         }
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  gaussianTruncatedDiscrete(config.looseMeet), tick, theAgent);
+                  gaussianTruncatedDiscrete(config.looseMeet), tick,
+                  theAgent);
     }
 }
 
