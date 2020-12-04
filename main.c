@@ -22,37 +22,48 @@ int main(int argc, char *argv[])
 
     /*party */
     config.partyChance = 5;
-    config.partyDist.upperbound = 50;
-    config.partyDist.lowerbound = 5;
-    config.partyDist.expectedValue = (5 + 50) / 2;
-    config.partyDist.varians = 1;
     config.partyRisk = 10;
-    config.partyMeetChance = 10;
 
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 5;  /*can */
     config.groupPercentageToInfect = 66;
-    config.groupMaxAmountToMeet[0] = 10;  /*Prim */
-    config.groupMaxAmountToMeet[1] = 5; /*second */
-    config.groupMaxAmountToMeet[2] = 3; /*loos */
-    config.groupMaxAmountToMeet[3] = 20;  /*party */
-    config.amountOfContactsPerAgent.lowerbound = 0;
-    config.amountOfContactsPerAgent.upperbound = 10;
-    config.amountOfContactsPerAgent.varians = 1;
-    config.amountOfContactsPerAgent.expectedValue = 5;
-    config.primaryGroupSize.lowerbound = 10;
-    config.primaryGroupSize.upperbound = 50;
-    config.primaryGroupSize.varians = 1;
-    config.primaryGroupSize.expectedValue =
-        (config.primaryGroupSize.lowerbound +
-         config.primaryGroupSize.upperbound) / 2;
-    config.secondaryGroupSize.lowerbound = 5;
-    config.secondaryGroupSize.upperbound = 30;
-    config.secondaryGroupSize.varians = 1;
-    config.secondaryGroupSize.expectedValue =
-        (config.secondaryGroupSize.lowerbound +
-         config.secondaryGroupSize.upperbound) / 2;
+    config.groupSize[0].lowerbound = 10;
+    config.groupSize[0].upperbound = 50;
+    config.groupSize[0].varians = 400;
+    config.groupSize[0].expectedValue =
+        (config.groupSize[0].lowerbound +
+         config.groupSize[0].upperbound) / 2;
+    config.groupSize[1].lowerbound = 5;
+    config.groupSize[1].upperbound = 30;
+    config.groupSize[1].varians = 100;
+    config.groupSize[1].expectedValue =
+        (config.groupSize[1].lowerbound +
+         config.groupSize[1].upperbound) / 2;
+    config.groupSize[2].lowerbound = 0;
+    config.groupSize[2].upperbound = 10;
+    config.groupSize[2].varians = 9;
+    config.groupSize[2].expectedValue = 5;
+    config.groupSize[3].upperbound = 50;
+    config.groupSize[3].lowerbound = 5;
+    config.groupSize[3].expectedValue = (5 + 50) / 2;
+    config.groupSize[3].varians = 1;
+    config.toMeet[0].upperbound = 10;
+    config.toMeet[0].lowerbound = 0;
+    config.toMeet[0].expectedValue = 10;
+    config.toMeet[0].varians = 25;
+    config.toMeet[1].upperbound = 20;
+    config.toMeet[1].lowerbound = 0;
+    config.toMeet[1].expectedValue = 5;
+    config.toMeet[1].varians = 25;
+    config.toMeet[2].upperbound = 3;
+    config.toMeet[2].lowerbound = 0;
+    config.toMeet[2].expectedValue = 2;
+    config.toMeet[2].varians = 2;
+    config.toMeet[3].upperbound = 20;
+    config.toMeet[3].lowerbound = 0;
+    config.toMeet[3].expectedValue = 10;
+    config.toMeet[3].varians = 49;
     config.passerbys.lowerbound = 0;
     config.passerbys.upperbound = 25;
     config.passerbys.varians = 20;
@@ -91,7 +102,6 @@ int main(int argc, char *argv[])
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 95;
 
-
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
 
@@ -127,11 +137,11 @@ int main(int argc, char *argv[])
                     break;
 
                 case 't':      /*size of primary group */
-                    config.groupSize[0] = value;
+                    config.groupSize[0].expectedValue = value;
                     break;
 
                 case 'y':      /*size of secound group */
-                    config.groupSize[1] = value;
+                    config.groupSize[1].expectedValue = value;
                     break;
 
                 case 'a':      /*amount of time incted */
