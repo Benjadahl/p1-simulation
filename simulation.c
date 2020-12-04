@@ -240,7 +240,8 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.incubationTime);
         (agents + i)->willIsolate = bernoulli(config.willIsolatePercent);
         (agents + i)->isolatedTick = -1;
-        (agents + i)->isolationDelay = gaussianTruncatedDiscrete(config.isolationDelay);
+        (agents + i)->isolationDelay =
+            gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
         (agents + i)->testedTick = -1 * config.testResponseTime;
@@ -377,8 +378,8 @@ void infectAgent(int tick, agent * theAgent)
         theAgent->exposedTick = tick;
 
         /*if (theAgent->willIsolate && theAgent->symptomatic) {
-            theAgent->isolatedTick = tick;
-        }*/
+           theAgent->isolatedTick = tick;
+           } */
     }
 }
 
