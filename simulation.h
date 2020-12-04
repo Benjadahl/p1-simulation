@@ -34,4 +34,5 @@ typedef struct simConfig {
     int chanceOfCorrectTest;
     struct gaussian primaryGroupSize;
     struct gaussian secondaryGroupSize;
+    struct gaussian passerbys;
 } simConfig;

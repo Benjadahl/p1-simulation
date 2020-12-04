@@ -26,13 +26,13 @@ int main(int argc, char *argv[])
     config.partyDist.lowerbound = 5;
     config.partyDist.expectedValue = (5 + 50) / 2;
     config.partyDist.varians = 1;
-    config.partyRisk = 75;
+    config.partyRisk = 10;
     config.partyMeetChance = 10;
 
     /*Groups */
     config.primaryGroupRisk = 5;  /*can */
     config.secondaryGroupRisk = 5;  /*can */
-    config.groupPercentageToInfect = 74;
+    config.groupPercentageToInfect = 66;
     config.groupMaxAmountToMeet[0] = 10;  /*Prim */
     config.groupMaxAmountToMeet[1] = 5; /*second */
     config.groupMaxAmountToMeet[2] = 3; /*loos */
@@ -53,6 +53,10 @@ int main(int argc, char *argv[])
     config.secondaryGroupSize.expectedValue =
         (config.secondaryGroupSize.lowerbound +
          config.secondaryGroupSize.upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 25;
+    config.passerbys.varians = 20;
+    config.passerbys.expectedValue = 7;
 
     /*App */
     config.chanceToHaveApp = 25;  /*can */
@@ -79,7 +83,7 @@ int main(int argc, char *argv[])
     config.print = 1;
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 90; /*can */
-    config.willTestPercent = 95;  /*^^ */
+    config.willTestPercent = 60;  /*can */
     config.isolationTime = 7;   /*can */
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
