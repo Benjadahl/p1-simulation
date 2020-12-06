@@ -108,7 +108,6 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
         }
     }
 
-
     for (tick = 1; tick <= config.maxEvents; tick++) {
         PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
@@ -534,10 +533,12 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   config.contactsRisk,
                   gaussianTruncatedDiscrete(config.toMeet[3]), tick,
                   theAgent);
+
+        handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
+                theAgent, tick, config);
     }
 
-    handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
-                    theAgent, tick, config);
+
 }
 
 void meeting(agent * theAgent, agent * peer, double infectionRisk,
