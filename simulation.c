@@ -534,8 +534,9 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   gaussianTruncatedDiscrete(config.toMeet[3]), tick,
                   theAgent);
 
-        handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
-                theAgent, tick, config);
+        handlePasserBys(agents,
+                        gaussianTruncatedDiscrete(config.passerbys),
+                        theAgent, tick, config);
     }
 
 
