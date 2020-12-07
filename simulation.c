@@ -531,7 +531,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  gaussianTruncatedDiscrete(config.toMeet[3]), tick,
+                  gaussianTruncatedDiscrete(config.toMeet[2]), tick,
                   theAgent);
 
         handlePasserBys(agents,
