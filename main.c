@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
     config.partyRisk = 0.05;
 
     /*Groups */
-    config.primaryGroupRisk = 0.05;  /*can */
+    config.primaryGroupRisk = 0.05; /*can */
     config.secondaryGroupRisk = 0.025;  /*can */
-    config.contactsRisk = 0.03;    /*can */
+    config.contactsRisk = 0.03; /*can */
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.print = 1;
     config.amountOfAgents = 100000;
-    config.willIsolatePercent = 0.9; /*can */
-    config.willTestPercent = 0.6;  /*can */
+    config.willIsolatePercent = 0.9;  /*can */
+    config.willTestPercent = 0.6; /*can */
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
