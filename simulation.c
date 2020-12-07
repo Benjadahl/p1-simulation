@@ -73,7 +73,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
                   int *recoveredInTick, int *infectedDuringInfection);
 void meeting(agent * theAgent, agent * peer, double infectionRisk,
              int tick, int recordInApp);
-void meetGroup(group * group, int infectionRisk, int amountToMeet,
+void meetGroup(group * group, double infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
 void informContacts(agent * theAgent, App app, int tick);
@@ -566,7 +566,7 @@ void meeting(agent * theAgent, agent * peer, double infectionRisk,
     }
 }
 
-void meetGroup(group * group, int infectionRisk, int amountToMeet,
+void meetGroup(group * group, double infectionRisk, int amountToMeet,
                int tick, agent * theAgent)
 {
     int i = 0;

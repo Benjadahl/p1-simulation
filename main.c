@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
 
     /*party */
     config.partyChance = 5;
-    config.partyRisk = 5;
+    config.partyRisk = 0.05;
 
     /*Groups */
-    config.primaryGroupRisk = 5;  /*can */
-    config.secondaryGroupRisk = 2.5;  /*can */
-    config.contactsRisk = 3;    /*can */
+    config.primaryGroupRisk = 0.05;  /*can */
+    config.secondaryGroupRisk = 0.025;  /*can */
+    config.contactsRisk = 0.03;    /*can */
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
-    config.symptomaticPercent = 84; /*can */
+    config.symptomaticPercent = 0.84; /*can */
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
@@ -96,14 +96,14 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.print = 1;
     config.amountOfAgents = 100000;
-    config.willIsolatePercent = 90; /*can */
-    config.willTestPercent = 60;  /*can */
+    config.willIsolatePercent = 0.9; /*can */
+    config.willTestPercent = 0.6;  /*can */
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
     config.testResponseTime.varians = 1;
-    config.chanceOfCorrectTest = 95;
-    config.passerByRisk = 0.48;
+    config.chanceOfCorrectTest = 0.95;
+    config.passerByRisk = 0.0048;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
