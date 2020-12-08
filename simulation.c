@@ -444,7 +444,7 @@ void handlePasserBys(agent agents[], int toMeet, agent * theAgent,
             randomID = getNextID(randomID, config.amountOfAgents);
         } while (theAgent->ID == peer->ID);
 
-        meeting(theAgent, peer, 0.48, tick, 0);
+        meeting(theAgent, peer, config.passerByRisk, tick, 0);
     }
 }
 

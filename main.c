@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
     config.testResponseTime.varians = 1;
+    config.passerByRisk = 0.48;
 
 
     /* indlaeser parametre */
@@ -140,7 +141,7 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'k':      /*amount of contacts pr agent */
-                    config.amountOfContacts = value;
+                    config.groupSize[2].expectedValue = value;
                     break;
 
                 case 't':      /*size of primary group */
@@ -173,6 +174,37 @@ int main(int argc, char *argv[])
 
                 case 'g':
                     graph = 1;
+                    break;
+
+                case 'b':
+                    config.groupSize[0].lowerbound = 2;
+                    config.groupSize[0].upperbound = 10;
+                    config.groupSize[0].varians = 6;
+                    config.groupSize[0].expectedValue = 5;
+                    config.groupSize[1].lowerbound = 2;
+                    config.groupSize[1].upperbound = 10;
+                    config.groupSize[1].varians = 6;
+                    config.groupSize[1].expectedValue = 5;
+                    config.groupSize[2].lowerbound = 0;
+                    config.groupSize[2].upperbound = 10;
+                    config.groupSize[2].varians = 9;
+                    config.groupSize[2].expectedValue = 5;
+                    config.groupSize[3].upperbound = 20;
+                    config.groupSize[3].lowerbound = 2;
+                    config.groupSize[3].expectedValue = 6;
+                    config.groupSize[3].varians = 9;
+                    break;
+
+                case 'd':
+                    config.chanceToHaveApp = value;
+                    break;
+
+                case 'f':
+                    config.btThreshold = value;
+                    break;
+
+                case 'h':
+                    config.btDecay = value;
                     break;
                 }
             }
