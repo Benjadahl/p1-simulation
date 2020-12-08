@@ -271,8 +271,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
                         gaussianTruncatedDiscrete(config.groupSize[0]);
                 else if (i == 1)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete
-                        (config.groupSize[1]);
+                        gaussianTruncatedDiscrete(config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
             } else {
                 thisGroupSize = agentsLeft;
@@ -528,9 +527,11 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
 
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
-                  gaussianTruncatedDiscrete(config.toMeet[2]), tick, theAgent);
+                  gaussianTruncatedDiscrete(config.toMeet[2]), tick,
+                  theAgent);
 
-        handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
+        handlePasserBys(agents,
+                        gaussianTruncatedDiscrete(config.passerbys),
                         theAgent, tick, config);
     }
 
