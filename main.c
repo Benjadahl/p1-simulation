@@ -15,27 +15,12 @@ int main(int argc, char *argv[])
     int i;
     int value;
     int graph = 0;
+    int seedUsed;
     time_t runTime;
 
     simConfig config;
 
-    int seedUsed;
-
-    config.simulationRuns = 1;
-    config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
-    config.infectionTime.lowerbound = 2;
-    config.infectionTime.upperbound = 12;
-    config.infectionTime.varians = 1;
-    config.infectionTime.expectedValue = 4;
-    config.amountOfStartInfected = 20;
-    config.maxEvents = 100;
-    config.symptomaticPercent = 25;
-    config.incubationTime.lowerbound = 1; /* CDC.gov */
-    config.incubationTime.upperbound = 14;  /* CDC.gov */
-    config.incubationTime.varians = 20;
-    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
-    config.willIsolatePercent = 50;
+    /*party */
     config.partyChance = 5;
     config.partyDist.upperbound = 50;
     config.partyDist.lowerbound = 5;
@@ -43,30 +28,19 @@ int main(int argc, char *argv[])
     config.partyDist.varians = 1;
     config.partyRisk = 10;
     config.partyMeetChance = 10;
-    config.willTestPercent = 75;
-    config.seed = 0;
-    config.print = 1;
-    config.primaryGroupRisk = 5;
-    config.secondaryGroupRisk = 5;
+
+    /*Groups */
+    config.primaryGroupRisk = 5;  /*can */
+    config.secondaryGroupRisk = 5;  /*can */
+    config.groupPercentageToInfect = 66;
+    config.groupMaxAmountToMeet[0] = 10;  /*Prim */
+    config.groupMaxAmountToMeet[1] = 5; /*second */
+    config.groupMaxAmountToMeet[2] = 3; /*loos */
+    config.groupMaxAmountToMeet[3] = 20;  /*party */
     config.amountOfContactsPerAgent.lowerbound = 0;
     config.amountOfContactsPerAgent.upperbound = 10;
     config.amountOfContactsPerAgent.varians = 1;
     config.amountOfContactsPerAgent.expectedValue = 5;
-    config.groupPercentageToInfect = 74;
-    config.chanceToHaveApp = 35;
-    config.isolationTime = 15;
-    config.testResponseTime = 2;
-    config.groupMaxAmountToMeet[0] = 10;
-    config.groupMaxAmountToMeet[1] = 5;
-    config.groupMaxAmountToMeet[2] = 3;
-    config.groupMaxAmountToMeet[3] = 20;
-    config.isolationDelay.lowerbound = 0;
-    config.isolationDelay.upperbound = 7;
-    config.isolationDelay.varians = 1;
-    config.isolationDelay.expectedValue = 2;
-    config.btThreshold = 6;
-    config.btDecay = 3;
-    config.chanceOfCorrectTest = 95;
     config.primaryGroupSize.lowerbound = 10;
     config.primaryGroupSize.upperbound = 50;
     config.primaryGroupSize.varians = 1;
@@ -83,6 +57,37 @@ int main(int argc, char *argv[])
     config.passerbys.upperbound = 25;
     config.passerbys.varians = 20;
     config.passerbys.expectedValue = 7;
+
+    /*App */
+    config.chanceToHaveApp = 25;  /*can */
+    config.btThreshold = 6;
+    config.btDecay = 3;
+
+    /*Infections */
+    config.contactsRisk = 10;   /*can */
+    config.infectionTime.lowerbound = 2;
+    config.infectionTime.upperbound = 12;
+    config.infectionTime.varians = 1;
+    config.infectionTime.expectedValue = 4;
+    config.amountOfStartInfected = 20;
+    config.symptomaticPercent = 84; /*can */
+    config.incubationTime.lowerbound = 1; /* CDC.gov */
+    config.incubationTime.upperbound = 14;  /* CDC.gov */
+    config.incubationTime.varians = 1;
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
+
+    /*Misc */
+    config.simulationRuns = 1;
+    config.maxEvents = 100;
+    config.seed = 0;
+    config.print = 1;
+    config.amountOfAgents = 100000;
+    config.willIsolatePercent = 90; /*can */
+    config.willTestPercent = 60;  /*can */
+    config.isolationTime = 7;   /*can */
+    config.testResponseTime = 3;  /*can, this is a worst case */
+    config.chanceOfCorrectTest = 95;
+
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
