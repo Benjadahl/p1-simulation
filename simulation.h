@@ -1,6 +1,13 @@
 #define amountOfGroups 4
 #define PLOT_COUNT 7
 
+typedef struct gaussian {
+    int lowerbound;
+    int upperbound;
+    double varians;
+    double expectedValue;
+} gaussian;
+
 typedef struct simConfig {
     int simulationRuns;
     double contactsRisk;

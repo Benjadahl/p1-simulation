@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
-#include "distribution.h"
 #include "simulation.h"
 #include "export.h"
 
