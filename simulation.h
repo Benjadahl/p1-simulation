@@ -26,7 +26,7 @@ typedef struct simConfig {
     struct gaussian isolationDelay; 
     int testResponseTime;
     int groupAmounts[amountOfGroups];
-    int groupMaxAmountToMeet[amountOfGroups];
+    struct gaussian toMeet[amountOfGroups];
     int btThreshold;
     int btDecay;
     int chanceOfCorrectTest;
