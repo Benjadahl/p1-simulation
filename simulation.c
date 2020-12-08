@@ -247,8 +247,9 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
-        (agents + i)->testResponseTime = gaussianTruncatedDiscrete(config.testResponseTime);
-        (agents + i)->testedTick = -1 * (agents + i)->testResponseTime; 
+        (agents + i)->testResponseTime =
+            gaussianTruncatedDiscrete(config.testResponseTime);
+        (agents + i)->testedTick = -1 * (agents + i)->testResponseTime;
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
         (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
@@ -464,7 +465,8 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->infectedTick = tick;
 
         if (theAgent->app != NULL) {
-            informContacts(*(theAgent->app), theAgent->testResponseTime, tick);
+            informContacts(*(theAgent->app), theAgent->testResponseTime,
+                           tick);
         }
     }
 
@@ -600,8 +602,7 @@ void informContacts(App app, int responseTime, int tick)
     }
 
     for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick <
-            responseTime + 2) {
+        if (tick - app.records[i].onContactTick < responseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
                 if (app.records[i].peer->healthState == infectious) {

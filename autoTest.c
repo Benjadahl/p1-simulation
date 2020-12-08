@@ -71,7 +71,7 @@ int main()
     config.passerbys.expectedValue = 7;
 
     /*App */
-    config.chanceToHaveApp = 100;  /*can */
+    config.chanceToHaveApp = 100; /*can */
     config.btThreshold = 6;
     config.btDecay = 3;
 
