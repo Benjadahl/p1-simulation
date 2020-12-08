@@ -23,7 +23,6 @@ typedef struct ContactRecord {
 } ContactRecord;
 
 typedef struct App {
-    int infected;
     int positiveMet;
     ContactRecord records[MAX_CONTACTS_IN_APP];
     int recorded;
@@ -80,6 +79,7 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk, int amountToMee
 void addRecord(agent * recorder, agent * peer, int tick);
 void informContacts(App app, int responseTime, int tick);
 void isolate(agent * agent);
+void testAgent (agent * theAgent, int tick);
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
@@ -261,8 +261,8 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group *
         (agents + i)->willTest = gsl_ran_bernoulli(r, config.willTestPercent);
         (agents + i)->testResponseTime =
             gaussianTruncatedDiscrete(config.testResponseTime);
-        (agents + i)->testedTick = -1 * (agents + i)->testResponseTime;
-        (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
+        (agents + i)->testedTick = -1;
+        (agents + i)->exposedTick = -1;
         (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
         (agents + i)->groups[1] = NULL;
@@ -345,7 +345,6 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head)
 App *initApp()
 {
     App *app = malloc(sizeof(App));
-    app->infected = 0;
     app->positiveMet = 0;
     (*app).recorded = 0;
     return app;
@@ -466,31 +465,38 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick, int a
 {
     agent *theAgent = &agents[agentID];
 
-    if (theAgent->isolationDelay + theAgent->infectedTick == tick
-        && theAgent->healthState == infectious && theAgent->willIsolate) {
-        theAgent->isolatedTick = tick;
+    if (theAgent->infectedTick != -1) {
+        if (theAgent->infectedTick + theAgent->isolationDelay == tick
+            && theAgent->healthState == infectious) {
+            if (theAgent->symptomatic) {
+                if (theAgent->willTest) {
+                    testAgent(theAgent, tick);
+                }
+
+                if (theAgent->willIsolate) {
+                    theAgent->isolatedTick = tick;
+                }
+            }
+        }
     }
 
-    /* Move agent to infectious state if incubationTime has passed */
-    if (theAgent->exposedTick + theAgent->incubationTime == tick) {
-        theAgent->healthState = infectious;
-        theAgent->infectedTick = tick;
 
-        if (theAgent->app != NULL) {
-            informContacts(*(theAgent->app), theAgent->testResponseTime,
-                           tick);
+    /* Move agent to infectious state if incubationTime has passed */
+    if (theAgent->exposedTick != -1) {
+        if (theAgent->exposedTick + theAgent->incubationTime == tick) {
+            theAgent->healthState = infectious;
+            theAgent->infectedTick = tick;
+            theAgent->exposedTick = -1;
         }
     }
 
     /* Move agent to recovered state if infectionTime has passed */
-    if (theAgent->healthState == infectious
-        && tick > theAgent->infectedTick + theAgent->infectedPeriod) {
-        theAgent->healthState = recovered;
-        (*recoveredInTick)++;
-        (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
-        theAgent->isolatedTick = -1;
-        if (theAgent->app != NULL)
-            theAgent->app->infected = 0;
+    if (theAgent->infectedTick != -1) {
+        if (theAgent->infectedTick + theAgent->infectedPeriod == tick) {
+            theAgent->healthState = recovered;
+            (*recoveredInTick)++;
+            (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
+        }
     }
 
     if (theAgent->app != NULL) {
@@ -505,25 +511,33 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick, int a
         if (theAgent->app->positiveMet >= config.btThreshold
             && config.btThreshold > 0 && theAgent->willIsolate
             && theAgent->willTest) {
-            theAgent->testedTick = tick;
             theAgent->isolatedTick = tick;
-            if (theAgent->healthState == infectious)
-                theAgent->testResult = 1;
-            else
-                theAgent->testResult = 0;
-
+            testAgent(theAgent, tick);
             theAgent->app->positiveMet = 0;
         }
     }
 
-    if (theAgent->testedTick + theAgent->testResponseTime == tick) {
-        if (theAgent->testResult && theAgent->willIsolate
-            && gsl_ran_bernoulli(r, config.chanceOfCorrectTest)) {
-            if (theAgent->healthState == infectious)
-                theAgent->isolatedTick = tick;
-        } else {
-            theAgent->isolatedTick = -1;
+    if (theAgent->testedTick != -1) {
+        if (theAgent->testedTick + theAgent->testResponseTime == tick) {
+            if (theAgent->testResult && gsl_ran_bernoulli(r, config.chanceOfCorrectTest)) {
+                if (theAgent->willIsolate) {
+                    theAgent->isolatedTick = tick;
+                }
+
+                if (theAgent->app != NULL) {
+                    informContacts(*(theAgent->app), theAgent->testResponseTime,
+                                tick);
+                }
+            }
+            theAgent->testedTick = -1;
         }
+    }
+
+    /* If agent is isolated healthy and not awaiting test results,
+       then, remove him from isolation.
+    */
+    if (theAgent->isolatedTick != -1 && theAgent->testedTick == -1 && theAgent->healthState != infectious) {
+        theAgent->isolatedTick = -1;
     }
 
     if (theAgent->isolatedTick == -1) {
@@ -614,17 +628,22 @@ void informContacts(App app, int responseTime, int tick)
     }
 
     for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick < responseTime + 2) {
+        if (tick - app.records[i].onContactTick <= responseTime + 2) {
             if (app.records[i].peer->willTest) {
-                app.records[i].peer->testedTick = tick;
-                if (app.records[i].peer->healthState == infectious) {
-                    app.records[i].peer->testResult = 1;
-                } else {
-                    app.records[i].peer->testResult = 0;
-                }
+                testAgent(app.records[i].peer, tick);
                 app.records[i].peer->app->positiveMet++;
             }
         }
+    }
+}
+
+void testAgent (agent * theAgent, int tick) {
+    theAgent->testedTick = tick;
+
+    if (theAgent->healthState == infectious) {
+        theAgent->testResult = 1;
+    } else {
+        theAgent->testResult = 0;
     }
 }
 
