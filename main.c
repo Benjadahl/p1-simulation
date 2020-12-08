@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     config.groupSize[1].expectedValue =
         (config.groupSize[1].lowerbound +
          config.groupSize[1].upperbound) / 2;
-    config.groupSize[2].lowerbound = 0;
+    config.groupSize[2].lowerbound = 2;
     config.groupSize[2].upperbound = 10;
     config.groupSize[2].varians = 9;
     config.groupSize[2].expectedValue = 5;
