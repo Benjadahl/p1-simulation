@@ -84,7 +84,7 @@ void informContacts(App app, int responseTime, int tick);
 void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 int rndInt(int max);
-int truncatedGaus (gsl_rng * r, struct gaussian settings);
+int truncatedGaus(gsl_rng * r, struct gaussian settings);
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
               double *R0, double *avgR0);
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
@@ -291,11 +291,9 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 config.groupSize[1].upperbound;
             if (run) {
                 if (i == 0)
-                    thisGroupSize =
-                        truncatedGaus(r, config.groupSize[0]);
+                    thisGroupSize = truncatedGaus(r, config.groupSize[0]);
                 else if (i == 1)
-                    thisGroupSize =
-                        truncatedGaus(r, config.groupSize[1]);
+                    thisGroupSize = truncatedGaus(r, config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
             } else {
                 thisGroupSize = agentsLeft;
@@ -309,8 +307,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
 
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
-        int contactsPerAgent =
-            truncatedGaus(r, config.groupSize[2]);
+        int contactsPerAgent = truncatedGaus(r, config.groupSize[2]);
         group *newGroup = malloc(sizeof(group));
         agent **members = malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
@@ -556,21 +553,18 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(r, theAgent->groups[0],
                       config.primaryGroupRisk,
-                      truncatedGaus(r, config.toMeet[0]), tick,
-                      theAgent);
+                      truncatedGaus(r, config.toMeet[0]), tick, theAgent);
         }
 
         if (isDay(tick) == theAgent->groups[1]->meetingDayOne
             || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(r, theAgent->groups[1], config.secondaryGroupRisk,
-                      truncatedGaus(r, config.toMeet[1]), tick,
-                      theAgent);
+                      truncatedGaus(r, config.toMeet[1]), tick, theAgent);
         }
 
         meetGroup(r, theAgent->groups[2],
                   config.contactsRisk,
-                  truncatedGaus(r, config.toMeet[2]), tick,
-                  theAgent);
+                  truncatedGaus(r, config.toMeet[2]), tick, theAgent);
 
         handlePasserBys(r, agents,
                         truncatedGaus(r, config.passerbys),
@@ -666,11 +660,13 @@ int rndInt(int max)
     return rand() % max;
 }
 
-int truncatedGaus (gsl_rng * r, struct gaussian settings) {
+int truncatedGaus(gsl_rng * r, struct gaussian settings)
+{
     double result;
 
     do {
-        result = gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
+        result =
+            gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
         result = round(result);
     } while (result < settings.lowerbound || result > settings.upperbound);
 
