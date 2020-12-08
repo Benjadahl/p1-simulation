@@ -529,8 +529,9 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
                   rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent);
-                  
-        handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
+
+        handlePasserBys(agents,
+                        gaussianTruncatedDiscrete(config.passerbys),
                         theAgent, tick, config);
     }
 
