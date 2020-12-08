@@ -76,6 +76,11 @@ int main(int argc, char *argv[])
     config.incubationTime.varians = 1;
     config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
 
+    config.isolationDelay.lowerbound = 1;
+    config.isolationDelay.upperbound = 5;
+    config.isolationDelay.varians = 4;
+    config.isolationDelay.expectedValue = 2;
+
     /*Misc */
     config.simulationRuns = 1;
     config.maxEvents = 100;
