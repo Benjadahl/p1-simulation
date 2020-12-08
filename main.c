@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     config.passerbys.expectedValue = 7;
 
     /*App */
-    config.chanceToHaveApp = 25;  /*can */
+    config.chanceToHaveApp = 100;  /*can */
     config.btThreshold = 6;
     config.btDecay = 3;
 
@@ -102,8 +102,11 @@ int main(int argc, char *argv[])
     config.willIsolatePercent = 90; /*can */
     config.willTestPercent = 60;  /*can */
     config.isolationTime = 7;   /*can */
-    config.testResponseTime = 3;  /*can, this is a worst case */
     config.chanceOfCorrectTest = 95;
+    config.testResponseTime.upperbound = 3; /*can, this is a worst case */
+    config.testResponseTime.lowerbound = 1;
+    config.testResponseTime.expectedValue = 2;
+    config.testResponseTime.varians = 1;
 
 
     /* indlaeser parametre */

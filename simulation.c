@@ -40,6 +40,7 @@ typedef struct agent {
     int willIsolate;
     int isolatedTick;
     int willTest;
+    int testResponseTime;
     int testedTick;
     int testResult;             /* 1 positive, 0 negative */
     struct group **groups;
@@ -75,7 +76,7 @@ void meeting(agent * theAgent, agent * peer, double infectionRisk,
 void meetGroup(group * group, int infectionRisk, int amountToMeet,
                int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
-void informContacts(App app, simConfig config, int tick);
+void informContacts(App app, int responseTime, int tick);
 void isolate(agent * agent);
 void runEvent(agent agents[], simConfig config, int tick, double *R0,
               double *avgR0);
@@ -246,7 +247,8 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
             gaussianTruncatedDiscrete(config.isolationDelay);
         (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
         (agents + i)->willTest = bernoulli(config.willTestPercent);
-        (agents + i)->testedTick = -1 * config.testResponseTime;
+        (agents + i)->testResponseTime = gaussianTruncatedDiscrete(config.testResponseTime);
+        (agents + i)->testedTick = -1 * (agents + i)->testResponseTime; 
         (agents + i)->exposedTick = -1 * (agents + i)->incubationTime;
         (agents + i)->testResult = 0;
         (agents + i)->groups[0] = NULL;
@@ -462,7 +464,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         theAgent->infectedTick = tick;
 
         if (theAgent->app != NULL) {
-            informContacts(*(theAgent->app), config, tick);
+            informContacts(*(theAgent->app), theAgent->testResponseTime, tick);
         }
     }
 
@@ -500,7 +502,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         }
     }
 
-    if (theAgent->testedTick + config.testResponseTime == tick) {
+    if (theAgent->testedTick + theAgent->testResponseTime == tick) {
         if (theAgent->testResult && theAgent->willIsolate
             && bernoulli(config.chanceOfCorrectTest)) {
             if (theAgent->healthState == infectious)
@@ -589,7 +591,7 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recorder->app->recorded++;
 }
 
-void informContacts(App app, simConfig config, int tick)
+void informContacts(App app, int responseTime, int tick)
 {
     int i;
     int contacts = MAX_CONTACTS_IN_APP;
@@ -599,7 +601,7 @@ void informContacts(App app, simConfig config, int tick)
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <
-            config.testResponseTime + 2) {
+            responseTime + 2) {
             if (app.records[i].peer->willTest) {
                 app.records[i].peer->testedTick = tick;
                 if (app.records[i].peer->healthState == infectious) {
