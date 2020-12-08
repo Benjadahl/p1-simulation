@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
-        /*party */
+    /*party */
     config.partyChance = 5;
     config.partyRisk = 0.05;
 
