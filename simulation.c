@@ -263,16 +263,16 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
         while (agentsLeft) {
             run =
                 i == 0 ? agentsLeft >
-                config.primaryGroupSize.upperbound : agentsLeft >
-                config.secondaryGroupSize.upperbound;
+                config.groupSize[0].upperbound : agentsLeft >
+                config.groupSize[1].upperbound;
             if (run) {
                 if (i == 0)
                     thisGroupSize =
-                        gaussianTruncatedDiscrete(config.primaryGroupSize);
+                        gaussianTruncatedDiscrete(config.groupSize[0]);
                 else if (i == 1)
                     thisGroupSize =
                         gaussianTruncatedDiscrete
-                        (config.secondaryGroupSize);
+                        (config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
             } else {
                 thisGroupSize = agentsLeft;
@@ -287,7 +287,7 @@ void initAgents(agent * agents, simConfig config, int tick, group ** head)
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
         int contactsPerAgent =
-            gaussianTruncatedDiscrete(config.amountOfContactsPerAgent);
+            gaussianTruncatedDiscrete(config.groupSize[2]);
         group *newGroup = malloc(sizeof(group));
         agent **members = malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
@@ -410,7 +410,7 @@ void handleParties(agent agents[], simConfig config, int tick)
         group *groupPtr;
 
         /* Create random group, meet it, then free it */
-        grpSize = gaussianTruncatedDiscrete(config.partyDist);
+        grpSize = gaussianTruncatedDiscrete(config.groupSize[3]);
 
         groupPtr = createGroup(agents, config, grpSize, 3);
         for (i = 0; i < groupPtr->size; i++) {
@@ -529,7 +529,7 @@ void computeAgent(agent agents[], simConfig config, int tick, int agentID,
         meetGroup(theAgent->groups[2],
                   config.contactsRisk,
                   rndInt(config.groupMaxAmountToMeet[2]), tick, theAgent);
-                  
+
         handlePasserBys(agents, gaussianTruncatedDiscrete(config.passerbys),
                         theAgent, tick, config);
     }

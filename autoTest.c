@@ -20,64 +20,77 @@ int main()
 
     simConfig config;
 
-    config.simulationRuns = 1;
-    config.contactsRisk = 1;
-    config.amountOfAgents = 100000;
+    config.partyChance = 5;
+    config.groupSize[3].upperbound = 50;
+    config.groupSize[3].lowerbound = 5;
+    config.groupSize[3].expectedValue = (5 + 50) / 2;
+    config.groupSize[3].varians = 1;
+    config.partyRisk = 10;
+    config.partyMeetChance = 10;
+
+    /*Groups */
+    config.primaryGroupRisk = 5;  /*can */
+    config.secondaryGroupRisk = 5;  /*can */
+    config.groupPercentageToInfect = 66;
+    config.groupMaxAmountToMeet[0] = 10;  /*Prim */
+    config.groupMaxAmountToMeet[1] = 5; /*second */
+    config.groupMaxAmountToMeet[2] = 3; /*loos */
+    config.groupMaxAmountToMeet[3] = 20;  /*party */
+    config.groupSize[2].lowerbound = 0;
+    config.groupSize[2].upperbound = 10;
+    config.groupSize[2].varians = 1;
+    config.groupSize[2].expectedValue = 5;
+    config.groupSize[0].lowerbound = 10;
+    config.groupSize[0].upperbound = 50;
+    config.groupSize[0].varians = 1;
+    config.groupSize[0].expectedValue =
+        (config.groupSize[0].lowerbound +
+         config.groupSize[0].upperbound) / 2;
+    config.groupSize[1].lowerbound = 5;
+    config.groupSize[1].upperbound = 30;
+    config.groupSize[1].varians = 1;
+    config.groupSize[1].expectedValue =
+        (config.groupSize[1].lowerbound +
+         config.groupSize[1].upperbound) / 2;
+    config.passerbys.lowerbound = 0;
+    config.passerbys.upperbound = 25;
+    config.passerbys.varians = 20;
+    config.passerbys.expectedValue = 7;
+
+    /*App */
+    config.chanceToHaveApp = 25;  /*can */
+    config.btThreshold = 6;
+    config.btDecay = 3;
+
+    /*Infections */
+    config.contactsRisk = 10;   /*can */
     config.infectionTime.lowerbound = 2;
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
-    config.maxEvents = 100;
-    config.symptomaticPercent = 25;
+    config.symptomaticPercent = 84; /*can */
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
-    config.incubationTime.expectedValue = 5.1;  /* CDC.gov */
-    config.willIsolatePercent = 50;
-    config.partyChance = 5;
-    config.partyDist.upperbound = 50;
-    config.partyDist.lowerbound = 5;
-    config.partyDist.expectedValue = (5 + 50) / 2;
-    config.partyDist.varians = 1;
-    config.partyRisk = 75;
-    config.partyMeetChance = 10;
-    config.willTestPercent = 75;
+    config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
+
+    config.isolationDelay.lowerbound = 1;
+    config.isolationDelay.upperbound = 5;
+    config.isolationDelay.varians = 4;
+    config.isolationDelay.expectedValue = 2;
+
+    /*Misc */
+    config.simulationRuns = 1;
+    config.maxEvents = 100;
     config.seed = 1;
     config.print = 0;
-    config.primaryGroupRisk = 5;
-    config.secondaryGroupRisk = 5;
-    config.amountOfContactsPerAgent.lowerbound = 0;
-    config.amountOfContactsPerAgent.upperbound = 10;
-    config.amountOfContactsPerAgent.varians = 1;
-    config.amountOfContactsPerAgent.expectedValue = 5;
-    config.groupPercentageToInfect = 74;
-    config.chanceToHaveApp = 35;
-    config.isolationTime = 15;
-    config.testResponseTime = 2;
-    config.groupMaxAmountToMeet[0] = 10;
-    config.groupMaxAmountToMeet[1] = 5;
-    config.groupMaxAmountToMeet[2] = 3;
-    config.groupMaxAmountToMeet[3] = 20;
-    config.btThreshold = 6;
-    config.btDecay = 3;
+    config.amountOfAgents = 100000;
+    config.willIsolatePercent = 90; /*can */
+    config.willTestPercent = 60;  /*can */
+    config.isolationTime = 7;   /*can */
+    config.testResponseTime = 3;  /*can, this is a worst case */
     config.chanceOfCorrectTest = 95;
-    config.primaryGroupSize.lowerbound = 10;
-    config.primaryGroupSize.upperbound = 50;
-    config.primaryGroupSize.varians = 1;
-    config.primaryGroupSize.expectedValue =
-        (config.primaryGroupSize.lowerbound +
-         config.primaryGroupSize.upperbound) / 2;
-    config.secondaryGroupSize.lowerbound = 5;
-    config.secondaryGroupSize.upperbound = 30;
-    config.secondaryGroupSize.varians = 1;
-    config.secondaryGroupSize.expectedValue =
-        (config.secondaryGroupSize.lowerbound +
-         config.secondaryGroupSize.upperbound) / 2;
-    config.passerbys.lowerbound = 0;
-    config.passerbys.upperbound = 50;
-    config.passerbys.varians = 1;
-    config.passerbys.expectedValue = 25;
 
 
     DataSet data[PLOT_COUNT];
