@@ -94,7 +94,7 @@ void writeConfigInput(char *filename, simConfig config)
 }
 
 void WriteFile(char *fileName, DataSet * dataSets, int absolute,
-               int dataCount, int events, int lable)
+               int dataCount, int events, int label)
 {
     int i, j;
     FILE *file = fopen(fileName, "w+");
@@ -105,7 +105,7 @@ void WriteFile(char *fileName, DataSet * dataSets, int absolute,
     }
 
     for (i = 0; i < events; i++) {
-        fprintf(file, "\n%d;", lable);
+        fprintf(file, "\n%d;", label);
         for (j = 0; j < dataCount; j++) {
             if (absolute) {
                 fprintf(file, "%f;", dataSets[j].absoluteData[i]);
@@ -198,7 +198,7 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
     }
 
     WriteFile(filename, dataSets, absolute, dataCount, events,
-              config.dataLable);
+              config.dataLabel);
 
     if (config.makeConfigFile && run == 0) {
         sprintf(configName, "%s/config.txt", foldername);

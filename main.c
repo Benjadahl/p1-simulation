@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     config.chanceOfCorrectTest = 0.95;
     config.passerByRisk = 0.0048;
     config.makeConfigFile = 1;
-    config.dataLable = 1;
+    config.dataLabel = 1;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
