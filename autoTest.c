@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 #include "simulation.h"
 #include "export.h"
 
-void run_simulation(simConfig config, DataSet * data, int dataCount);
+void run_simulation(gsl_rng * r, simConfig config, DataSet * data, int dataCount);
 int printCheck(int i, simConfig config, double input,
                double expectedValue);
 
@@ -15,7 +17,10 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 97.10, 96.91, 97.28 };
+    double expectedValue[3] = { 78.70, 77.70, 61.10 };
+
+    const gsl_rng_type *T;
+    gsl_rng *r;
 
     simConfig config;
 
@@ -104,7 +109,6 @@ int main()
     config.chanceOfCorrectTest = 0.95;
     config.passerByRisk = 0.0048;
 
-
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
 
@@ -126,11 +130,16 @@ int main()
         avgData[i].name = data[i].name;
     }
 
-    srand(config.seed);
+    /* Setup GSL */
+    gsl_rng_env_setup();
+
+    T = gsl_rng_default;
+    r = gsl_rng_alloc(T);
+    gsl_rng_set(r, 0);
 
     for (i = 0; i < 3; i++) {
         config.amountOfAgents = 100 * pow(10, i + 1);
-        run_simulation(config, data, PLOT_COUNT);
+        run_simulation(r, config, data, PLOT_COUNT);
         results[i] = floor(data[3].data[config.maxEvents - 1] * 100) / 100;
         failures += printCheck(i, config, results[i], expectedValue[i]);
     }
