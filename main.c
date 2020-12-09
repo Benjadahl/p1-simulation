@@ -7,7 +7,8 @@
 #include "simulation.h"
 #include "export.h"
 
-void run_simulation(gsl_rng *r, simConfig config, DataSet * data, int dataCount);
+void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
+                    int dataCount);
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
 
