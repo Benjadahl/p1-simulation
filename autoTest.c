@@ -18,7 +18,7 @@ int main()
     int i;
     int failures = 0;
     double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 78.70, 77.70, 61.10 };
+    double expectedValue[3] = { 59.40, 22.92, 3.39 };
 
     const gsl_rng_type *T;
     gsl_rng *r;
