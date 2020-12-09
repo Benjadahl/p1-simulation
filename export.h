@@ -9,6 +9,5 @@ typedef struct DataSet
 } DataSet;
 
 void WriteFile(char *fileName, DataSet * dataSets, int absolute, int dataCount,
-               int events);
-void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events, int yMax, int abosolute);
+               int events, int able);
 DataSet createDataSet(char *name, double *data);
