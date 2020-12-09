@@ -91,7 +91,8 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
 void insertGroupToLinkedList(group * groupToInsert, group ** head);
 
-void run_simulation(gsl_rng *r, simConfig config, DataSet * data, int dataCount)
+void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
+                    int dataCount)
 {
     double R0 = 0;
     double avgR0 = 0;
