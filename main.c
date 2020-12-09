@@ -218,6 +218,10 @@ int main(int argc, char *argv[])
                 case 'j':
                     config.simulationRuns = value;
                     break;
+
+                case 'l':
+                    config.dataLabel = value;
+                    break;
                 }
             }
         }
