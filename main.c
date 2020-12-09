@@ -208,6 +208,10 @@ int main(int argc, char *argv[])
                 case 'h':
                     config.btDecay = value;
                     break;
+
+                case 'j':
+                    config.simulationRuns = value;
+                    break;
                 }
             }
         }
