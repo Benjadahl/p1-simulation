@@ -32,14 +32,14 @@ int main(int argc, char *argv[])
     simConfig config;
 
     /*party */
-    config.partyChance = 5;
-    config.partyRisk = 0.05;
+    config.partyChance = 16;
+    config.partyRisk = 0.15;
 
     /*Groups */
     config.primaryGroupRisk = 0.05; /*can */
     config.secondaryGroupRisk = 0.025;  /*can */
     config.contactsRisk = 0.03; /*can */
-    config.groupSize[0].lowerbound = 10;
+    config.groupSize[0].lowerbound = 5;
     config.groupSize[0].upperbound = 50;
     config.groupSize[0].varians = 400;
     config.groupSize[0].expectedValue =
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     config.groupSize[2].upperbound = 10;
     config.groupSize[2].varians = 9;
     config.groupSize[2].expectedValue = 5;
-    config.groupSize[3].upperbound = 20;
+    config.groupSize[3].upperbound = 50;
     config.groupSize[3].lowerbound = 2;
     config.groupSize[3].expectedValue = 6;
     config.groupSize[3].varians = 9;
@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
     config.toMeet[3].varians = 9;
     config.passerbys.lowerbound = 0;
     config.passerbys.upperbound = 25;
-    config.passerbys.varians = 16;
+    config.passerbys.varians = 8;
     config.passerbys.expectedValue = 4;
 
     /*App */
-    config.chanceToHaveApp = 1; /*can */
+    config.chanceToHaveApp = 0; /*can */
     config.btThreshold = 0;
     config.btDecay = 7;
 
