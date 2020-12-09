@@ -57,3 +57,4 @@ dkms.conf
 #Output files
 *.csv
 *.png
+*.txt
