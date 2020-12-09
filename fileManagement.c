@@ -6,7 +6,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include"import.h"
-#include "distribution.h"
 #include"simulation.h"
 #include"export.h"
 

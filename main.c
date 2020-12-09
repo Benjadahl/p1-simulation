@@ -2,11 +2,13 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
-#include "distribution.h"
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 #include "simulation.h"
 #include "export.h"
 
-void run_simulation(simConfig config, DataSet * data, int dataCount);
+void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
+                    int dataCount);
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
 
@@ -18,80 +20,83 @@ int main(int argc, char *argv[])
     int seedUsed;
     time_t runTime;
 
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
+
+    const gsl_rng_type *T;
+    gsl_rng *r;
+
     simConfig config;
 
     /*party */
     config.partyChance = 5;
-    config.groupSize[3].upperbound = 50;
-    config.groupSize[3].lowerbound = 5;
-    config.groupSize[3].expectedValue = (5 + 50) / 2;
-    config.groupSize[3].varians = 1;
-    config.partyRisk = 10;
-    config.partyMeetChance = 10;
+    config.partyRisk = 0.05;
 
     /*Groups */
-    config.primaryGroupRisk = 5;  /*can */
-    config.secondaryGroupRisk = 5;  /*can */
-    config.groupPercentageToInfect = 66;
-    config.toMeet[0].upperbound = 10;
-    config.toMeet[0].lowerbound = 0;
-    config.toMeet[0].expectedValue = 10;
-    config.toMeet[0].varians = 25;
-    config.toMeet[1].upperbound = 20;
-    config.toMeet[1].lowerbound = 0;
-    config.toMeet[1].expectedValue = 5;
-    config.toMeet[1].varians = 25;
-    config.toMeet[2].upperbound = 3;
-    config.toMeet[2].lowerbound = 0;
-    config.toMeet[2].expectedValue = 2;
-    config.toMeet[2].varians = 2;
-    config.toMeet[3].upperbound = 20;
-    config.toMeet[3].lowerbound = 0;
-    config.toMeet[3].expectedValue = 10;
-    config.toMeet[3].varians = 49;
-    config.groupSize[2].lowerbound = 0;
-    config.groupSize[2].upperbound = 10;
-    config.groupSize[2].varians = 1;
-    config.groupSize[2].expectedValue = 5;
+    config.primaryGroupRisk = 0.05; /*can */
+    config.secondaryGroupRisk = 0.025;  /*can */
+    config.contactsRisk = 0.03; /*can */
     config.groupSize[0].lowerbound = 10;
     config.groupSize[0].upperbound = 50;
-    config.groupSize[0].varians = 1;
+    config.groupSize[0].varians = 400;
     config.groupSize[0].expectedValue =
         (config.groupSize[0].lowerbound +
          config.groupSize[0].upperbound) / 2;
     config.groupSize[1].lowerbound = 5;
     config.groupSize[1].upperbound = 30;
-    config.groupSize[1].varians = 1;
+    config.groupSize[1].varians = 100;
     config.groupSize[1].expectedValue =
         (config.groupSize[1].lowerbound +
          config.groupSize[1].upperbound) / 2;
+    config.groupSize[2].lowerbound = 2;
+    config.groupSize[2].upperbound = 10;
+    config.groupSize[2].varians = 9;
+    config.groupSize[2].expectedValue = 5;
+    config.groupSize[3].upperbound = 20;
+    config.groupSize[3].lowerbound = 2;
+    config.groupSize[3].expectedValue = 6;
+    config.groupSize[3].varians = 9;
+    config.toMeet[0].upperbound = 10;
+    config.toMeet[0].lowerbound = 0;
+    config.toMeet[0].expectedValue = 5;
+    config.toMeet[0].varians = 9;
+    config.toMeet[1].upperbound = 20;
+    config.toMeet[1].lowerbound = 0;
+    config.toMeet[1].expectedValue = 3;
+    config.toMeet[1].varians = 9;
+    config.toMeet[2].upperbound = 3;
+    config.toMeet[2].lowerbound = 0;
+    config.toMeet[2].expectedValue = 1;
+    config.toMeet[2].varians = 2;
+    config.toMeet[3].upperbound = 15;
+    config.toMeet[3].lowerbound = 0;
+    config.toMeet[3].expectedValue = 3;
+    config.toMeet[3].varians = 9;
     config.passerbys.lowerbound = 0;
     config.passerbys.upperbound = 25;
-    config.passerbys.varians = 20;
-    config.passerbys.expectedValue = 7;
+    config.passerbys.varians = 16;
+    config.passerbys.expectedValue = 4;
 
     /*App */
-    config.chanceToHaveApp = 100; /*can */
-    config.btThreshold = 6;
-    config.btDecay = 3;
+    config.chanceToHaveApp = 1; /*can */
+    config.btThreshold = 0;
+    config.btDecay = 7;
 
     /*Infections */
-    config.contactsRisk = 10;   /*can */
     config.infectionTime.lowerbound = 2;
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
     config.amountOfStartInfected = 20;
-    config.symptomaticPercent = 84; /*can */
+    config.symptomaticPercent = 0.84; /*can */
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
     config.incubationTime.varians = 1;
     config.incubationTime.expectedValue = 5.1;  /* CDC.gov *//*can */
-
-    config.isolationDelay.lowerbound = 1;
     config.isolationDelay.upperbound = 5;
-    config.isolationDelay.varians = 4;
-    config.isolationDelay.expectedValue = 2;
+    config.isolationDelay.lowerbound = 0;
+    config.isolationDelay.expectedValue = 1;
+    config.isolationDelay.varians = 1;
 
     /*Misc */
     config.simulationRuns = 1;
@@ -99,16 +104,14 @@ int main(int argc, char *argv[])
     config.seed = 0;
     config.print = 1;
     config.amountOfAgents = 100000;
-    config.willIsolatePercent = 90; /*can */
-    config.willTestPercent = 60;  /*can */
-    config.isolationTime = 7;   /*can */
-    config.chanceOfCorrectTest = 95;
+    config.willIsolatePercent = 0.9;  /*can */
+    config.willTestPercent = 0.6; /*can */
     config.testResponseTime.upperbound = 3; /*can, this is a worst case */
     config.testResponseTime.lowerbound = 1;
     config.testResponseTime.expectedValue = 2;
     config.testResponseTime.varians = 1;
-    config.passerByRisk = 0.48;
-
+    config.chanceOfCorrectTest = 0.95;
+    config.passerByRisk = 0.0048;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -206,14 +209,15 @@ int main(int argc, char *argv[])
                 case 'h':
                     config.btDecay = value;
                     break;
+
+                case 'j':
+                    config.simulationRuns = value;
+                    break;
                 }
             }
         }
 
     }
-
-    DataSet data[PLOT_COUNT];
-    DataSet avgData[PLOT_COUNT];
 
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
@@ -237,21 +241,28 @@ int main(int argc, char *argv[])
     runTime = time(NULL);
 
     if (!config.seed) {
-        srand(runTime);
         seedUsed = runTime;
     } else {
-        srand(config.seed);
         seedUsed = config.seed;
     }
 
+    /* Setup GSL */
+    gsl_rng_env_setup();
+
+    T = gsl_rng_default;
+    r = gsl_rng_alloc(T);
+    gsl_rng_set(r, seedUsed);
+
     for (i = 0; i < config.simulationRuns; i++) {
-        run_simulation(config, data, PLOT_COUNT);
+        run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
+
+    gsl_rng_free(r);
 
     printf("\nSeed used: %d\n", seedUsed);
 
