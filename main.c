@@ -2,10 +2,12 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 #include "simulation.h"
 #include "export.h"
 
-void run_simulation(simConfig config, DataSet * data, int dataCount);
+void run_simulation(gsl_rng *r, simConfig config, DataSet * data, int dataCount);
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
 
@@ -16,6 +18,12 @@ int main(int argc, char *argv[])
     int graph = 0;
     int seedUsed;
     time_t runTime;
+
+    DataSet data[PLOT_COUNT];
+    DataSet avgData[PLOT_COUNT];
+
+    const gsl_rng_type *T;
+    gsl_rng *r;
 
     simConfig config;
 
@@ -206,9 +214,6 @@ int main(int argc, char *argv[])
 
     }
 
-    DataSet data[PLOT_COUNT];
-    DataSet avgData[PLOT_COUNT];
-
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
         data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
@@ -231,21 +236,28 @@ int main(int argc, char *argv[])
     runTime = time(NULL);
 
     if (!config.seed) {
-        srand(runTime);
         seedUsed = runTime;
     } else {
-        srand(config.seed);
         seedUsed = config.seed;
     }
 
+    /* Setup GSL */
+    gsl_rng_env_setup();
+
+    T = gsl_rng_default;
+    r = gsl_rng_alloc(T);
+    gsl_rng_set(r, seedUsed);
+
     for (i = 0; i < config.simulationRuns; i++) {
-        run_simulation(config, data, PLOT_COUNT);
+        run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
+
+    gsl_rng_free(r);
 
     printf("\nSeed used: %d\n", seedUsed);
 

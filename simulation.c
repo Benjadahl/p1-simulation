@@ -91,7 +91,7 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
 void insertGroupToLinkedList(group * groupToInsert, group ** head);
 
-void run_simulation(simConfig config, DataSet * data, int dataCount)
+void run_simulation(gsl_rng *r, simConfig config, DataSet * data, int dataCount)
 {
     double R0 = 0;
     double avgR0 = 0;
@@ -102,15 +102,6 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
 
     group *head = NULL;
     group *current = head;
-
-    /* Setup GSL */
-    const gsl_rng_type *T;
-    gsl_rng *r;
-
-    gsl_rng_env_setup();
-
-    T = gsl_rng_default;
-    r = gsl_rng_alloc(T);
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -144,7 +135,6 @@ void run_simulation(simConfig config, DataSet * data, int dataCount)
 
     /*Freeing agents */
     free(agents);
-    gsl_rng_free(r);
 }
 
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
