@@ -629,8 +629,8 @@ void informContacts(App app, int responseTime, int tick)
         if (tick - app.records[i].onContactTick <= responseTime + 2) {
             if (app.records[i].peer->willTest) {
                 testAgent(app.records[i].peer, tick);
-                app.records[i].peer->app->positiveMet++;
             }
+            app.records[i].peer->app->positiveMet++;
         }
     }
 }
