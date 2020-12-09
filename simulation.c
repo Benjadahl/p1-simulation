@@ -594,7 +594,7 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
     int i = 0;
     int size = group->size;
 
-    for (i = 0; i < size && i < amountToMeet; i++) {
+    for (i = 1; i < size && i <= amountToMeet; i++) {
         agent *peer;
         int randomID = rand() % size;
 
