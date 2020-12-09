@@ -118,7 +118,8 @@ int main(int argc, char *argv[])
 
         if (argv[i][0] == '-') {
 
-            if ((argv[i][1] != 'g' && argv[i][1] != 'b') && !isdigit(argv[i + 1][0])) {
+            if ((argv[i][1] != 'g' && argv[i][1] != 'b')
+                && !isdigit(argv[i + 1][0])) {
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
                      argv[i][1]);
