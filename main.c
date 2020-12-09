@@ -118,16 +118,10 @@ int main(int argc, char *argv[])
         /*grunden til at vi har valgt at der skal være et '-' foran 
         en parameterinstilling er for at gøre det nemmer at opsamle i vores program*/
         if (argv[i][0] == '-') {
-<<<<<<< HEAD
             /*grunden til at vi har denne if statment er fordi at både 'g' og 'b'
             skal ikke efterføgles af en værdi, så for at sikre os at det inputs
             som skal have en værdi tilknyttede til sig har det bruge vi dette*/
             if ((argv[i][1] != 'g' && argv[i][1] != 'b') && !isdigit(argv[i + 1][0])) {
-=======
-
-            if ((argv[i][1] != 'g' && argv[i][1] != 'b')
-                && !isdigit(argv[i + 1][0])) {
->>>>>>> 8e3735eb284ed6ac8fd3c216f8ceb32a9a74c525
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
                      argv[i][1]);
