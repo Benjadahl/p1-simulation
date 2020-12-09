@@ -11,7 +11,8 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
-void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events, int yMax, int abosolute, simConfig simConfig);
+void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
+                int events, int yMax, int abosolute, simConfig simConfig);
 
 
 int main(int argc, char *argv[])
@@ -261,7 +262,8 @@ int main(int argc, char *argv[])
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1, config);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0, config);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0,
+                   config);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }

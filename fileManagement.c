@@ -23,11 +23,21 @@ void writeConfigInput(char *filename, simConfig config)
     fprintf(file, "simulationRuns: %d\n", config.simulationRuns);
     fprintf(file, "contactsRisk: %lf\n", config.contactsRisk);
     fprintf(file, "amountOfAgents: %d\n", config.amountOfAgents);
-    fprintf(file, "infectionTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n", config.infectionTime.upperbound, config.infectionTime.lowerbound, config.infectionTime.varians, config.infectionTime.expectedValue);
-    fprintf(file, "amountOfStartInfected: %d\n", config.amountOfStartInfected);
+    fprintf(file,
+            "infectionTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+            config.infectionTime.upperbound,
+            config.infectionTime.lowerbound, config.infectionTime.varians,
+            config.infectionTime.expectedValue);
+    fprintf(file, "amountOfStartInfected: %d\n",
+            config.amountOfStartInfected);
     fprintf(file, "maxEvents: %d\n", config.maxEvents);
     fprintf(file, "symptomaticPercent: %lf\n", config.symptomaticPercent);
-    fprintf(file, "incubationTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n", config.incubationTime.upperbound, config.incubationTime.lowerbound, config.incubationTime.varians, config.incubationTime.expectedValue);
+    fprintf(file,
+            "incubationTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+            config.incubationTime.upperbound,
+            config.incubationTime.lowerbound,
+            config.incubationTime.varians,
+            config.incubationTime.expectedValue);
     fprintf(file, "willIsolatePercent: %lf\n", config.willIsolatePercent);
     fprintf(file, "partyChance: %lf\n", config.partyChance);
     fprintf(file, "partyRisk: %lf\n", config.partyRisk);
@@ -39,22 +49,45 @@ void writeConfigInput(char *filename, simConfig config)
     fprintf(file, "secondaryGroupRisk: %lf\n", config.secondaryGroupRisk);
     fprintf(file, "chanceToHaveApp: %lf\n", config.chanceToHaveApp);
     fprintf(file, "isolationTime: %d\n", config.isolationTime);
-    fprintf(file, "isolationDelay{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n", config.isolationDelay.upperbound, config.isolationDelay.lowerbound, config.isolationDelay.varians, config.isolationDelay.expectedValue);
-    fprintf(file, "testResponseTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n", config.testResponseTime.upperbound, config.testResponseTime.lowerbound, config.testResponseTime.varians, config.testResponseTime.expectedValue);
+    fprintf(file,
+            "isolationDelay{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+            config.isolationDelay.upperbound,
+            config.isolationDelay.lowerbound,
+            config.isolationDelay.varians,
+            config.isolationDelay.expectedValue);
+    fprintf(file,
+            "testResponseTime{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+            config.testResponseTime.upperbound,
+            config.testResponseTime.lowerbound,
+            config.testResponseTime.varians,
+            config.testResponseTime.expectedValue);
     for (i = 0; i < amountOfGroups; i++) {
         fprintf(file, "groupAmounts[%d]: %d\n", i, config.groupAmounts[i]);
     }
     for (i = 0; i < amountOfGroups; i++) {
-        fprintf(file, "toMeet[%d]{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",i, config.toMeet[i].upperbound, config.toMeet[i].lowerbound, config.toMeet[i].varians, config.toMeet[i].expectedValue);
+        fprintf(file,
+                "toMeet[%d]{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+                i, config.toMeet[i].upperbound,
+                config.toMeet[i].lowerbound, config.toMeet[i].varians,
+                config.toMeet[i].expectedValue);
     }
-    
+
     fprintf(file, "btThreshold: %d\n", config.btThreshold);
     fprintf(file, "btDecay: %d\n", config.btDecay);
-    fprintf(file, "chanceOfCorrectTest: %lf\n", config.chanceOfCorrectTest);
-      for (i = 0; i < amountOfGroups; i++) {
-        fprintf(file, "groupSize[%d]{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",i, config.groupSize[i].upperbound, config.groupSize[i].lowerbound, config.groupSize[i].varians, config.groupSize[i].expectedValue);
+    fprintf(file, "chanceOfCorrectTest: %lf\n",
+            config.chanceOfCorrectTest);
+    for (i = 0; i < amountOfGroups; i++) {
+        fprintf(file,
+                "groupSize[%d]{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+                i, config.groupSize[i].upperbound,
+                config.groupSize[i].lowerbound,
+                config.groupSize[i].varians,
+                config.groupSize[i].expectedValue);
     }
-    fprintf(file, "passerbys{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n", config.passerbys.upperbound, config.passerbys.lowerbound, config.passerbys.varians, config.passerbys.expectedValue);
+    fprintf(file,
+            "passerbys{\nupper: %d \nlower: %d\nvarias: %lf\nexpectedValue: %lf \n}\n",
+            config.passerbys.upperbound, config.passerbys.lowerbound,
+            config.passerbys.varians, config.passerbys.expectedValue);
     fprintf(file, "passerByRisk: %lf\n", config.passerByRisk);
     fclose(file);
     return;
@@ -66,7 +99,7 @@ void WriteFile(char *fileName, DataSet * dataSets, int absolute,
     int i, j;
     FILE *file = fopen(fileName, "w+");
 
-    fprintf(file,";");
+    fprintf(file, ";");
     for (i = 0; i < dataCount; i++) {
         fprintf(file, "%s;", dataSets[i].name);
     }
@@ -164,12 +197,12 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
         }
     }
 
-    WriteFile(filename, dataSets, absolute, dataCount, events, config.dataLable);
+    WriteFile(filename, dataSets, absolute, dataCount, events,
+              config.dataLable);
 
-    if(config.makeConfigFile && run == 0)
-    {
+    if (config.makeConfigFile && run == 0) {
         sprintf(configName, "%s/config.txt", foldername);
-        writeConfigInput(configName,config);
+        writeConfigInput(configName, config);
     }
 
     if (run == -1) {
