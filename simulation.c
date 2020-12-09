@@ -463,22 +463,6 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
 {
     agent *theAgent = &agents[agentID];
 
-    if (theAgent->infectedTick != -1) {
-        if (theAgent->infectedTick + theAgent->isolationDelay == tick
-            && theAgent->healthState == infectious) {
-            if (theAgent->symptomatic) {
-                if (theAgent->willTest) {
-                    testAgent(theAgent, tick);
-                }
-
-                if (theAgent->willIsolate) {
-                    theAgent->isolatedTick = tick;
-                }
-            }
-        }
-    }
-
-
     /* Move agent to infectious state if incubationTime has passed */
     if (theAgent->exposedTick != -1) {
         if (theAgent->exposedTick + theAgent->incubationTime == tick) {
@@ -494,6 +478,22 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
             theAgent->healthState = recovered;
             (*recoveredInTick)++;
             (*infectedDuringInfection) += theAgent->amountAgentHasInfected;
+        }
+    }
+
+    /* React to infection */
+    if (theAgent->infectedTick != -1) {
+        if (theAgent->infectedTick + theAgent->isolationDelay == tick
+            && theAgent->healthState == infectious) {
+            if (theAgent->symptomatic) {
+                if (theAgent->willTest) {
+                    testAgent(theAgent, tick);
+                }
+
+                if (theAgent->willIsolate) {
+                    theAgent->isolatedTick = tick;
+                }
+            }
         }
     }
 
