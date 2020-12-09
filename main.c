@@ -11,6 +11,8 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
+void ExportData(int run, time_t runTime, DataSet *dataSets, int dataCount, int events, int yMax, int abosolute, simConfig simConfig);
+
 
 int main(int argc, char *argv[])
 {
@@ -112,6 +114,8 @@ int main(int argc, char *argv[])
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 0.95;
     config.passerByRisk = 0.0048;
+    config.makeConfigFile = 1;
+    config.dataLable = 1;
 
     /* indlaeser parametre */
     for (i = 0; i < argc; i++) {
@@ -256,8 +260,8 @@ int main(int argc, char *argv[])
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
-                   config.amountOfAgents, 1);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0);
+                   config.amountOfAgents, 1, config);
+        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0, config);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
@@ -269,7 +273,7 @@ int main(int argc, char *argv[])
     if (graph != 0) {
         printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
-                   0);
+                   0, config);
     }
     for (i = 0; i < PLOT_COUNT; i++) {
         free(data[i].data);

@@ -9,6 +9,8 @@ typedef struct gaussian {
 } gaussian;
 
 typedef struct simConfig {
+    int dataLable;
+    int makeConfigFile;
     int simulationRuns;
     double contactsRisk;
     int amountOfAgents;
