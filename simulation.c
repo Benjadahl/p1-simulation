@@ -149,6 +149,14 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         }
     } while (current->next != NULL);
 
+    for (i = 0; i < config.amountOfAgents; i++) {
+        agent *theAgent = agents + i;
+
+        if (theAgent->app != NULL) {
+            free(theAgent->app);
+        }
+    }
+
     /*Freeing agents */
     free(agents);
 }
