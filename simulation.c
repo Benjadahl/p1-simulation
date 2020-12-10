@@ -119,7 +119,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
         int prevTick;
-        
+
         double exposed;
         double infectious;
         double isolated;
@@ -130,14 +130,12 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         }
 
         prevTick = tick - 1;
-        
+
         exposed = data[1].absoluteData[prevTick];
         infectious = data[2].absoluteData[prevTick];
         isolated = data[4].absoluteData[prevTick];
 
-        if (!(exposed == 0
-            && infectious == 0
-            && isolated == 0)) {
+        if (!(exposed == 0 && infectious == 0 && isolated == 0)) {
             runEvent(r, agents, config, tick, &R0, &avgR0);
         }
     }
