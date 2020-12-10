@@ -116,15 +116,17 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         }
     }
 
-    
+
     for (tick = 1; tick <= config.maxEvents; tick++) {
         PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
             printStats(data, dataCount, tick, &R0, &avgR0);
         }
-        if(data[1].absoluteData[tick-1] != 0 || data[2].absoluteData[tick-1] != 0 || data[4].absoluteData[tick-1] != 0) {
+        if (data[1].absoluteData[tick - 1] != 0
+            || data[2].absoluteData[tick - 1] != 0
+            || data[4].absoluteData[tick - 1] != 0) {
             runEvent(r, agents, config, tick, &R0, &avgR0);
-        }  
+        }
     }
 
     /*Freeing groups */
