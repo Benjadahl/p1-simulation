@@ -4,6 +4,7 @@
 #include <time.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
+#include <limits.h>
 #include "simulation.h"
 #include "export.h"
 
@@ -13,6 +14,7 @@ void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int abosolute, simConfig simConfig);
+int isValueCorrect(char input, int value, int min, int max);
 
 
 int main(int argc, char *argv[])
@@ -126,7 +128,7 @@ int main(int argc, char *argv[])
             /*grunden til at vi har denne if statment er fordi at både 'g' og 'b'
                skal ikke efterføgles af en værdi, så for at sikre os at det inputs
                som skal have en værdi tilknyttede til sig har det bruge vi dette */
-            if ((argv[i][1] != 'g' && argv[i][1] != 'b')
+            if ((argv[i][1] == 'g' || argv[i][1] == 'b')
                 && !isdigit(argv[i + 1][0])) {
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
@@ -140,47 +142,58 @@ int main(int argc, char *argv[])
 
                 switch (argv[i][1]) {
                 case 'z':      /*how many angents have sympums when infected */
-                    config.symptomaticPercent = value;
+                    if (isValueCorrect(argv[i][1], value, 0, 1)) config.symptomaticPercent = value;
+                    else return 0;
                     break;
 
                 case 'w':      /*chanc that angent will isolate */
-                    config.willIsolatePercent = value;
+                    if (isValueCorrect(argv[i][1], value, 0, 1)) config.willIsolatePercent = value;
+                    else return 0;
                     break;
 
                 case 'c':      /*risk of infetion */
-                    config.contactsRisk = value;
+                    if (isValueCorrect(argv[i][1], value, 0, 1)) config.contactsRisk = value;
+                    else return 0;
                     break;
 
                 case 'k':      /*amount of contacts pr agent */
-                    config.groupSize[2].expectedValue = value;
+                    if (isValueCorrect(argv[i][1], value, config.groupSize[2].lowerbound, config.groupSize[2].upperbound)) config.groupSize[2].expectedValue = value;
+                    else return 0;
                     break;
 
                 case 't':      /*size of primary group */
-                    config.groupSize[0].expectedValue = value;
+                    if (isValueCorrect(argv[i][1], value, config.groupSize[0].lowerbound, config.groupSize[0].upperbound)) config.groupSize[0].expectedValue = value;
+                    else return 0;
                     break;
 
                 case 'y':      /*size of secound group */
-                    config.groupSize[1].expectedValue = value;
+                    if (isValueCorrect(argv[i][1], value, config.groupSize[1].lowerbound, config.groupSize[1].upperbound)) config.groupSize[1].expectedValue = value;
+                    else return 0;
                     break;
 
                 case 'a':      /*amount of time incted */
-                    config.infectionTime.expectedValue = value;
+                    if (isValueCorrect(argv[i][1], value, config.infectionTime.lowerbound, config.infectionTime.upperbound)) config.infectionTime.expectedValue = value;
+                    else return 0;
                     break;
 
                 case 'p':      /*total amount of agents */
-                    config.amountOfAgents = value;
+                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX)) config.amountOfAgents = value;
+                    else return 0;
                     break;
 
                 case 'i':      /*amount of infected at start of simulation */
-                    config.amountOfStartInfected = value;
+                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX)) config.amountOfStartInfected = value;
+                    else return 0;
                     break;
 
                 case 'e':      /*lenght of simulation */
-                    config.maxEvents = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.maxEvents = value;
+                    else return 0;
                     break;
 
                 case 's':      /*seed */
-                    config.seed = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.seed = value;
+                    else return 0;
                     break;
 
                 case 'g':
@@ -207,23 +220,28 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'd':
-                    config.chanceToHaveApp = value;
+                    if (isValueCorrect(argv[i][1], value, 0, 1)) config.chanceToHaveApp = value;
+                    else return 0;
                     break;
 
                 case 'f':
-                    config.btThreshold = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.btThreshold = value;
+                    else return 0;
                     break;
 
                 case 'h':
-                    config.btDecay = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.btDecay = value;
+                    else return 0;
                     break;
 
                 case 'j':
-                    config.simulationRuns = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.simulationRuns = value;
+                    else return 0;
                     break;
 
                 case 'l':
-                    config.dataLabel = value;
+                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.dataLabel = value;
+                    else return 0;
                     break;
                 }
             }
@@ -291,4 +309,9 @@ int main(int argc, char *argv[])
         free(avgData[i].data);
     }
     return EXIT_SUCCESS;
+}
+
+int isValueCorrect(char input, int value, int min, int max){
+    if (value >= min && value <= max) return 1;
+    else printf("-%c %d is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n", input, value, input, min, max); return 0;
 }
