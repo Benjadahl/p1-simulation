@@ -140,7 +140,7 @@ void ReadFile(char *file_name, DataSetRead * data, int dataCount)
             } else {
                 char *titleToken = strtok(lineToken, ";");
                 while (titleToken != NULL) {
-                    if(titleToken != ";"){
+                    if (titleToken != ";") {
                         strcpy(data[j].name, titleToken);
                         titleToken = strtok(NULL, ";");
                         j++;
@@ -158,9 +158,9 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
     int data_set = 0;
     char *token = strtok(t, ";");
     while (token != NULL) {
-        if (data_set < dataCount+1) {
-            if(data_set % dataCount != 0){
-                data[data_set-1].data[dataNum] = atof(token);
+        if (data_set < dataCount + 1) {
+            if (data_set % dataCount != 0) {
+                data[data_set - 1].data[dataNum] = atof(token);
             }
         }
         data_set++;
