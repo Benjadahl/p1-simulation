@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
-    config.amountOfStartInfected = 20;
+    config.amountOfStartInfected = 1;
     config.symptomaticPercent = 0.84; /*can */
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
