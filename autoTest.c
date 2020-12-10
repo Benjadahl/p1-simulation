@@ -17,8 +17,8 @@ int main()
     int seed;
     int i;
     int failures = 0;
-    double results[3] = { 0, 0, 0 };
-    double expectedValue[3] = { 59.40, 22.92, 3.39 };
+    double results[2] = { 0, 0 };
+    double expectedValue[2] = { 59.40, 22.92 };
 
     const gsl_rng_type *T;
     gsl_rng *r;
@@ -138,7 +138,7 @@ int main()
     r = gsl_rng_alloc(T);
     gsl_rng_set(r, 0);
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 2; i++) {
         config.amountOfAgents = 100 * pow(10, i + 1);
         run_simulation(r, config, data, PLOT_COUNT);
         results[i] = floor(data[3].data[config.maxEvents - 1] * 100) / 100;
