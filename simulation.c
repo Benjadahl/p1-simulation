@@ -118,13 +118,26 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
+        int prevTick;
+        
+        double exposed;
+        double infectious;
+        double isolated;
+
         PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
             printStats(data, dataCount, tick, &R0, &avgR0);
         }
-        if (data[1].absoluteData[tick - 1] != 0
-            || data[2].absoluteData[tick - 1] != 0
-            || data[4].absoluteData[tick - 1] != 0) {
+
+        prevTick = tick - 1;
+        
+        exposed = data[1].absoluteData[prevTick];
+        infectious = data[2].absoluteData[prevTick];
+        isolated = data[4].absoluteData[prevTick];
+
+        if (!(exposed == 0
+            && infectious == 0
+            && isolated == 0)) {
             runEvent(r, agents, config, tick, &R0, &avgR0);
         }
     }
