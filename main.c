@@ -142,7 +142,6 @@ int main(int argc, char *argv[])
 
                 switch (argv[i][1]) {
                 case 'z':      /*how many angents have sympums when infected */
-<<<<<<< HEAD
                     if (isValueCorrect(argv[i][1], value, 0, 1)) config.symptomaticPercent = value;
                     break;
 
@@ -184,91 +183,6 @@ int main(int argc, char *argv[])
 
                 case 's':      /*seed */
                     if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.seed = value;
-=======
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.symptomaticPercent = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'w':      /*chanc that angent will isolate */
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.willIsolatePercent = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'c':      /*risk of infetion */
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.contactsRisk = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'k':      /*amount of contacts pr agent */
-                    if (isValueCorrect
-                        (argv[i][1], value, config.groupSize[2].lowerbound,
-                         config.groupSize[2].upperbound))
-                        config.groupSize[2].expectedValue = value;
-                    else
-                        return 0;
-                    break;
-
-                case 't':      /*size of primary group */
-                    if (isValueCorrect
-                        (argv[i][1], value, config.groupSize[0].lowerbound,
-                         config.groupSize[0].upperbound))
-                        config.groupSize[0].expectedValue = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'y':      /*size of secound group */
-                    if (isValueCorrect
-                        (argv[i][1], value, config.groupSize[1].lowerbound,
-                         config.groupSize[1].upperbound))
-                        config.groupSize[1].expectedValue = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'a':      /*amount of time incted */
-                    if (isValueCorrect
-                        (argv[i][1], value,
-                         config.infectionTime.lowerbound,
-                         config.infectionTime.upperbound))
-                        config.infectionTime.expectedValue = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'p':      /*total amount of agents */
-                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX))
-                        config.amountOfAgents = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'i':      /*amount of infected at start of simulation */
-                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX))
-                        config.amountOfStartInfected = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'e':      /*lenght of simulation */
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.maxEvents = value;
-                    else
-                        return 0;
-                    break;
-
-                case 's':      /*seed */
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.seed = value;
-                    else
-                        return 0;
->>>>>>> 2f2e855ca239d2bd49fe47409d420c5cb2c0a71d
                     break;
 
                 case 'g':
@@ -295,7 +209,6 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'd':
-<<<<<<< HEAD
                     if (isValueCorrect(argv[i][1], value, 0, 1)) config.chanceToHaveApp = value;
                     break;
 
@@ -313,40 +226,6 @@ int main(int argc, char *argv[])
 
                 case 'l':
                     if (isValueCorrect(argv[i][1], value, 0, INT_MAX)) config.dataLabel = value;
-=======
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.chanceToHaveApp = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'f':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.btThreshold = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'h':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.btDecay = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'j':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.simulationRuns = value;
-                    else
-                        return 0;
-                    break;
-
-                case 'l':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.dataLabel = value;
-                    else
-                        return 0;
->>>>>>> 2f2e855ca239d2bd49fe47409d420c5cb2c0a71d
                     break;
                 }
             }
@@ -416,20 +295,7 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-<<<<<<< HEAD
 int isValueCorrect(char input, int value, int min, int max){
     if (value >= min && value <= max) return 1;
     else printf("-%c %d is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n", input, value, input, min, max); exit(EXIT_FAILURE);
 }
-=======
-int isValueCorrect(char input, int value, int min, int max)
-{
-    if (value >= min && value <= max)
-        return 1;
-    else
-        printf
-            ("-%c %d is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n",
-             input, value, input, min, max);
-    return 0;
-}
->>>>>>> 2f2e855ca239d2bd49fe47409d420c5cb2c0a71d
