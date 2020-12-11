@@ -56,17 +56,22 @@ typedef struct group {
     struct group *next;
 } group;
 
+void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
+App *initApp();
+int truncatedGaus(gsl_rng * r, struct gaussian settings);
+void insertGroupToLinkedList(group * groupToInsert, group ** head);
+int getNextID(int currentID, int size);
+void infectRandomAgent(agent agents[], simConfig config, int tick);
+void infectAgent(int tick, agent * a);
+
 void printAgent(agent * agent, simConfig config);
 void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0);
-void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
-                group ** head);
-App *initApp();
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
-int getNextID(int currentID, int size);
-void infectAgent(int tick, agent * a);
-void infectRandomAgent(agent agents[], simConfig config, int tick);
+
+
+
 Day isDay(int tick);
 void handleParties(gsl_rng * r, agent agents[], simConfig config,
                    int tick);
@@ -84,12 +89,11 @@ void informContacts(App app, int responseTime, int tick);
 void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 int rndInt(int max);
-int truncatedGaus(gsl_rng * r, struct gaussian settings);
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
               double *R0, double *avgR0);
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
-void insertGroupToLinkedList(group * groupToInsert, group ** head);
+
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
