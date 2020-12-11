@@ -143,15 +143,18 @@ int main(int argc, char *argv[])
 
                 switch (argv[i][1]) {
                 case 'z':      /*how many angents have sympums when infected */
-                    config.symptomaticPercent = isValueCorrect(argv[i][1], value, 0, 1);
+                    config.symptomaticPercent =
+                        isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'w':      /*chanc that angent will isolate */
-                    config.willIsolatePercent = isValueCorrect(argv[i][1], value, 0, 1);
+                    config.willIsolatePercent =
+                        isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'c':      /*risk of infetion */
-                    config.contactsRisk = isValueCorrect(argv[i][1], value, 0, 1);
+                    config.contactsRisk =
+                        isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'k':      /*amount of contacts pr agent */
@@ -180,19 +183,23 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'p':      /*total amount of agents */
-                    config.amountOfAgents = isValueCorrect(argv[i][1], value, 1, INT_MAX);
+                    config.amountOfAgents =
+                        isValueCorrect(argv[i][1], value, 1, INT_MAX);
                     break;
 
                 case 'i':      /*amount of infected at start of simulation */
-                    config.amountOfStartInfected = isValueCorrect(argv[i][1], value, 1, INT_MAX);
+                    config.amountOfStartInfected =
+                        isValueCorrect(argv[i][1], value, 1, INT_MAX);
                     break;
 
                 case 'e':      /*lenght of simulation */
-                    config.maxEvents = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.maxEvents =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 's':      /*seed */
-                    config.seed = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.seed =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'g':
@@ -219,23 +226,28 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'd':
-                    config.chanceToHaveApp = isValueCorrect(argv[i][1], value, 0, 1);
+                    config.chanceToHaveApp =
+                        isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'f':
-                    config.btThreshold = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.btThreshold =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'h':
-                    config.btDecay = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.btDecay =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'j':
-                    config.simulationRuns = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.simulationRuns =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'l':
-                    config.dataLabel = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    config.dataLabel =
+                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
                 }
             }
         }
