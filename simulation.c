@@ -103,7 +103,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     group *head = NULL;
     group *current = head;
-
+    group *tempGroup;
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
     initAgents(r, agents, config, tick, &head);
@@ -144,13 +144,20 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     do {
         free(current->members);
         if (current->next != NULL) {
+            tempGroup = current->next;
             free(current);
-            current = current->next;
+            current = tempGroup;
         }
     } while (current->next != NULL);
 
+    for (i = 0; i < config.amountOfAgents; i++) {
+        free(agents[i].app);
+        free(agents[i].groups);
+    }
+
     /*Freeing agents */
     free(agents);
+
 }
 
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,

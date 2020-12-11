@@ -270,8 +270,6 @@ int main(int argc, char *argv[])
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1, config);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0,
-                   config);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
