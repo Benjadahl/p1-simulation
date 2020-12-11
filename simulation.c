@@ -71,11 +71,11 @@ void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick, double *R
 Day isDay(int tick);
 void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick);
 void meetGroup(gsl_rng * r, group * group, double infectionRisk, int amountToMeet, int tick, agent * theAgent);
+void meeting(gsl_rng * r, agent * theAgent, agent * peer, double infectionRisk, int tick, int recordInApp);
 void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick, int agentID, int *recoveredInTick, int *infectedDuringInfection);
 void testAgent(agent * theAgent, int tick);
 void informContacts(App app, int responseTime, int tick);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet, agent * theAgent, int tick, simConfig config);
-void meeting(gsl_rng * r, agent * theAgent, agent * peer, double infectionRisk, int tick, int recordInApp);
 void addRecord(agent * recorder, agent * peer, int tick);
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
@@ -247,6 +247,94 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     }
 }
 
+App *initApp()
+{
+    App *app = malloc(sizeof(App));
+    app->positiveMet = 0;
+    (*app).recorded = 0;
+    return app;
+}
+
+int truncatedGaus(gsl_rng * r, struct gaussian settings)
+{
+    double result;
+
+    do {
+        result =
+            gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
+        result = round(result);
+    } while (result < settings.lowerbound || result > settings.upperbound);
+
+    return result;
+}
+
+group *createGroup(agent * agents, simConfig config, int groupSize,
+                   int groupNr)
+{
+    group *newGroup = malloc(sizeof(group));
+    agent **members = malloc(sizeof(agent *) * groupSize);
+    agent *theAgent;
+    int i = 0;
+    newGroup->members = members;
+    newGroup->size = groupSize;
+
+    for (i = 0; i < groupSize; i++) {
+        int randomID = rand() % config.amountOfAgents;
+
+        do {
+            theAgent = agents + randomID;
+            randomID = getNextID(randomID, config.amountOfAgents);
+        } while (theAgent->groups[groupNr] != NULL);
+
+        theAgent->groups[groupNr] = newGroup;
+        *(members + i) = theAgent;
+    }
+
+    /*Giving secondary group random meeting days */
+    /*Note: Some secondary groups will only meet once a week, due to rndInt(7) may return the same number both times */
+    if (groupNr == 1) {
+        newGroup->meetingDayOne = rndInt(7);
+        newGroup->meetingDayTwo = rndInt(7);
+    }
+
+    return newGroup;
+}
+
+int getNextID(int currentID, int size)
+{
+    return (currentID + 1) % size;
+}
+
+int rndInt(int max)
+{
+    return rand() % max;
+}
+
+void insertGroupToLinkedList(group * groupToInsert, group ** head)
+{
+    groupToInsert->next = *head;
+    *head = groupToInsert;
+}
+
+void infectRandomAgent(agent agents[], simConfig config, int tick)
+{
+    int randomID;
+
+    do {
+        randomID = rndInt(config.amountOfAgents);
+    } while (agents[randomID].healthState == infectious);
+
+    infectAgent(tick, &agents[randomID]);
+}
+
+void infectAgent(int tick, agent * theAgent)
+{
+    if (theAgent->healthState == succeptible) {
+        theAgent->healthState = exposed;
+        theAgent->exposedTick = tick;
+    }
+}
+
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config)
 {
@@ -293,30 +381,6 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
     }
 }
 
-void calculateAveragePlot(int run, int events, DataSet * data,
-                          DataSet * avgData, int dataCount)
-{
-    int e, d;
-    if (run == 0) {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] = data[d].data[e];
-                avgData[d].absoluteData[e] = data[d].absoluteData[e];
-            }
-        }
-    } else {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] =
-                    (avgData[d].data[e] + data[d].data[e]) / 2;
-                avgData[d].absoluteData[e] =
-                    (avgData[d].absoluteData[e] +
-                     data[d].absoluteData[e]) / 2;
-            }
-        }
-    }
-}
-
 void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0)
 {
@@ -335,74 +399,36 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     }
 }
 
-void insertGroupToLinkedList(group * groupToInsert, group ** head)
+void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
+              double *R0, double *avgR0)
 {
-    groupToInsert->next = *head;
-    *head = groupToInsert;
-}
+    int recoveredInTick = 0;
+    int infectedDuringInfection = 0;
 
-App *initApp()
-{
-    App *app = malloc(sizeof(App));
-    app->positiveMet = 0;
-    (*app).recorded = 0;
-    return app;
-}
+    int a = 0;
 
-group *createGroup(agent * agents, simConfig config, int groupSize,
-                   int groupNr)
-{
-    group *newGroup = malloc(sizeof(group));
-    agent **members = malloc(sizeof(agent *) * groupSize);
-    agent *theAgent;
-    int i = 0;
-    newGroup->members = members;
-    newGroup->size = groupSize;
-
-    for (i = 0; i < groupSize; i++) {
-        int randomID = rand() % config.amountOfAgents;
-
-        do {
-            theAgent = agents + randomID;
-            randomID = getNextID(randomID, config.amountOfAgents);
-        } while (theAgent->groups[groupNr] != NULL);
-
-        theAgent->groups[groupNr] = newGroup;
-        *(members + i) = theAgent;
+    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
+        handleParties(r, agents, config, tick);
     }
 
-    /*Giving secondary group random meeting days */
-    /*Note: Some secondary groups will only meet once a week, due to rndInt(7) may return the same number both times */
-    if (groupNr == 1) {
-        newGroup->meetingDayOne = rndInt(7);
-        newGroup->meetingDayTwo = rndInt(7);
+    for (a = 0; a < config.amountOfAgents; a++) {
+        computeAgent(r, agents, config, tick, a,
+                     &recoveredInTick, &infectedDuringInfection);
     }
 
-    return newGroup;
-}
-
-int getNextID(int currentID, int size)
-{
-    return (currentID + 1) % size;
-}
-
-void infectAgent(int tick, agent * theAgent)
-{
-    if (theAgent->healthState == succeptible) {
-        theAgent->healthState = exposed;
-        theAgent->exposedTick = tick;
+    if (infectedDuringInfection == 0) {
+        *R0 = 0;
+    } else if (recoveredInTick != 0) {
+        *R0 =
+            ((double) infectedDuringInfection) /
+            ((double) recoveredInTick);
     }
-}
 
-void infectRandomAgent(agent agents[], simConfig config, int tick)
-{
-    int randomID;
-
-    do {
-        randomID = rndInt(config.amountOfAgents);
-    } while (agents[randomID].healthState == infectious);
-
-    infectAgent(tick, &agents[randomID]);
+    if (*avgR0 == 0) {
+        *avgR0 = *R0;
+    } else {
+        *avgR0 = (*avgR0 + *R0) / 2;
+    }
 }
 
 Day isDay(int tick)
@@ -441,21 +467,47 @@ void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
     }
 }
 
-void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
-                     agent * theAgent, int tick, simConfig config)
+void meetGroup(gsl_rng * r, group * group, double infectionRisk,
+               int amountToMeet, int tick, agent * theAgent)
 {
-    agent *peer;
     int i = 0;
+    int size = group->size;
 
-    for (i = 0; i < toMeet; i++) {
-        int randomID = rand() % config.amountOfAgents;
+    for (i = 1; i < size && i <= amountToMeet; i++) {
+        agent *peer;
+        int randomID = rand() % size;
 
         do {
-            peer = agents + randomID;
-            randomID = getNextID(randomID, config.amountOfAgents);
+            peer = *(group->members + randomID);
+            randomID = getNextID(randomID, size);
         } while (theAgent->ID == peer->ID);
 
-        meeting(r, theAgent, peer, config.passerByRisk, tick, 0);
+        meeting(r, theAgent, peer, infectionRisk, tick, 1);
+    }
+}
+
+void meeting(gsl_rng * r, agent * theAgent, agent * peer,
+             double infectionRisk, int tick, int recordInApp)
+{
+    if (peer->isolatedTick == -1) {
+        if (theAgent->healthState == infectious
+            && gsl_ran_bernoulli(r, infectionRisk)) {
+            infectAgent(tick, peer);
+            (theAgent->amountAgentHasInfected)++;
+        }
+
+        if (peer->healthState == infectious
+            && gsl_ran_bernoulli(r, infectionRisk)) {
+            infectAgent(tick, theAgent);
+            (peer->amountAgentHasInfected)++;
+        }
+
+        if (recordInApp) {
+            if (theAgent->app != NULL && peer->app != NULL) {
+                addRecord(theAgent, peer, tick);
+                addRecord(peer, theAgent, tick);
+            }
+        }
     }
 }
 
@@ -566,47 +618,45 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
 
 }
 
-void meeting(gsl_rng * r, agent * theAgent, agent * peer,
-             double infectionRisk, int tick, int recordInApp)
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
 {
-    if (peer->isolatedTick == -1) {
-        if (theAgent->healthState == infectious
-            && gsl_ran_bernoulli(r, infectionRisk)) {
-            infectAgent(tick, peer);
-            (theAgent->amountAgentHasInfected)++;
+    int e, d;
+    if (run == 0) {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] = data[d].data[e];
+                avgData[d].absoluteData[e] = data[d].absoluteData[e];
+            }
         }
-
-        if (peer->healthState == infectious
-            && gsl_ran_bernoulli(r, infectionRisk)) {
-            infectAgent(tick, theAgent);
-            (peer->amountAgentHasInfected)++;
-        }
-
-        if (recordInApp) {
-            if (theAgent->app != NULL && peer->app != NULL) {
-                addRecord(theAgent, peer, tick);
-                addRecord(peer, theAgent, tick);
+    } else {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] =
+                    (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].absoluteData[e] =
+                    (avgData[d].absoluteData[e] +
+                     data[d].absoluteData[e]) / 2;
             }
         }
     }
 }
 
-void meetGroup(gsl_rng * r, group * group, double infectionRisk,
-               int amountToMeet, int tick, agent * theAgent)
+void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
+                     agent * theAgent, int tick, simConfig config)
 {
+    agent *peer;
     int i = 0;
-    int size = group->size;
 
-    for (i = 1; i < size && i <= amountToMeet; i++) {
-        agent *peer;
-        int randomID = rand() % size;
+    for (i = 0; i < toMeet; i++) {
+        int randomID = rand() % config.amountOfAgents;
 
         do {
-            peer = *(group->members + randomID);
-            randomID = getNextID(randomID, size);
+            peer = agents + randomID;
+            randomID = getNextID(randomID, config.amountOfAgents);
         } while (theAgent->ID == peer->ID);
 
-        meeting(r, theAgent, peer, infectionRisk, tick, 1);
+        meeting(r, theAgent, peer, config.passerByRisk, tick, 0);
     }
 }
 
@@ -645,55 +695,5 @@ void testAgent(agent * theAgent, int tick)
         theAgent->testResult = 1;
     } else {
         theAgent->testResult = 0;
-    }
-}
-
-int rndInt(int max)
-{
-    return rand() % max;
-}
-
-int truncatedGaus(gsl_rng * r, struct gaussian settings)
-{
-    double result;
-
-    do {
-        result =
-            gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
-        result = round(result);
-    } while (result < settings.lowerbound || result > settings.upperbound);
-
-    return result;
-}
-
-void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
-              double *R0, double *avgR0)
-{
-    int recoveredInTick = 0;
-    int infectedDuringInfection = 0;
-
-    int a = 0;
-
-    if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
-        handleParties(r, agents, config, tick);
-    }
-
-    for (a = 0; a < config.amountOfAgents; a++) {
-        computeAgent(r, agents, config, tick, a,
-                     &recoveredInTick, &infectedDuringInfection);
-    }
-
-    if (infectedDuringInfection == 0) {
-        *R0 = 0;
-    } else if (recoveredInTick != 0) {
-        *R0 =
-            ((double) infectedDuringInfection) /
-            ((double) recoveredInTick);
-    }
-
-    if (*avgR0 == 0) {
-        *avgR0 = *R0;
-    } else {
-        *avgR0 = (*avgR0 + *R0) / 2;
     }
 }
