@@ -59,41 +59,24 @@ typedef struct group {
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
-void insertGroupToLinkedList(group * groupToInsert, group ** head);
+group *createGroup(agent * agents, simConfig config, int groupSize, int groupNr);
 int getNextID(int currentID, int size);
+int rndInt(int max);
+void insertGroupToLinkedList(group * groupToInsert, group ** head);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 void infectAgent(int tick, agent * a);
-
-void printAgent(agent * agent, simConfig config);
-void printStats(DataSet * data, int dataCount, int tick, double *R0,
-                double *avgR0);
-group *createGroup(agent * agents, simConfig config, int groupSize,
-                   int groupNr);
-
-
-
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick, simConfig config);
+void printStats(DataSet * data, int dataCount, int tick, double *R0, double *avgR0);
+void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick, double *R0, double *avgR0);
 Day isDay(int tick);
-void handleParties(gsl_rng * r, agent agents[], simConfig config,
-                   int tick);
-void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
-                     agent * theAgent, int tick, simConfig config);
-void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
-                  int agentID, int *recoveredInTick,
-                  int *infectedDuringInfection);
-void meeting(gsl_rng * r, agent * theAgent, agent * peer,
-             double infectionRisk, int tick, int recordInApp);
-void meetGroup(gsl_rng * r, group * group, double infectionRisk,
-               int amountToMeet, int tick, agent * theAgent);
-void addRecord(agent * recorder, agent * peer, int tick);
-void informContacts(App app, int responseTime, int tick);
-void isolate(agent * agent);
+void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick);
+void meetGroup(gsl_rng * r, group * group, double infectionRisk, int amountToMeet, int tick, agent * theAgent);
+void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick, int agentID, int *recoveredInTick, int *infectedDuringInfection);
 void testAgent(agent * theAgent, int tick);
-int rndInt(int max);
-void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
-              double *R0, double *avgR0);
-void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
-              simConfig config);
-
+void informContacts(App app, int responseTime, int tick);
+void handlePasserBys(gsl_rng * r, agent agents[], int toMeet, agent * theAgent, int tick, simConfig config);
+void meeting(gsl_rng * r, agent * theAgent, agent * peer, double infectionRisk, int tick, int recordInApp);
+void addRecord(agent * recorder, agent * peer, int tick);
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
@@ -107,6 +90,12 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     group *head = NULL;
     group *current = head;
+
+    int prevTick;
+
+    double exposed;
+    double infectious;
+    double isolated;
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
 
@@ -122,12 +111,6 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-        int prevTick;
-
-        double exposed;
-        double infectious;
-        double isolated;
-
         PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
             printStats(data, dataCount, tick, &R0, &avgR0);
