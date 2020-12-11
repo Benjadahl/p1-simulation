@@ -181,9 +181,11 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
             currentTime->tm_min, currentTime->tm_sec);
 
     if (run == 0) {
-        if (opendir("output") == NULL) {
+        DIR *dir = opendir("output");
+        if (dir == NULL) {
             mkdir("output", 0777);
         }
+        closedir(dir);
         mkdir(foldername, 0777);
     }
 
