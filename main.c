@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     simConfig config;
 
     /*party */
-    config.partyChance = 16;
+    config.partyChance = 0.16;
     config.partyRisk = 0.15;
 
     /*Groups */
@@ -154,6 +154,26 @@ int main(int argc, char *argv[])
 
                 case 'c':      /*risk of infetion */
                     config.contactsRisk =
+                        isValueCorrect(argv[i][1], value, 0, 1);
+                    break;
+
+                case 'q':
+                    config.primaryGroupRisk =
+                        isValueCorrect(argv[i][1], value, 0, 1);
+                    break;
+
+                case 'r':
+                    config.secondaryGroupRisk =
+                        isValueCorrect(argv[i][1], value, 0, 1);
+                    break;
+
+                case 'v':
+                    config.partyRisk =
+                        isValueCorrect(argv[i][1], value, 0, 1);
+                    break;
+
+                case 'x':
+                        config.partyChance =
                         isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
