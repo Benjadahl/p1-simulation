@@ -14,7 +14,7 @@ void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount);
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int abosolute, simConfig simConfig);
-int isValueCorrect(char input, int value, int min, int max);
+double isValueCorrect(char input, double value, int min, int max);
 
 
 int main(int argc, char *argv[])
@@ -303,13 +303,13 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-int isValueCorrect(char input, int value, int min, int max)
+double isValueCorrect(char input, double value, int min, int max)
 {
     if (value >= min && value <= max)
         return value;
     else
         printf
-            ("-%c %d is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n",
+            ("-%c %f is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n",
              input, value, input, min, max);
     exit(EXIT_FAILURE);
 }
