@@ -90,6 +90,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     group *head = NULL;
     group *current = head;
+    group *tempGroup;
 
     int prevTick;
 
@@ -129,15 +130,21 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     /*Freeing groups */
     do {
+        tempGroup = current->next;
         free(current->members);
-        if (current->next != NULL) {
-            free(current);
-            current = current->next;
-        }
-    } while (current->next != NULL);
+        free(current);
+        if (tempGroup != NULL)
+            current = tempGroup;
+    } while (tempGroup != NULL);
+
+    for (i = 0; i < config.amountOfAgents; i++) {
+        free(agents[i].app);
+        free(agents[i].groups);
+    }
 
     /*Freeing agents */
     free(agents);
+
 }
 
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
