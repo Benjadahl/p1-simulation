@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     config.simulationRuns = 1;
     config.maxEvents = 100;
     config.seed = 0;
-    config.print = 0;
+    config.print = 1;
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 0.9;  /*can */
     config.willTestPercent = 0.6; /*can */
