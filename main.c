@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
             /*grunden til at vi har denne if statment er fordi at både 'g' og 'b'
                skal ikke efterføgles af en værdi, så for at sikre os at det inputs
                som skal have en værdi tilknyttede til sig har det bruge vi dette */
-            if ((argv[i][1] == 'g' || argv[i][1] == 'b')
+            if ((argv[i][1] != 'g' && argv[i][1] != 'b')
                 && !isdigit(argv[i + 1][0])) {
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
