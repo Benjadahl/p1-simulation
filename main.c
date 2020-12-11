@@ -136,8 +136,8 @@ int main(int argc, char *argv[])
             } else {
                 /*dette sikre os at den ikke prøver at få fat i en værdi som ikke eksistere */
                 if (i + 1 < argc) {
-                    value = strtod(argv[i + 1],&emPtr);
-                    
+                    value = strtod(argv[i + 1], &emPtr);
+
                 }
 
                 switch (argv[i][1]) {
