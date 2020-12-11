@@ -140,94 +140,6 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     free(agents);
 }
 
-void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
-              simConfig config)
-{
-    int i = 0;
-    for (i = 0; i < config.amountOfAgents; i++) {
-        switch (agents[i].healthState) {
-        case succeptible:
-            data[0].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[5].absoluteData[tick - 1]++;
-            }
-            break;
-        case exposed:
-            data[1].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[6].absoluteData[tick - 1]++;
-            }
-            break;
-        case infectious:
-            data[2].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[6].absoluteData[tick - 1]++;
-            }
-            break;
-        case recovered:
-            data[3].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[5].absoluteData[tick - 1]++;
-            }
-            break;
-        }
-        if (agents[i].isolatedTick != -1) {
-            data[4].absoluteData[tick - 1]++;
-        }
-    }
-
-
-    for (i = 0; i < dataCount; i++) {
-        if (data[i].absoluteData[tick - 1] != 0) {
-            data[i].data[tick - 1] =
-                data[i].absoluteData[tick -
-                                     1] * 100 / config.amountOfAgents;
-        }
-    }
-}
-
-void calculateAveragePlot(int run, int events, DataSet * data,
-                          DataSet * avgData, int dataCount)
-{
-    int e, d;
-    if (run == 0) {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] = data[d].data[e];
-                avgData[d].absoluteData[e] = data[d].absoluteData[e];
-            }
-        }
-    } else {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] =
-                    (avgData[d].data[e] + data[d].data[e]) / 2;
-                avgData[d].absoluteData[e] =
-                    (avgData[d].absoluteData[e] +
-                     data[d].absoluteData[e]) / 2;
-            }
-        }
-    }
-}
-
-void printStats(DataSet * data, int dataCount, int tick, double *R0,
-                double *avgR0)
-{
-    int i;
-    printf("\nTick: %d\n", tick);
-
-    for (i = 0; i < dataCount; i++) {
-        printf("Total %-30s: %-6d (%f%%)\n", data[i].name,
-               (int) data[i].absoluteData[tick - 1],
-               data[i].data[tick - 1]);
-    }
-
-    if (*R0 != 0 || data[3].data[tick - 1] > 0) {
-        printf("%-36s: %-6f \n", "R0", *R0);
-        printf("%-36s: %-6f \n", "Average R0", *avgR0);
-    }
-}
-
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head)
 {
@@ -332,6 +244,94 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
         infectRandomAgent(agents, config, tick - 1);
+    }
+}
+
+void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+              simConfig config)
+{
+    int i = 0;
+    for (i = 0; i < config.amountOfAgents; i++) {
+        switch (agents[i].healthState) {
+        case succeptible:
+            data[0].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[5].absoluteData[tick - 1]++;
+            }
+            break;
+        case exposed:
+            data[1].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[6].absoluteData[tick - 1]++;
+            }
+            break;
+        case infectious:
+            data[2].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[6].absoluteData[tick - 1]++;
+            }
+            break;
+        case recovered:
+            data[3].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[5].absoluteData[tick - 1]++;
+            }
+            break;
+        }
+        if (agents[i].isolatedTick != -1) {
+            data[4].absoluteData[tick - 1]++;
+        }
+    }
+
+
+    for (i = 0; i < dataCount; i++) {
+        if (data[i].absoluteData[tick - 1] != 0) {
+            data[i].data[tick - 1] =
+                data[i].absoluteData[tick -
+                                     1] * 100 / config.amountOfAgents;
+        }
+    }
+}
+
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
+{
+    int e, d;
+    if (run == 0) {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] = data[d].data[e];
+                avgData[d].absoluteData[e] = data[d].absoluteData[e];
+            }
+        }
+    } else {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] =
+                    (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].absoluteData[e] =
+                    (avgData[d].absoluteData[e] +
+                     data[d].absoluteData[e]) / 2;
+            }
+        }
+    }
+}
+
+void printStats(DataSet * data, int dataCount, int tick, double *R0,
+                double *avgR0)
+{
+    int i;
+    printf("\nTick: %d\n", tick);
+
+    for (i = 0; i < dataCount; i++) {
+        printf("Total %-30s: %-6d (%f%%)\n", data[i].name,
+               (int) data[i].absoluteData[tick - 1],
+               data[i].data[tick - 1]);
+    }
+
+    if (*R0 != 0 || data[3].data[tick - 1] > 0) {
+        printf("%-36s: %-6f \n", "R0", *R0);
+        printf("%-36s: %-6f \n", "Average R0", *avgR0);
     }
 }
 
