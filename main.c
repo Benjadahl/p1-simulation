@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'x':
-                        config.partyChance =
+                    config.partyChance =
                         isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
