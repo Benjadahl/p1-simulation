@@ -20,9 +20,10 @@ int isValueCorrect(char input, int value, int min, int max);
 int main(int argc, char *argv[])
 {
     int i;
-    double value;
     int graph = 0;
     int seedUsed;
+    double value;
+    char *emPtr;
     time_t runTime;
 
     DataSet data[PLOT_COUNT];
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
     config.infectionTime.upperbound = 12;
     config.infectionTime.varians = 1;
     config.infectionTime.expectedValue = 4;
-    config.amountOfStartInfected = 20;
+    config.amountOfStartInfected = 1;
     config.symptomaticPercent = 0.84; /*can */
     config.incubationTime.lowerbound = 1; /* CDC.gov */
     config.incubationTime.upperbound = 14;  /* CDC.gov */
@@ -137,7 +138,7 @@ int main(int argc, char *argv[])
             } else {
                 /*dette sikre os at den ikke prøver at få fat i en værdi som ikke eksistere */
                 if (i + 1 < argc) {
-                    value = atoi(argv[i + 1]);
+                    value = strtod(argv[i + 1], &emPtr);
                 }
 
                 switch (argv[i][1]) {
