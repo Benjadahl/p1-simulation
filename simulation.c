@@ -618,6 +618,17 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
 
 }
 
+void testAgent(agent * theAgent, int tick)
+{
+    theAgent->testedTick = tick;
+
+    if (theAgent->healthState == infectious) {
+        theAgent->testResult = 1;
+    } else {
+        theAgent->testResult = 0;
+    }
+}
+
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount)
 {
@@ -638,6 +649,24 @@ void calculateAveragePlot(int run, int events, DataSet * data,
                     (avgData[d].absoluteData[e] +
                      data[d].absoluteData[e]) / 2;
             }
+        }
+    }
+}
+
+void informContacts(App app, int responseTime, int tick)
+{
+    int i;
+    int contacts = MAX_CONTACTS_IN_APP;
+    if (app.recorded < MAX_CONTACTS_IN_APP) {
+        contacts = app.recorded;
+    }
+
+    for (i = 0; i < contacts; i++) {
+        if (tick - app.records[i].onContactTick <= responseTime + 2) {
+            if (app.records[i].peer->willTest) {
+                testAgent(app.records[i].peer, tick);
+            }
+            app.records[i].peer->app->positiveMet++;
         }
     }
 }
@@ -667,33 +696,4 @@ void addRecord(agent * recorder, agent * peer, int tick)
     record->peer = peer;
     record->onContactTick = tick;
     recorder->app->recorded++;
-}
-
-void informContacts(App app, int responseTime, int tick)
-{
-    int i;
-    int contacts = MAX_CONTACTS_IN_APP;
-    if (app.recorded < MAX_CONTACTS_IN_APP) {
-        contacts = app.recorded;
-    }
-
-    for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick <= responseTime + 2) {
-            if (app.records[i].peer->willTest) {
-                testAgent(app.records[i].peer, tick);
-            }
-            app.records[i].peer->app->positiveMet++;
-        }
-    }
-}
-
-void testAgent(agent * theAgent, int tick)
-{
-    theAgent->testedTick = tick;
-
-    if (theAgent->healthState == infectious) {
-        theAgent->testResult = 1;
-    } else {
-        theAgent->testResult = 0;
-    }
 }
