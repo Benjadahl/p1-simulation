@@ -20,7 +20,7 @@ int isValueCorrect(char input, int value, int min, int max);
 int main(int argc, char *argv[])
 {
     int i;
-    int value;
+    double value;
     int graph = 0;
     int seedUsed;
     time_t runTime;
@@ -142,67 +142,57 @@ int main(int argc, char *argv[])
 
                 switch (argv[i][1]) {
                 case 'z':      /*how many angents have sympums when infected */
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.symptomaticPercent = value;
+                    config.symptomaticPercent = isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'w':      /*chanc that angent will isolate */
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.willIsolatePercent = value;
+                    config.willIsolatePercent = isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'c':      /*risk of infetion */
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.contactsRisk = value;
+                    config.contactsRisk = isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'k':      /*amount of contacts pr agent */
-                    if (isValueCorrect
+                    config.groupSize[2].expectedValue = isValueCorrect
                         (argv[i][1], value, config.groupSize[2].lowerbound,
-                         config.groupSize[2].upperbound))
-                        config.groupSize[2].expectedValue = value;
+                         config.groupSize[2].upperbound);
                     break;
 
                 case 't':      /*size of primary group */
-                    if (isValueCorrect
+                    config.groupSize[0].expectedValue = isValueCorrect
                         (argv[i][1], value, config.groupSize[0].lowerbound,
-                         config.groupSize[0].upperbound))
-                        config.groupSize[0].expectedValue = value;
+                         config.groupSize[0].upperbound);
                     break;
 
                 case 'y':      /*size of secound group */
-                    if (isValueCorrect
+                    config.groupSize[1].expectedValue = isValueCorrect
                         (argv[i][1], value, config.groupSize[1].lowerbound,
-                         config.groupSize[1].upperbound))
-                        config.groupSize[1].expectedValue = value;
+                         config.groupSize[1].upperbound);
                     break;
 
                 case 'a':      /*amount of time incted */
-                    if (isValueCorrect
+                    config.infectionTime.expectedValue = isValueCorrect
                         (argv[i][1], value,
                          config.infectionTime.lowerbound,
-                         config.infectionTime.upperbound))
-                        config.infectionTime.expectedValue = value;
+                         config.infectionTime.upperbound);
                     break;
 
                 case 'p':      /*total amount of agents */
-                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX))
-                        config.amountOfAgents = value;
+                    config.amountOfAgents = isValueCorrect(argv[i][1], value, 1, INT_MAX);
                     break;
 
                 case 'i':      /*amount of infected at start of simulation */
-                    if (isValueCorrect(argv[i][1], value, 1, INT_MAX))
-                        config.amountOfStartInfected = value;
+                    config.amountOfStartInfected = isValueCorrect(argv[i][1], value, 1, INT_MAX);
                     break;
 
                 case 'e':      /*lenght of simulation */
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.maxEvents = value;
+                    config.maxEvents = isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 's':      /*seed */
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.seed = value;
+                    config.seed = isValueCorrect(argv[i][1], value, 0, INT_MAX);
+                    break;
 
                 case 'g':
                     graph = 1;
@@ -228,32 +218,26 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'd':
-                    if (isValueCorrect(argv[i][1], value, 0, 1))
-                        config.chanceToHaveApp = value;
+                    config.chanceToHaveApp = isValueCorrect(argv[i][1], value, 0, 1);
                     break;
 
                 case 'f':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.btThreshold = value;
+                    config.btThreshold = isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'h':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.btDecay = value;
+                    config.btDecay = isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'j':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.simulationRuns = value;
+                    config.simulationRuns = isValueCorrect(argv[i][1], value, 0, INT_MAX);
                     break;
 
                 case 'l':
-                    if (isValueCorrect(argv[i][1], value, 0, INT_MAX))
-                        config.dataLabel = value;
+                    config.dataLabel = isValueCorrect(argv[i][1], value, 0, INT_MAX);
                 }
             }
         }
-
     }
 
     for (i = 0; i < PLOT_COUNT; i++) {
@@ -321,7 +305,7 @@ int main(int argc, char *argv[])
 int isValueCorrect(char input, int value, int min, int max)
 {
     if (value >= min && value <= max)
-        return 1;
+        return value;
     else
         printf
             ("-%c %d is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n",
