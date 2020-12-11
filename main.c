@@ -18,9 +18,10 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
 int main(int argc, char *argv[])
 {
     int i;
-    int value;
     int graph = 0;
     int seedUsed;
+    double value;
+    char *emPtr;
     time_t runTime;
 
     DataSet data[PLOT_COUNT];
@@ -135,7 +136,8 @@ int main(int argc, char *argv[])
             } else {
                 /*dette sikre os at den ikke prøver at få fat i en værdi som ikke eksistere */
                 if (i + 1 < argc) {
-                    value = atoi(argv[i + 1]);
+                    value = strtod(argv[i + 1],&emPtr);
+                    
                 }
 
                 switch (argv[i][1]) {
@@ -145,6 +147,7 @@ int main(int argc, char *argv[])
 
                 case 'w':      /*chanc that angent will isolate */
                     config.willIsolatePercent = value;
+                    printf("%lf\n", config.willIsolatePercent);
                     break;
 
                 case 'c':      /*risk of infetion */
