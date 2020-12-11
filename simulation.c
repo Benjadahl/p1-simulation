@@ -148,7 +148,6 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         if (tempGroup != NULL)
             current = tempGroup;
     } while (tempGroup != NULL);
-    printf("Hey \n");
 
     for (i = 0; i < config.amountOfAgents; i++) {
         free(agents[i].app);
