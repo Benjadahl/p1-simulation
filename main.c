@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     config.simulationRuns = 1;
     config.maxEvents = 100;
     config.seed = 0;
-    config.print = 1;
+    config.print = 0;
     config.amountOfAgents = 100000;
     config.willIsolatePercent = 0.9;  /*can */
     config.willTestPercent = 0.6; /*can */
@@ -269,8 +269,6 @@ int main(int argc, char *argv[])
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1, config);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents, 100, 0,
-                   config);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
     }
