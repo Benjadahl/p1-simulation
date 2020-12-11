@@ -163,10 +163,13 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 }
 
-int isAllocated(void *check){
-    if (check != NULL) return 1;
+int isAllocated(void *check)
+{
+    if (check != NULL)
+        return 1;
     else {
-        printf("Could not allocate enough storage for the pointer, program terminates\n");
+        printf
+            ("Could not allocate enough storage for the pointer, program terminates\n");
         exit(EXIT_FAILURE);
     }
 }
