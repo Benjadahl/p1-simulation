@@ -142,13 +142,12 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     /*Freeing groups */
     do {
-        free(current->members);
-        if (current->next != NULL) {
-            tempGroup = current->next;
-            free(current);
-            current = tempGroup;
-        }
-    } while (current->next != NULL);
+    	tempGroup = current->next;
+    	free(current->members);
+    	free(current);
+    	if (tempGroup != NULL) current = tempGroup;
+    } while (tempGroup != NULL);
+    printf("Hey \n");
 
     for (i = 0; i < config.amountOfAgents; i++) {
         free(agents[i].app);
