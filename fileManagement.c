@@ -182,8 +182,8 @@ void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
 
     if (run == 0) {
         /*if (opendir("output") == NULL) {
-            mkdir("output", 0777);
-        }*/
+           mkdir("output", 0777);
+           } */
         mkdir(foldername, 0777);
     }
 
