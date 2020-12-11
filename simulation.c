@@ -142,10 +142,11 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     /*Freeing groups */
     do {
-    	tempGroup = current->next;
-    	free(current->members);
-    	free(current);
-    	if (tempGroup != NULL) current = tempGroup;
+        tempGroup = current->next;
+        free(current->members);
+        free(current);
+        if (tempGroup != NULL)
+            current = tempGroup;
     } while (tempGroup != NULL);
     printf("Hey \n");
 
