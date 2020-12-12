@@ -3,6 +3,7 @@
 #include"export.h"
 #include"plot.h"
 #include"simulation.h"
+#include "allocationTest.h"
 
 typedef struct GraphData {
     double *data;
@@ -22,6 +23,9 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     for (i = 0; i < dataCount; i++) {
         data[i].data = malloc(sizeof(float) * events);
         newData[i].data = malloc(sizeof(double) * events);
+
+        isAllocated(data[i].data);
+        isAllocated(newData[i].data);
     }
 
     ReadFile(file_name, data, dataCount);
