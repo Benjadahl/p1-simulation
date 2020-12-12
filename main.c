@@ -269,21 +269,29 @@ int main(int argc, char *argv[])
                 case 'l':
                     config.dataLabel =
                         isValueCorrect(argv[i][1], value, 0, INT_MAX);
-                
+
                 case 'm':
-                    isValueCorrect(config.toMeet[0].expectedValue, value, config.toMeet[0].lowerbound, config.toMeet[0].upperbound);
+                    isValueCorrect(config.toMeet[0].expectedValue, value,
+                                   config.toMeet[0].lowerbound,
+                                   config.toMeet[0].upperbound);
                     break;
-                                
+
                 case 'n':
-                    isValueCorrect(config.toMeet[1].expectedValue, value, config.toMeet[1].lowerbound, config.toMeet[1].upperbound);
+                    isValueCorrect(config.toMeet[1].expectedValue, value,
+                                   config.toMeet[1].lowerbound,
+                                   config.toMeet[1].upperbound);
                     break;
 
                 case 'o':
-                    isValueCorrect(config.toMeet[2].expectedValue, value, config.toMeet[2].lowerbound, config.toMeet[2].upperbound);
+                    isValueCorrect(config.toMeet[2].expectedValue, value,
+                                   config.toMeet[2].lowerbound,
+                                   config.toMeet[2].upperbound);
                     break;
 
                 case 'u':
-                    isValueCorrect(config.toMeet[3].expectedValue, value, config.toMeet[3].lowerbound, config.toMeet[3].upperbound);
+                    isValueCorrect(config.toMeet[3].expectedValue, value,
+                                   config.toMeet[3].lowerbound,
+                                   config.toMeet[3].upperbound);
                     break;
                 }
             }
