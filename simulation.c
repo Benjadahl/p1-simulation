@@ -456,7 +456,7 @@ void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
     int i;
     int agentsBeenToParty = 0;
     int agentShouldParty =
-        config.amountOfAgents / 100 * config.partyChance;
+        config.amountOfAgents / 100 * (config.partyChance * 100);
     int grpSize = 0;
 
     while (agentsBeenToParty < agentShouldParty) {

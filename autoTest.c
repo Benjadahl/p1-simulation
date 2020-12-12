@@ -27,7 +27,7 @@ int main()
     simConfig config;
 
     /*party */
-    config.partyChance = 5;
+    config.partyChance = 0.05;
     config.partyRisk = 0.05;
 
     /*Groups */
