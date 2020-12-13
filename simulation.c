@@ -6,6 +6,7 @@
 #include <gsl/gsl_randist.h>
 #include "simulation.h"
 #include "export.h"
+#include "allocationTest.h"
 
 #define MAX_CONTACTS_IN_APP 200
 
@@ -56,6 +57,7 @@ typedef struct group {
     struct group *next;
 } group;
 
+int isAllocated(void *check);
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
 App *initApp();
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
@@ -99,6 +101,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     double isolated;
 
     agents = malloc(sizeof(agent) * config.amountOfAgents);
+    isAllocated(agents);
 
     initAgents(r, agents, config, tick, &head);
     current = head;
@@ -147,6 +150,17 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 }
 
+int isAllocated(void *check)
+{
+    if (check != NULL)
+        return 1;
+    else {
+        printf
+            ("Could not allocate enough storage for the pointer, program terminates\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head)
 {
@@ -191,6 +205,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         (agents + i)->groups[3] = NULL;
         (agents + i)->amountAgentHasInfected = 0;
 
+        isAllocated((agents + i)->groups);
     }
 
     /*Initializing groups */
@@ -224,6 +239,8 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         agent **members = malloc(sizeof(agent *) * contactsPerAgent);
         newGroup->members = members;
         newGroup->size = contactsPerAgent;
+        isAllocated(newGroup);
+        isAllocated(members);
 
         for (j = 0; j < contactsPerAgent; j++) {
             agent *theAgent;
@@ -257,6 +274,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
 App *initApp()
 {
     App *app = malloc(sizeof(App));
+    isAllocated(app);
     app->positiveMet = 0;
     (*app).recorded = 0;
     return app;
@@ -284,6 +302,9 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     int i = 0;
     newGroup->members = members;
     newGroup->size = groupSize;
+
+    isAllocated(newGroup);
+    isAllocated(members);
 
     for (i = 0; i < groupSize; i++) {
         int randomID = rand() % config.amountOfAgents;
@@ -448,7 +469,7 @@ void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
     int i;
     int agentsBeenToParty = 0;
     int agentShouldParty =
-        config.amountOfAgents / 100 * config.partyChance;
+        config.amountOfAgents / 100 * (config.partyChance * 100);
     int grpSize = 0;
 
     while (agentsBeenToParty < agentShouldParty) {

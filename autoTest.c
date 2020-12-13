@@ -6,6 +6,7 @@
 #include <gsl/gsl_randist.h>
 #include "simulation.h"
 #include "export.h"
+#include "allocationTest.h"
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
@@ -26,7 +27,7 @@ int main()
     simConfig config;
 
     /*party */
-    config.partyChance = 5;
+    config.partyChance = 0.05;
     config.partyRisk = 0.05;
 
     /*Groups */
@@ -119,6 +120,11 @@ int main()
         data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
         avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+
+        isAllocated(data[i].data);
+        isAllocated(data[i].absoluteData);
+        isAllocated(avgData[i].data);
+        isAllocated(avgData[i].absoluteData);
     }
 
     data[0].name = "Succeptible";

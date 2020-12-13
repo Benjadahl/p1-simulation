@@ -7,17 +7,17 @@
 #include <limits.h>
 #include "simulation.h"
 #include "export.h"
+#include "allocationTest.h"
 
 void initStandardConfig(simConfig *config);
 void initConfigWithInputParameters(simConfig *config, double value, char input, int *graph);
+double isValueCorrect(char input, double value, int min, int max);
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
-void calculateAveragePlot(int run, int events, DataSet * data,
-                          DataSet * avgData, int dataCount);
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int abosolute, simConfig simConfig);
-double isValueCorrect(char input, double value, int min, int max);
-
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount);
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +37,10 @@ int main(int argc, char *argv[])
     simConfig config;
 
     initStandardConfig(&config);
+
+    /*party */
+    config.partyChance = 0.16;
+    config.partyRisk = 0.15;
 
 
     /* indlaeser parametre */
@@ -69,6 +73,11 @@ int main(int argc, char *argv[])
         data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
         avgData[i].data = calloc(config.maxEvents, sizeof(double));
         avgData[i].absoluteData = calloc(config.maxEvents, sizeof(double));
+
+        isAllocated(data[i].data);
+        isAllocated(data[i].absoluteData);
+        isAllocated(avgData[i].data);
+        isAllocated(avgData[i].absoluteData);
     }
 
     data[0].name = "Succeptible";
