@@ -267,9 +267,8 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'l':
-                    config.dataLabel =
-                        isValueCorrect(argv[i][1], value, 0, INT_MAX);
-
+                    config.dataLabel = value;
+                    break;
                 case 'm':
                     config.toMeet[0].expectedValue = isValueCorrect(config.toMeet[0].expectedValue, value, config.toMeet[0].lowerbound, config.toMeet[0].upperbound);
                     break;
