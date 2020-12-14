@@ -91,7 +91,8 @@ void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
               double *R0, double *avgR0);
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
-void addAgentToData(agent theAgent, DataSet *theData, int tick, DataSet *isolationDataSet);
+void addAgentToData(agent theAgent, DataSet * theData, int tick,
+                    DataSet * isolationDataSet);
 void insertGroupToLinkedList(group * groupToInsert, group ** head);
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
@@ -207,16 +208,18 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
     }
 }
 
-void addAgentToData(agent theAgent, DataSet *theData, int tick, DataSet *isolationDataSet)
+void addAgentToData(agent theAgent, DataSet * theData, int tick,
+                    DataSet * isolationDataSet)
 {
-    if(theData != NULL) {
-        theData->absoluteData[tick -1]++;
+    if (theData != NULL) {
+        theData->absoluteData[tick - 1]++;
     }
 
-    if(theAgent.isolatedTick != -1) {
-        isolationDataSet->absoluteData[tick -1]++;
+    if (theAgent.isolatedTick != -1) {
+        isolationDataSet->absoluteData[tick - 1]++;
     }
 }
+
 void calculateAveragePlot(int run, int events, DataSet * data,
                           DataSet * avgData, int dataCount)
 {
