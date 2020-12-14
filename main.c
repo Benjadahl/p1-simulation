@@ -1,24 +1,4 @@
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <time.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <limits.h>
-#include "simulation.h"
-#include "export.h"
-#include "allocationTest.h"
-
-void initStandardConfig(simConfig * config);
-void initConfigWithInputParameters(simConfig * config, double value,
-                                   char input, int *graph);
-double isValueCorrect(char input, double value, int min, int max);
-void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
-                    int dataCount);
-void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
-                int events, int yMax, int abosolute, simConfig simConfig);
-void calculateAveragePlot(int run, int events, DataSet * data,
-                          DataSet * avgData, int dataCount);
+#include "main.h"
 
 int main(int argc, char *argv[])
 {
@@ -111,9 +91,9 @@ int main(int argc, char *argv[])
 
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(r, config, data, PLOT_COUNT);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
+        exportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 1, config);
-        ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
+        exportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
                    config.amountOfAgents, 0, config);
         calculateAveragePlot(i, config.maxEvents, data, avgData,
                              PLOT_COUNT);
@@ -125,7 +105,7 @@ int main(int argc, char *argv[])
 
     if (graph != 0) {
         printf("\nPlotting graph...\n");
-        ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
+        exportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0, config);
     }
     for (i = 0; i < PLOT_COUNT; i++) {

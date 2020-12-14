@@ -1,3 +1,5 @@
+#ifndef SIMULATION
+#define SIMULATION
 #define amountOfGroups 4
 #define PLOT_COUNT 7
 
@@ -41,3 +43,4 @@ typedef struct simConfig {
     struct gaussian passerbys;
     double passerByRisk;
 } simConfig;
+#endif

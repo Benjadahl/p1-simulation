@@ -71,8 +71,10 @@ int rndInt(int max);
 void insertGroupToLinkedList(group * groupToInsert, group ** head);
 void infectRandomAgent(agent agents[], simConfig config, int tick);
 void infectAgent(int tick, agent * a);
-void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+void plotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config);
+void addAgentToData(agent theAgent, DataSet * theData, int tick,
+                    DataSet * isolationDataSet);
 void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0);
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
@@ -135,7 +137,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
-        PlotData(agents, data, dataCount, tick, config);
+        plotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
             printStats(data, dataCount, tick, &R0, &avgR0);
         }
@@ -395,40 +397,26 @@ void infectAgent(int tick, agent * theAgent)
     }
 }
 
-void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
+void plotData(agent * agents, DataSet * data, int dataCount, int tick,
               simConfig config)
 {
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
         case succeptible:
-            data[0].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[5].absoluteData[tick - 1]++;
-            }
+            addAgentToData(agents[i], &data[0], tick, &data[5]);
             break;
         case exposed:
-            data[1].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[6].absoluteData[tick - 1]++;
-            }
+            addAgentToData(agents[i], &data[1], tick, &data[6]);
             break;
         case infectious:
-            data[2].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[6].absoluteData[tick - 1]++;
-            }
+            addAgentToData(agents[i], &data[2], tick, &data[6]);
             break;
         case recovered:
-            data[3].absoluteData[tick - 1]++;
-            if (agents[i].isolatedTick != -1) {
-                data[5].absoluteData[tick - 1]++;
-            }
+            addAgentToData(agents[i], &data[3], tick, &data[5]);
             break;
         }
-        if (agents[i].isolatedTick != -1) {
-            data[4].absoluteData[tick - 1]++;
-        }
+        addAgentToData(agents[i], NULL, tick, &data[4]);
     }
 
 
@@ -441,6 +429,17 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
     }
 }
 
+void addAgentToData(agent theAgent, DataSet * theData, int tick,
+                    DataSet * isolationDataSet)
+{
+    if (theData != NULL) {
+        theData->absoluteData[tick - 1]++;
+    }
+
+    if (theAgent.isolatedTick != -1) {
+        isolationDataSet->absoluteData[tick - 1]++;
+    }
+}
 void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0)
 {

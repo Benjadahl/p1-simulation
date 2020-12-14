@@ -2,18 +2,14 @@
 #include"import.h"
 #include"export.h"
 #include"plot.h"
+#include"graph.h"
 #include"simulation.h"
 #include "allocationTest.h"
 
-typedef struct GraphData {
-    double *data;
-    wchar_t title[100];
-} GraphData;
-
-void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+void createPlot(char *file_name, int dataCount, GraphData * dataSets,
                 int time_length, int yMax);
 
-void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
+void createPlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events, int yMax)
 {
     int i, j;
@@ -28,7 +24,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
         isAllocated(newData[i].data);
     }
 
-    ReadFile(file_name, data, dataCount);
+    readFile(file_name, data, dataCount);
 
     for (i = 0; i < dataCount; i++) {
         mbstowcs(newData[i].title, data[i].name, 30);
@@ -40,7 +36,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
         }
     }
 
-    CreatePlot(output_name, dataCount, newData, events, yMax);
+    createPlot(output_name, dataCount, newData, events, yMax);
 
     for (i = 0; i < dataCount; i++) {
         free(data[i].data);
@@ -48,7 +44,7 @@ void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
     }
 }
 
-void CreatePlot(char *file_name, int dataCount, GraphData * dataSets,
+void createPlot(char *file_name, int dataCount, GraphData * dataSets,
                 int time_length, int yMax)
 {
     int i;
