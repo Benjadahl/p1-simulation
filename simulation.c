@@ -58,10 +58,12 @@ typedef struct group {
 } group;
 
 int isAllocated(void *check);
-void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
+void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
+                group ** head);
 App *initApp();
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
-void initGroups(simConfig config, agent agents[], group **head, gsl_rng *r);
+void initGroups(simConfig config, agent agents[], group ** head,
+                gsl_rng * r);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, int size);
@@ -85,12 +87,15 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
                   int agentID, int *recoveredInTick,
                   int *infectedDuringInfection);
-void changeStateOfAgent(agent *theAgent, int tick, int *recoveredInTick, int *infectedDuringInfection);
-void computeBTTrace(agent *theAgent, simConfig config, int tick);
+void changeStateOfAgent(agent * theAgent, int tick, int *recoveredInTick,
+                        int *infectedDuringInfection);
+void computeBTTrace(agent * theAgent, simConfig config, int tick);
 void testAgent(agent * theAgent, int tick);
-void handleTestRespons(agent *theAgent, simConfig config, gsl_rng * r, int tick);
+void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
+                       int tick);
 void informContacts(App app, int responseTime, int tick);
-void handleMeetings(agent *theAgent, simConfig config, gsl_rng * r, agent agents[], int tick);
+void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
+                    agent agents[], int tick);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
                      agent * theAgent, int tick, simConfig config);
 void addRecord(agent * recorder, agent * peer, int tick);
@@ -248,19 +253,21 @@ int truncatedGaus(gsl_rng * r, struct gaussian settings)
     return result;
 }
 
-void initGroups(simConfig config, agent agents[], group **head, gsl_rng *r){
-	int i, j, l, k = 0;
-	int agentsLeft;
-	int run;
-	int thisGroupSize;
-	int contactsPerAgent;
-	int randomID;
+void initGroups(simConfig config, agent agents[], group ** head,
+                gsl_rng * r)
+{
+    int i, j, l, k = 0;
+    int agentsLeft;
+    int run;
+    int thisGroupSize;
+    int contactsPerAgent;
+    int randomID;
     int isReplica;
     group *newGroup;
     agent **members;
 
-	
-	/*Initializing groups */
+
+    /*Initializing groups */
     for (i = 0; i <= 1; i++) {
         agentsLeft = config.amountOfAgents;
         while (agentsLeft) {
@@ -394,31 +401,31 @@ void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
     int i = 0;
     for (i = 0; i < config.amountOfAgents; i++) {
         switch (agents[i].healthState) {
-	        case succeptible:
-	            data[0].absoluteData[tick - 1]++;
-	            if (agents[i].isolatedTick != -1) {
-	                data[5].absoluteData[tick - 1]++;
-	            }
-	            break;
-	        case exposed:
-	            data[1].absoluteData[tick - 1]++;
-	            if (agents[i].isolatedTick != -1) {
-	                data[6].absoluteData[tick - 1]++;
-	            }
-	            break;
-	        case infectious:
-	            data[2].absoluteData[tick - 1]++;
-	            if (agents[i].isolatedTick != -1) {
-	                data[6].absoluteData[tick - 1]++;
-	            }
-	            break;
-	        case recovered:
-	            data[3].absoluteData[tick - 1]++;
-	            if (agents[i].isolatedTick != -1) {
-	                data[5].absoluteData[tick - 1]++;
-	            }
-	            break;
-	        }
+        case succeptible:
+            data[0].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[5].absoluteData[tick - 1]++;
+            }
+            break;
+        case exposed:
+            data[1].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[6].absoluteData[tick - 1]++;
+            }
+            break;
+        case infectious:
+            data[2].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[6].absoluteData[tick - 1]++;
+            }
+            break;
+        case recovered:
+            data[3].absoluteData[tick - 1]++;
+            if (agents[i].isolatedTick != -1) {
+                data[5].absoluteData[tick - 1]++;
+            }
+            break;
+        }
         if (agents[i].isolatedTick != -1) {
             data[4].absoluteData[tick - 1]++;
         }
@@ -570,14 +577,17 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
 {
     agent *theAgent = &agents[agentID];
 
-    changeStateOfAgent(theAgent, tick, recoveredInTick, infectedDuringInfection);
+    changeStateOfAgent(theAgent, tick, recoveredInTick,
+                       infectedDuringInfection);
     computeBTTrace(theAgent, config, tick);
     handleTestRespons(theAgent, config, r, tick);
     handleMeetings(theAgent, config, r, agents, tick);
 }
 
-void changeStateOfAgent(agent *theAgent, int tick, int *recoveredInTick, int *infectedDuringInfection){
-	/* Move agent to infectious state if incubationTime has passed */
+void changeStateOfAgent(agent * theAgent, int tick, int *recoveredInTick,
+                        int *infectedDuringInfection)
+{
+    /* Move agent to infectious state if incubationTime has passed */
     if (theAgent->exposedTick != -1) {
         if (theAgent->exposedTick + theAgent->incubationTime == tick) {
             theAgent->healthState = infectious;
@@ -612,30 +622,31 @@ void changeStateOfAgent(agent *theAgent, int tick, int *recoveredInTick, int *in
     }
 
     /* If agent is isolated healthy and not awaiting test results,
-    then, remove him from isolation.*/
+       then, remove him from isolation. */
     if (theAgent->isolatedTick != -1 && theAgent->testedTick == -1
         && theAgent->healthState != infectious) {
         theAgent->isolatedTick = -1;
     }
 }
 
-void computeBTTrace(agent *theAgent, simConfig config, int tick){
+void computeBTTrace(agent * theAgent, simConfig config, int tick)
+{
     if (theAgent->app != NULL) {
-	    /* If the decay day has been reached, decay one */
-	    if (tick % config.btDecay == 0) {
-	        if (theAgent->app->positiveMet > 0) {
-	            theAgent->app->positiveMet--;
-	        }
-	    }
+        /* If the decay day has been reached, decay one */
+        if (tick % config.btDecay == 0) {
+            if (theAgent->app->positiveMet > 0) {
+                theAgent->app->positiveMet--;
+            }
+        }
 
-	    /*If threshold is greater than zero, BT is enabled, thus check */
-	    if (theAgent->app->positiveMet >= config.btThreshold
-	        && config.btThreshold > 0 && theAgent->willIsolate
-	        && theAgent->willTest) {
-	        theAgent->isolatedTick = tick;
-	        testAgent(theAgent, tick);
-	        theAgent->app->positiveMet = 0;
-	    }
+        /*If threshold is greater than zero, BT is enabled, thus check */
+        if (theAgent->app->positiveMet >= config.btThreshold
+            && config.btThreshold > 0 && theAgent->willIsolate
+            && theAgent->willTest) {
+            theAgent->isolatedTick = tick;
+            testAgent(theAgent, tick);
+            theAgent->app->positiveMet = 0;
+        }
     }
 }
 
@@ -650,8 +661,10 @@ void testAgent(agent * theAgent, int tick)
     }
 }
 
-void handleTestRespons(agent *theAgent, simConfig config, gsl_rng * r, int tick){
-	if (theAgent->testedTick != -1) {
+void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
+                       int tick)
+{
+    if (theAgent->testedTick != -1) {
         if (theAgent->testedTick + theAgent->testResponseTime == tick) {
             if (theAgent->testResult
                 && gsl_ran_bernoulli(r, config.chanceOfCorrectTest)) {
@@ -687,8 +700,10 @@ void informContacts(App app, int responseTime, int tick)
     }
 }
 
-void handleMeetings(agent *theAgent, simConfig config, gsl_rng *r, agent agents[], int tick){
-	if (theAgent->isolatedTick == -1) {
+void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
+                    agent agents[], int tick)
+{
+    if (theAgent->isolatedTick == -1) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(r, theAgent->groups[0],
                       config.primaryGroupRisk,

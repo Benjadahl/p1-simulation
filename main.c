@@ -9,8 +9,9 @@
 #include "export.h"
 #include "allocationTest.h"
 
-void initStandardConfig(simConfig *config);
-void initConfigWithInputParameters(simConfig *config, double value, char input, int *graph);
+void initStandardConfig(simConfig * config);
+void initConfigWithInputParameters(simConfig * config, double value,
+                                   char input, int *graph);
 double isValueCorrect(char input, double value, int min, int max);
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
