@@ -8,6 +8,6 @@ typedef struct DataSet
 
 } DataSet;
 
-void WriteFile(char *fileName, DataSet * dataSets, int absolute, int dataCount,
+void writeFile(char *fileName, DataSet * dataSets, int absolute, int dataCount,
                int events, int able);
 DataSet createDataSet(char *name, double *data);
