@@ -1,3 +1,5 @@
+#ifndef IMPORT
+#define IMPORT
 typedef struct DataSetRead
 {
     float *data;
@@ -5,3 +7,4 @@ typedef struct DataSetRead
 } DataSetRead;
 
 void readFile(char *file_name, DataSetRead *data, int dataCount);
+#endif

@@ -140,10 +140,9 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         infectious = data[2].absoluteData[prevTick];
         isolated = data[4].absoluteData[prevTick];
 
-        /*if (!(exposed == 0 && infectious == 0 && isolated == 0)) {
+        if (!(exposed == 0 && infectious == 0 && isolated == 0)) {
             runEvent(r, agents, config, tick, &R0, &avgR0);
-        }*/
-        runEvent(r, agents, config, tick, &R0, &avgR0);
+        }
     }
 
     /*Freeing groups */

@@ -2,13 +2,9 @@
 #include"import.h"
 #include"export.h"
 #include"plot.h"
+#include"graph.h"
 #include"simulation.h"
 #include "allocationTest.h"
-
-typedef struct GraphData {
-    double *data;
-    wchar_t title[100];
-} GraphData;
 
 void createPlot(char *file_name, int dataCount, GraphData * dataSets,
                 int time_length, int yMax);
