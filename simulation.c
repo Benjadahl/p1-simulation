@@ -8,7 +8,7 @@
 #include "export.h"
 #include "allocationTest.h"
 
-#define MAX_CONTACTS_IN_APP 200
+#define MAX_CONTACTS_IN_APP 500
 
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
