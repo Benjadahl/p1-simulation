@@ -22,7 +22,7 @@ typedef struct ContactRecord {
     struct agent *peer;
     int onContactTick;
     struct ContactRecord *next;
-    
+
 } ContactRecord;
 
 typedef struct App {
@@ -96,7 +96,7 @@ void computeBTTrace(agent * theAgent, simConfig config, int tick);
 void testAgent(agent * theAgent, int tick);
 void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
                        int tick);
-void informContacts(App *app, int responseTime, int tick);
+void informContacts(App * app, int responseTime, int tick);
 void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
                     agent agents[], int tick);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
@@ -537,7 +537,7 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
     for (i = 1; i < size && i <= amountToMeet; i++) {
         agent *peer;
         int randomID = rand() % size;
-    
+
         do {
             peer = *(group->members + randomID);
             randomID = getNextID(randomID, size);
@@ -683,46 +683,44 @@ void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
     }
 }
 
-void informContacts(App *app, int responseTime, int tick)
+void informContacts(App * app, int responseTime, int tick)
 {
     ContactRecord *temp = app->head;
-    /*Remove old elements*/
+    /*Remove old elements */
     while (temp != NULL) {
-        if(temp->onContactTick + responseTime + 2 <= tick) {
+        if (temp->onContactTick + responseTime + 2 <= tick) {
             temp = NULL;
-        }
-        else{
+        } else {
             temp = temp->next;
         }
     }
 
     temp = app->head;
-    while (temp != NULL)
-    {
-        if(temp->peer->willTest){
+    while (temp != NULL) {
+        if (temp->peer->willTest) {
             printf("FUCK YOU\n");
             testAgent(temp->peer, tick);
         }
         temp->peer->app->positiveMet++;
         temp = temp->next;
     }
-    
-    
-    
-    /*int i;
-    int contacts = MAX_CONTACTS_IN_APP;
-    if (app.recorded < MAX_CONTACTS_IN_APP) {
-        contacts = app.recorded;
-    }
 
-    for (i = 0; i < contacts; i++) {
-        if (tick - app.records[i].onContactTick <= responseTime + 2) {
-            if (app.records[i].peer->willTest) {
-                testAgent(app.records[i].peer, tick);
-            }
-            app.records[i].peer->app->positiveMet++;
-        }
-    }*/
+
+
+    /*int i;
+       int contacts = MAX_CONTACTS_IN_APP;
+       if (app.recorded < MAX_CONTACTS_IN_APP) {
+       contacts = app.recorded;
+       }
+
+       for (i = 0; i < contacts; i++) {
+       if (tick - app.records[i].onContactTick <= responseTime + 2) {
+       if (app.records[i].peer->willTest) {
+       testAgent(app.records[i].peer, tick);
+       }
+       app.records[i].peer->app->positiveMet++;
+       }
+       } */
 }
 
 void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
@@ -777,15 +775,15 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recordToInsert.next = recorder->app->head;
     recorder->app->head = &recordToInsert;
     /*int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
-    ContactRecord *record = &(recorder->app->records[recordNr]);
-    if(record->peer != NULL){
-        if(record->onContactTick + record->peer->testResponseTime + 2 > tick)
-            printf("FUCK\n");
-    }
-    
-    record->peer = peer;
-    record->onContactTick = tick;
-    recorder->app->recorded++;*/
+       ContactRecord *record = &(recorder->app->records[recordNr]);
+       if(record->peer != NULL){
+       if(record->onContactTick + record->peer->testResponseTime + 2 > tick)
+       printf("FUCK\n");
+       }
+
+       record->peer = peer;
+       record->onContactTick = tick;
+       recorder->app->recorded++; */
 }
 
 void calculateAveragePlot(int run, int events, DataSet * data,
