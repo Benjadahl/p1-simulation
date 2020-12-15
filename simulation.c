@@ -440,6 +440,7 @@ void addAgentToData(agent theAgent, DataSet * theData, int tick,
         isolationDataSet->absoluteData[tick - 1]++;
     }
 }
+
 void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0)
 {
