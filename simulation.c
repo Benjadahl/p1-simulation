@@ -164,7 +164,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
-    	free(agents[i].app->head);
+        free(agents[i].app->head);
         free(agents[i].app);
         free(agents[i].groups);
     }
@@ -689,14 +689,15 @@ void informContacts(App * app, int responseTime, int tick)
     /*Remove old elements */
     while (temp != NULL) {
         if (temp->onContactTick + responseTime + 2 <= tick) {
-        	temptemp = temp->next;
-        	free(temp);
-        	temp = temptemp;
+            temptemp = temp->next;
+            free(temp);
+            temp = temptemp;
         } else {
-        	last = temp;
+            last = temp;
             temp = temp->next;
         }
     }
+
     if (last != NULL){
     	last->next = NULL;
     	
@@ -709,6 +710,7 @@ void informContacts(App * app, int responseTime, int tick)
 	        temp = temp->next;
     	}
     }
+    
     else {
     	app->head = NULL;
     }
