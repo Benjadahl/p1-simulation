@@ -274,7 +274,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     agent *theAgent;
 
     for (i = 0; i < config.amountOfAgents; i++) {
-    	theAgent = (agents + i);
+        theAgent = (agents + i);
         theAgent->ID = i;
         theAgent->healthState = succeptible;
         if (gsl_ran_bernoulli(r, config.chanceToHaveApp)) {
@@ -283,20 +283,16 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
             theAgent->app = NULL;
         }
         theAgent->infectedTick = -1;
-        theAgent->infectedPeriod =
-            truncatedGaus(r, config.infectionTime);
+        theAgent->infectedPeriod = truncatedGaus(r, config.infectionTime);
         theAgent->symptomatic =
             gsl_ran_bernoulli(r, config.symptomaticPercent);
-        theAgent->incubationTime =
-            truncatedGaus(r, config.incubationTime);
+        theAgent->incubationTime = truncatedGaus(r, config.incubationTime);
         theAgent->willIsolate =
             gsl_ran_bernoulli(r, config.willIsolatePercent);
         theAgent->isolatedTick = -1;
-        theAgent->isolationDelay =
-            truncatedGaus(r, config.isolationDelay);
+        theAgent->isolationDelay = truncatedGaus(r, config.isolationDelay);
         theAgent->groups = malloc(sizeof(group **) * amountOfGroups);
-        theAgent->willTest =
-            gsl_ran_bernoulli(r, config.willTestPercent);
+        theAgent->willTest = gsl_ran_bernoulli(r, config.willTestPercent);
         theAgent->testResponseTime =
             truncatedGaus(r, config.testResponseTime);
         theAgent->testedTick = -1;
