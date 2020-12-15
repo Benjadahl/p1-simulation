@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS= -ansi -pedantic -Wall -Wextra -fsyntax-only
-CFLAGS1= -lm -lgsl -lgslcblas
+CFLAGS1= -lm -lgsl -lgslcblas -g
 
 all: buildMain runTest libs
 

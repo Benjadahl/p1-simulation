@@ -8,7 +8,7 @@
 #include "export.h"
 #include "allocationTest.h"
 
-#define MAX_CONTACTS_IN_APP 200
+#define MAX_CONTACTS_IN_APP 500
 
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
@@ -21,12 +21,13 @@ typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday,
 typedef struct ContactRecord {
     struct agent *peer;
     int onContactTick;
+    struct ContactRecord *next;
+    
 } ContactRecord;
 
 typedef struct App {
     int positiveMet;
-    ContactRecord records[MAX_CONTACTS_IN_APP];
-    int recorded;
+    ContactRecord *head;
 } App;
 
 typedef struct agent {
@@ -95,7 +96,7 @@ void computeBTTrace(agent * theAgent, simConfig config, int tick);
 void testAgent(agent * theAgent, int tick);
 void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
                        int tick);
-void informContacts(App app, int responseTime, int tick);
+void informContacts(App *app, int responseTime, int tick);
 void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
                     agent agents[], int tick);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
@@ -169,7 +170,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
     /*Freeing agents */
     free(agents);
-
+    printf("WOW\n");
 }
 
 int isAllocated(void *check)
@@ -237,8 +238,8 @@ App *initApp()
 {
     App *app = malloc(sizeof(App));
     isAllocated(app);
+    app->head = NULL;
     app->positiveMet = 0;
-    (*app).recorded = 0;
     return app;
 }
 
@@ -535,7 +536,7 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
     for (i = 1; i < size && i <= amountToMeet; i++) {
         agent *peer;
         int randomID = rand() % size;
-
+    
         do {
             peer = *(group->members + randomID);
             randomID = getNextID(randomID, size);
@@ -672,7 +673,7 @@ void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
                 }
 
                 if (theAgent->app != NULL) {
-                    informContacts(*(theAgent->app),
+                    informContacts(theAgent->app,
                                    theAgent->testResponseTime, tick);
                 }
             }
@@ -681,9 +682,33 @@ void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
     }
 }
 
-void informContacts(App app, int responseTime, int tick)
+void informContacts(App *app, int responseTime, int tick)
 {
-    int i;
+    ContactRecord *temp = app->head;
+    /*Remove old elements*/
+    while (temp != NULL) {
+        if(temp->onContactTick + responseTime + 2 <= tick) {
+            temp = NULL;
+        }
+        else{
+            temp = temp->next;
+        }
+    }
+
+    temp = app->head;
+    while (temp != NULL)
+    {
+        if(temp->peer->willTest){
+            printf("FUCK YOU\n");
+            testAgent(temp->peer, tick);
+        }
+        temp->peer->app->positiveMet++;
+        temp = temp->next;
+    }
+    
+    
+    
+    /*int i;
     int contacts = MAX_CONTACTS_IN_APP;
     if (app.recorded < MAX_CONTACTS_IN_APP) {
         contacts = app.recorded;
@@ -696,7 +721,7 @@ void informContacts(App app, int responseTime, int tick)
             }
             app.records[i].peer->app->positiveMet++;
         }
-    }
+    }*/
 }
 
 void handleMeetings(agent * theAgent, simConfig config, gsl_rng * r,
@@ -745,11 +770,21 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
 
 void addRecord(agent * recorder, agent * peer, int tick)
 {
-    int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
+    ContactRecord recordToInsert;
+    recordToInsert.onContactTick = tick;
+    recordToInsert.peer = peer;
+    recordToInsert.next = recorder->app->head;
+    recorder->app->head = &recordToInsert;
+    /*int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
     ContactRecord *record = &(recorder->app->records[recordNr]);
+    if(record->peer != NULL){
+        if(record->onContactTick + record->peer->testResponseTime + 2 > tick)
+            printf("FUCK\n");
+    }
+    
     record->peer = peer;
     record->onContactTick = tick;
-    recorder->app->recorded++;
+    recorder->app->recorded++;*/
 }
 
 void calculateAveragePlot(int run, int events, DataSet * data,
