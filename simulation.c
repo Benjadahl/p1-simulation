@@ -708,7 +708,6 @@ void informContacts(App * app, int responseTime, int tick)
 	        temp->peer->app->positiveMet++;
 	        temp = temp->next;
     	}
-
     }
     else {
     	app->head = NULL;
