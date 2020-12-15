@@ -698,21 +698,21 @@ void informContacts(App * app, int responseTime, int tick)
         }
     }
 
-    if (last != NULL){
-    	last->next = NULL;
-    	
-    	temp = app->head;
-    	while (temp != NULL) {
-	        if (temp->peer->willTest) {
-	            testAgent(temp->peer, tick);
-	        }
-	        temp->peer->app->positiveMet++;
-	        temp = temp->next;
-    	}
+    if (last != NULL) {
+        last->next = NULL;
+
+        temp = app->head;
+        while (temp != NULL) {
+            if (temp->peer->willTest) {
+                testAgent(temp->peer, tick);
+            }
+            temp->peer->app->positiveMet++;
+            temp = temp->next;
+        }
     }
-    
+
     else {
-    	app->head = NULL;
+        app->head = NULL;
     }
 
 
