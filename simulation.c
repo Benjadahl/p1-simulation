@@ -271,40 +271,38 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     int thisGroupSize;
     int agentsLeft;
     int run;
+    agent *theAgent;
 
     for (i = 0; i < config.amountOfAgents; i++) {
-        (agents + i)->ID = i;
-        (agents + i)->healthState = succeptible;
+        theAgent = (agents + i);
+        theAgent->ID = i;
+        theAgent->healthState = succeptible;
         if (gsl_ran_bernoulli(r, config.chanceToHaveApp)) {
-            (agents + i)->app = initApp();
+            theAgent->app = initApp();
         } else {
-            (agents + i)->app = NULL;
+            theAgent->app = NULL;
         }
-        (agents + i)->infectedTick = -1;
-        (agents + i)->infectedPeriod =
-            truncatedGaus(r, config.infectionTime);
-        (agents + i)->symptomatic =
+        theAgent->infectedTick = -1;
+        theAgent->infectedPeriod = truncatedGaus(r, config.infectionTime);
+        theAgent->symptomatic =
             gsl_ran_bernoulli(r, config.symptomaticPercent);
-        (agents + i)->incubationTime =
-            truncatedGaus(r, config.incubationTime);
-        (agents + i)->willIsolate =
+        theAgent->incubationTime = truncatedGaus(r, config.incubationTime);
+        theAgent->willIsolate =
             gsl_ran_bernoulli(r, config.willIsolatePercent);
-        (agents + i)->isolatedTick = -1;
-        (agents + i)->isolationDelay =
-            truncatedGaus(r, config.isolationDelay);
-        (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
-        (agents + i)->willTest =
-            gsl_ran_bernoulli(r, config.willTestPercent);
-        (agents + i)->testResponseTime =
+        theAgent->isolatedTick = -1;
+        theAgent->isolationDelay = truncatedGaus(r, config.isolationDelay);
+        theAgent->groups = malloc(sizeof(group **) * amountOfGroups);
+        theAgent->willTest = gsl_ran_bernoulli(r, config.willTestPercent);
+        theAgent->testResponseTime =
             truncatedGaus(r, config.testResponseTime);
-        (agents + i)->testedTick = -1;
-        (agents + i)->exposedTick = -1;
-        (agents + i)->testResult = 0;
-        (agents + i)->groups[0] = NULL;
-        (agents + i)->groups[1] = NULL;
-        (agents + i)->groups[2] = NULL;
-        (agents + i)->groups[3] = NULL;
-        (agents + i)->amountAgentHasInfected = 0;
+        theAgent->testedTick = -1;
+        theAgent->exposedTick = -1;
+        theAgent->testResult = 0;
+        theAgent->groups[0] = NULL;
+        theAgent->groups[1] = NULL;
+        theAgent->groups[2] = NULL;
+        theAgent->groups[3] = NULL;
+        theAgent->amountAgentHasInfected = 0;
 
         isAllocated((agents + i)->groups);
     }
