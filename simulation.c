@@ -164,13 +164,13 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
+    	free(agents[i].app->head);
         free(agents[i].app);
         free(agents[i].groups);
     }
 
     /*Freeing agents */
     free(agents);
-    printf("WOW\n");
 }
 
 int isAllocated(void *check)
@@ -685,24 +685,33 @@ void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
 
 void informContacts(App * app, int responseTime, int tick)
 {
-    ContactRecord *temp = app->head;
+    ContactRecord *temp = app->head, *temptemp, *last = NULL;
     /*Remove old elements */
     while (temp != NULL) {
         if (temp->onContactTick + responseTime + 2 <= tick) {
-            temp = NULL;
+        	temptemp = temp->next;
+        	free(temp);
+        	temp = temptemp;
         } else {
+        	last = temp;
             temp = temp->next;
         }
     }
+    if (last != NULL){
+    	last->next = NULL;
+    	
+    	temp = app->head;
+    	while (temp != NULL) {
+	        if (temp->peer->willTest) {
+	            testAgent(temp->peer, tick);
+	        }
+	        temp->peer->app->positiveMet++;
+	        temp = temp->next;
+    	}
 
-    temp = app->head;
-    while (temp != NULL) {
-        if (temp->peer->willTest) {
-            printf("FUCK YOU\n");
-            testAgent(temp->peer, tick);
-        }
-        temp->peer->app->positiveMet++;
-        temp = temp->next;
+    }
+    else {
+    	app->head = NULL;
     }
 
 
@@ -769,11 +778,11 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
 
 void addRecord(agent * recorder, agent * peer, int tick)
 {
-    ContactRecord recordToInsert;
-    recordToInsert.onContactTick = tick;
-    recordToInsert.peer = peer;
-    recordToInsert.next = recorder->app->head;
-    recorder->app->head = &recordToInsert;
+    ContactRecord *recordToInsert = malloc(sizeof(ContactRecord));
+    recordToInsert->onContactTick = tick;
+    recordToInsert->peer = peer;
+    recordToInsert->next = recorder->app->head;
+    recorder->app->head = recordToInsert;
     /*int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
        ContactRecord *record = &(recorder->app->records[recordNr]);
        if(record->peer != NULL){
