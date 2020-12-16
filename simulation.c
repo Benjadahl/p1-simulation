@@ -119,11 +119,11 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     agents = malloc(sizeof(agent) * config.amountOfAgents);
     isAllocated(agents);
 
-    /*Initialization of agents*/
+    /*Initialization of agents */
     initAgents(r, agents, config, tick, &head);
     current = head;
 
-    /*Initialization of the data struct arrays, and resetting them to 0*/
+    /*Initialization of the data struct arrays, and resetting them to 0 */
     for (i = 0; i < dataCount; i++) {
         for (j = 0; j < config.maxEvents; j++) {
             data[i].absoluteData[j] = 0;
@@ -131,7 +131,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         }
     }
 
-    /*Running events*/
+    /*Running events */
     for (tick = 1; tick <= config.maxEvents; tick++) {
         PlotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
@@ -158,7 +158,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
             current = tempGroup;
     } while (tempGroup != NULL);
 
-    /*Freeing agent groups and their app pointer, if they have one*/
+    /*Freeing agent groups and their app pointer, if they have one */
     for (i = 0; i < config.amountOfAgents; i++) {
         if (agents[i].app != NULL) {
             free(agents[i].app->records);
@@ -191,7 +191,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     int i;
     agent *theAgent;
 
-    /*Initializing the fields of every agent struct*/
+    /*Initializing the fields of every agent struct */
     for (i = 0; i < config.amountOfAgents; i++) {
         theAgent = (agents + i);
         theAgent->ID = i;
@@ -226,7 +226,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         isAllocated((agents + i)->groups);
     }
 
-    /*Initialize groups to every agent*/
+    /*Initialize groups to every agent */
     initGroups(config, head, agents, r);
 
     /* Infect random agents */
@@ -274,7 +274,7 @@ int truncatedGaus(gsl_rng * r, struct gaussian settings)
 App *initApp(simConfig config, int testResponseTime)
 {
     int i;
-    /*The theoretical amount of the agents, an agent can meet, whilst waiting for test respons. Can be reallocatet to a greater size, if necessary*/
+    /*The theoretical amount of the agents, an agent can meet, whilst waiting for test respons. Can be reallocatet to a greater size, if necessary */
     int size =
         (testResponseTime + 2) * (config.toMeet[0].upperbound +
                                   config.toMeet[1].upperbound +
@@ -283,10 +283,10 @@ App *initApp(simConfig config, int testResponseTime)
     App *app = malloc(sizeof(App));
     isAllocated(app);
 
-    /*Setting the fields of the app*/
+    /*Setting the fields of the app */
     app->positiveMet = 0;
     app->records = malloc(sizeof(ContactRecord) * size);
-    /*Setting every contact the app has registered to -1, since the agent has not yet met any other agent*/
+    /*Setting every contact the app has registered to -1, since the agent has not yet met any other agent */
     for (i = 0; i < size; i++) {
         app->records[i].onContactTick = -1;
     }
@@ -299,7 +299,7 @@ App *initApp(simConfig config, int testResponseTime)
 void initGroups(simConfig config, group ** head, agent * agents,
                 gsl_rng * r)
 {
-	/*Declaration of variabels*/
+    /*Declaration of variabels */
     int i, j, k = 0, l;
     int agentsLeft;
     int isReplica;
@@ -310,7 +310,7 @@ void initGroups(simConfig config, group ** head, agent * agents,
     for (i = 0; i <= 1; i++) {
         agentsLeft = config.amountOfAgents;
         while (agentsLeft) {
-        	/*There should only be calculated a groupsize, if there are more agents left, than the max number of agents in a given group*/
+            /*There should only be calculated a groupsize, if there are more agents left, than the max number of agents in a given group */
             run =
                 i == 0 ? agentsLeft >
                 config.groupSize[0].upperbound : agentsLeft >
@@ -321,14 +321,14 @@ void initGroups(simConfig config, group ** head, agent * agents,
                 else if (i == 1)
                     thisGroupSize = truncatedGaus(r, config.groupSize[1]);
                 agentsLeft -= thisGroupSize;
-            } 
-            /*If there the amount of agents left is less that the maximum amount of agent in the given group, then the rest of the amount of agent left, will be the groupsize*/
+            }
+            /*If there the amount of agents left is less that the maximum amount of agent in the given group, then the rest of the amount of agent left, will be the groupsize */
             else {
                 thisGroupSize = agentsLeft;
                 agentsLeft = 0;
             }
 
-            /*Insertion of the group to the linked list of groups, to make the deallocation easier*/
+            /*Insertion of the group to the linked list of groups, to make the deallocation easier */
             insertGroupToLinkedList(createGroup
                                     (agents, config, thisGroupSize, i),
                                     head);
@@ -347,8 +347,8 @@ void initGroups(simConfig config, group ** head, agent * agents,
         isAllocated(newGroup);
         isAllocated(members);
 
-        /*Finding agents there is not a part of the agents contact group, and adding the to the agents contact group*/
-        /*Note: The found agents will only be added to the agent contact group, on not the other way around, since the contact group is unique to the agent*/
+        /*Finding agents there is not a part of the agents contact group, and adding the to the agents contact group */
+        /*Note: The found agents will only be added to the agent contact group, on not the other way around, since the contact group is unique to the agent */
         for (j = 0; j < contactsPerAgent; j++) {
             agent *theAgent;
             int randomID = rand() % config.amountOfAgents;
@@ -369,7 +369,7 @@ void initGroups(simConfig config, group ** head, agent * agents,
             *(members + j) = theAgent;
         }
 
-        /*Insertion of the group to the linked list of groups, to make the deallocation easier*/
+        /*Insertion of the group to the linked list of groups, to make the deallocation easier */
         insertGroupToLinkedList(newGroup, head);
         (agents + i)->groups[2] = newGroup;
     }
@@ -389,7 +389,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     isAllocated(newGroup);
     isAllocated(members);
 
-    /*Finding available agents, and sets them in the group array*/
+    /*Finding available agents, and sets them in the group array */
     for (i = 0; i < groupSize; i++) {
         int randomID = rand() % config.amountOfAgents;
 
@@ -485,14 +485,14 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
     int i;
     printf("\nTick: %d\n", tick);
 
-    /*Printing the agent data*/
+    /*Printing the agent data */
     for (i = 0; i < dataCount; i++) {
         printf("Total %-30s: %-6d (%f%%)\n", data[i].name,
                (int) data[i].absoluteData[tick - 1],
                data[i].data[tick - 1]);
     }
 
-    /*Printing the contact number*/
+    /*Printing the contact number */
     if (*R0 != 0 || data[3].data[tick - 1] > 0) {
         printf("%-36s: %-6f \n", "R0", *R0);
         printf("%-36s: %-6f \n", "Average R0", *avgR0);
@@ -503,24 +503,24 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
               double *R0, double *avgR0)
 {
-	/*Decleration and initialization of variabels*/
+    /*Decleration and initialization of variabels */
     int recoveredInTick = 0;
     int infectedDuringInfection = 0;
 
     int a = 0;
 
-    /*If a party is to occur*/
+    /*If a party is to occur */
     if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
         handleParties(r, agents, config, tick);
     }
 
-    /*Calculate, and if necessary, change the stat of the agents*/
+    /*Calculate, and if necessary, change the stat of the agents */
     for (a = 0; a < config.amountOfAgents; a++) {
         computeAgent(r, agents, config, tick, a,
                      &recoveredInTick, &infectedDuringInfection);
     }
 
-    /*Calculationg the contact number*/
+    /*Calculationg the contact number */
     if (infectedDuringInfection == 0) {
         *R0 = 0;
     } else if (recoveredInTick != 0) {
@@ -545,7 +545,7 @@ Day isDay(int tick)
 /*Creating a party*/
 void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
 {
-	/*Decleration and initialization of variabels*/
+    /*Decleration and initialization of variabels */
     int i;
     int agentsBeenToParty = 0;
     int agentShouldParty =
@@ -579,11 +579,11 @@ void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
 void meetGroup(gsl_rng * r, group * group, double infectionRisk,
                int amountToMeet, int tick, agent * theAgent)
 {
-	/*Decleration and initialization of variabels*/
+    /*Decleration and initialization of variabels */
     int i = 0;
     int size = group->size;
 
-    /*Finding to agents to meet*/
+    /*Finding to agents to meet */
     for (i = 1; i < size && i <= amountToMeet; i++) {
         agent *peer;
         int randomID = rand() % size;
@@ -602,21 +602,21 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
              double infectionRisk, int tick, int recordInApp)
 {
     if (peer->isolatedTick == -1) {
-    	/*If the agent is infected, and the agent infects the peer agent*/
+        /*If the agent is infected, and the agent infects the peer agent */
         if (theAgent->healthState == infectious
             && gsl_ran_bernoulli(r, infectionRisk)) {
             infectAgent(tick, peer);
             (theAgent->amountAgentHasInfected)++;
         }
 
-        /*If the peer agent is infected, and the peer agent infects the agent*/
+        /*If the peer agent is infected, and the peer agent infects the agent */
         if (peer->healthState == infectious
             && gsl_ran_bernoulli(r, infectionRisk)) {
             infectAgent(tick, theAgent);
             (peer->amountAgentHasInfected)++;
         }
 
-        /*Adding the both to their contact list in the app*/
+        /*Adding the both to their contact list in the app */
         if (recordInApp) {
             if (theAgent->app != NULL && peer->app != NULL) {
                 addRecord(theAgent, peer, tick);
@@ -629,15 +629,15 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 /*Adds a record to a contact list in an app*/
 void addRecord(agent * recorder, agent * peer, int tick)
 {
-	/*Decleration and initialization of variabels*/
+    /*Decleration and initialization of variabels */
     int i = 0, found = 0;
     int recordNr = recorder->app->recorded;
     ContactRecord *record;
 
-    /*If we are going to overide the array*/
+    /*If we are going to overide the array */
     if (recordNr % recorder->app->size == 0
         && recorder->app->recorded != 0) {
-    	/*Check if an element in the recorders app contact array can be overwritten, if it is too old, meaning their are no reason to keep track of that element/agent anymore*/
+        /*Check if an element in the recorders app contact array can be overwritten, if it is too old, meaning their are no reason to keep track of that element/agent anymore */
         while (i < recorder->app->size && !found) {
             if (tick - recorder->app->records[i].onContactTick >
                 recorder->testResponseTime + 2) {
@@ -645,14 +645,14 @@ void addRecord(agent * recorder, agent * peer, int tick)
             }
             i++;
         }
-        /*If there was no element there could be overwritten, the recorders app contact arrar will be reallocated to twice the size*/
+        /*If there was no element there could be overwritten, the recorders app contact arrar will be reallocated to twice the size */
         if (!found) {
             recorder->app->records =
                 realloc(recorder->app->records,
                         sizeof(ContactRecord) * recorder->app->size * 2);
             recorder->app->size *= 2;
         }
-        /*If an element to be overwritten could be found, the element will be overwritten*/
+        /*If an element to be overwritten could be found, the element will be overwritten */
         else {
             recorder->app->recorded--;
             recordNr = i;
@@ -723,7 +723,7 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         }
     }
 
-    /*Handle test respons*/
+    /*Handle test respons */
     if (theAgent->testedTick != -1) {
         if (theAgent->testedTick + theAgent->testResponseTime == tick) {
             if (theAgent->testResult
@@ -732,7 +732,7 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
                     theAgent->isolatedTick = tick;
                 }
 
-                /*If the agent has an app, the agent will inform his, or hers, contacts*/
+                /*If the agent has an app, the agent will inform his, or hers, contacts */
                 if (theAgent->app != NULL) {
                     informContacts(*(theAgent->app),
                                    theAgent->testResponseTime, tick,
@@ -751,7 +751,7 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         theAgent->isolatedTick = -1;
     }
 
-    /*Lets the not isolated agents meet in their respective groups*/
+    /*Lets the not isolated agents meet in their respective groups */
     if (theAgent->isolatedTick == -1) {
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(r, theAgent->groups[0],
@@ -791,16 +791,16 @@ void testAgent(agent * theAgent, int tick)
 /*Inform every contacts in the agents app, that the agent is infected*/
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
-	/*Decleration and initialization of variabels*/
+    /*Decleration and initialization of variabels */
     int i;
     int contacts = app.size;
 
-    /*Getting amount of contacts from the app*/
+    /*Getting amount of contacts from the app */
     if (app.recorded < app.size) {
         contacts = app.recorded;
     }
 
-    /*Informs the contacts. If the contacts ther will test, is tested*/
+    /*Informs the contacts. If the contacts ther will test, is tested */
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <= responseTime + 2) {
             if (!isolate) {
