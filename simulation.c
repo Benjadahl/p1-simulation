@@ -365,12 +365,6 @@ int rndInt(int max)
     return rand() % max;
 }
 
-void insertGroupToLinkedList(group * groupToInsert, group ** head)
-{
-    groupToInsert->next = *head;
-    *head = groupToInsert;
-}
-
 void infectRandomAgent(agent agents[], simConfig config, int tick)
 {
     int randomID;
@@ -709,37 +703,6 @@ void calculateAveragePlot(int run, int events, DataSet * data,
     }
 }
 
-void addRecord(agent * recorder, agent * peer, int tick)
-{
-    int i = 0, found = 0;
-    int recordNr = recorder->app->recorded;
-    ContactRecord *record;
-
-    if (recordNr % recorder->app->size == 0
-        && recorder->app->recorded != 0) {
-        while (i < recorder->app->size && !found) {
-            if (tick - recorder->app->records[i].onContactTick >
-                recorder->testResponseTime + 2) {
-                found = 1;
-            }
-            i++;
-        }
-        if (!found) {
-            recorder->app->records =
-                realloc(recorder->app->records,
-                        sizeof(ContactRecord) * recorder->app->size * 2);
-            recorder->app->size *= 2;
-        } else {
-            recorder->app->recorded--;
-            recordNr = i;
-        }
-    }
-    record = &(recorder->app->records[recordNr]);
-    record->peer = peer;
-    record->onContactTick = tick;
-    recorder->app->recorded++;
-}
-
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
@@ -789,8 +752,30 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
 
 void addRecord(agent * recorder, agent * peer, int tick)
 {
-    int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
-    ContactRecord *record = &(recorder->app->records[recordNr]);
+    int i = 0, found = 0;
+    int recordNr = recorder->app->recorded;
+    ContactRecord *record;
+
+    if (recordNr % recorder->app->size == 0
+        && recorder->app->recorded != 0) {
+        while (i < recorder->app->size && !found) {
+            if (tick - recorder->app->records[i].onContactTick >
+                recorder->testResponseTime + 2) {
+                found = 1;
+            }
+            i++;
+        }
+        if (!found) {
+            recorder->app->records =
+                realloc(recorder->app->records,
+                        sizeof(ContactRecord) * recorder->app->size * 2);
+            recorder->app->size *= 2;
+        } else {
+            recorder->app->recorded--;
+            recordNr = i;
+        }
+    }
+    record = &(recorder->app->records[recordNr]);
     record->peer = peer;
     record->onContactTick = tick;
     recorder->app->recorded++;
