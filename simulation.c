@@ -8,6 +8,7 @@
 #include "export.h"
 #include "allocationTest.h"
 
+/*Decalring and initializing enumerators*/
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
 } HealthState;
@@ -16,6 +17,7 @@ typedef enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday,
     Friday, Saturday
 } Day;
 
+/*Declaring structs*/
 typedef struct ContactRecord {
     struct agent *peer;
     int onContactTick;
@@ -56,6 +58,7 @@ typedef struct group {
     struct group *next;
 } group;
 
+/*Declaring functions*/
 int isAllocated(void *check);
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head);
@@ -94,6 +97,7 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
 {
+	/*Declaring and initializing variabels*/
     double R0 = 0;
     double avgR0 = 0;
 
