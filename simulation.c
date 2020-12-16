@@ -81,7 +81,7 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 void meetGroup(gsl_rng * r, group * group, double infectionRisk,
                int amountToMeet, int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
-void informContacts(App *app, int responseTime, int tick);
+void informContacts(App * app, int responseTime, int tick);
 void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 int rndInt(int max);
@@ -153,7 +153,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
-    	free(agents[i].app->records);
+        free(agents[i].app->records);
         free(agents[i].app);
         free(agents[i].groups);
     }
@@ -378,15 +378,19 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head)
 
 App *initApp(simConfig config, int testResponseTime)
 {
-	int i;
-	int size = (testResponseTime + 2) * (config.toMeet[0].upperbound + config.toMeet[1].upperbound + config.toMeet[2].upperbound + config.toMeet[3].upperbound);
-    /*printf("%d = (%d + 2) * (%d + %d + %d + %d)\n", size, testResponseTime, config.toMeet[0].upperbound, config.toMeet[1].upperbound, config.toMeet[2].upperbound, config.toMeet[3].upperbound);*/
+    int i;
+    int size =
+        (testResponseTime + 2) * (config.toMeet[0].upperbound +
+                                  config.toMeet[1].upperbound +
+                                  config.toMeet[2].upperbound +
+                                  config.toMeet[3].upperbound);
+    /*printf("%d = (%d + 2) * (%d + %d + %d + %d)\n", size, testResponseTime, config.toMeet[0].upperbound, config.toMeet[1].upperbound, config.toMeet[2].upperbound, config.toMeet[3].upperbound); */
     App *app = malloc(sizeof(App));
     isAllocated(app);
     app->positiveMet = 0;
     app->records = malloc(sizeof(ContactRecord) * size);
-    for (i = 0; i < size; i++){
-    	app->records[i].onContactTick = -1;
+    for (i = 0; i < size; i++) {
+        app->records[i].onContactTick = -1;
     }
     app->size = size;
     app->recorded = 0;
@@ -687,7 +691,7 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recorder->app->recorded++;
 }
 
-void informContacts(App *app, int responseTime, int tick)
+void informContacts(App * app, int responseTime, int tick)
 {
     int i;
     int contacts = app->size;
