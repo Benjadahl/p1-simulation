@@ -116,12 +116,6 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     group *current = head;
     group *tempGroup;
 
-    int prevTick;
-
-    double exposed;
-    double infectious;
-    double isolated;
-
     agents = malloc(sizeof(agent) * config.amountOfAgents);
     isAllocated(agents);
 
@@ -137,6 +131,12 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
 
 
     for (tick = 1; tick <= config.maxEvents; tick++) {
+        int prevTick;
+
+        double exposed;
+        double infectious;
+        double isolated;
+
         plotData(agents, data, dataCount, tick, config);
         if (config.print != 0) {
             printStats(data, dataCount, tick, &R0, &avgR0);
