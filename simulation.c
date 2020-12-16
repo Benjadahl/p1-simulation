@@ -81,11 +81,7 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 void meetGroup(gsl_rng * r, group * group, double infectionRisk,
                int amountToMeet, int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
-<<<<<<< HEAD
-void informContacts(App * app, int responseTime, int tick);
-=======
 void informContacts(App app, int responseTime, int tick, int isolate);
->>>>>>> newMain
 void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 int rndInt(int max);
@@ -699,9 +695,9 @@ void addRecord(agent * recorder, agent * peer, int tick)
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
-    int contacts = app->size;
-    if (app->recorded < app->size) {
-        contacts = app->recorded;
+    int contacts = app.size;
+    if (app.recorded < app.size) {
+        contacts = app.recorded;
     }
 
     for (i = 0; i < contacts; i++) {
