@@ -29,10 +29,10 @@ int main(int argc, char *argv[])
         /*grunden til at vi har valgt at der skal være et '-' foran 
            en parameterinstilling er for at gøre det nemmer at opsamle i vores program */
         if (argv[i][0] == '-') {
-            /*grunden til at vi har denne if statment er fordi at både 'g' og 'b'
+            /*grunden til at vi har denne if statment er fordi at både 'g', 'b' og 'r'
                skal ikke efterføgles af en værdi, så for at sikre os at det inputs
                som skal have en værdi tilknyttede til sig har det bruge vi dette */
-            if ((argv[i][1] != 'g' && argv[i][1] != 'b')
+            if ((argv[i][1] != 'g' && argv[i][1] != 'b' && argv[i][1] != 'r')
                 && !isdigit(argv[i + 1][0])) {
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
@@ -205,12 +205,16 @@ void initStandardConfig(simConfig * config)
     config->passerByRisk = 0.0048;
     config->makeConfigFile = 1;
     config->dataLabel = 1;
+    config->isolateOnAppInform = 0;
 }
 
 void initConfigWithInputParameters(simConfig * config, double value,
                                    char input, int *graph)
 {
     switch (input) {
+    case 'r':
+        config->isolateOnAppInform = 1;
+        break;
     case 'z':                  /*how many angents have sympums when infected */
         config->symptomaticPercent = isValueCorrect(input, value, 0, 1);
         break;
