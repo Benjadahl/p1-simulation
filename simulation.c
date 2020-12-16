@@ -667,7 +667,7 @@ void addRecord(agent * recorder, agent * peer, int tick)
     int recordNr = recorder->app->recorded;
     ContactRecord *record;
 
-    if (recordNr % recorder->app->size == 0 && tick != 1) {
+    if (recordNr % recorder->app->size == 0 && recorder->app->recorded != 0) {
         while (i < recorder->app->size && !found) {
             if (tick - recorder->app->records[i].onContactTick >
                 recorder->testResponseTime + 2) {
