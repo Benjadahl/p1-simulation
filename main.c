@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
             /*grunden til at vi har denne if statment er fordi at både 'g', 'b' og 'A'
                skal ikke efterføgles af en værdi, så for at sikre os at det inputs
                som skal have en værdi tilknyttede til sig har det bruge vi dette */
-            if ((argv[i][1] != 'g' && argv[i][1] != 'b' && argv[i][1] != 'A')
+            if ((argv[i][1] != 'g' && argv[i][1] != 'b'
+                 && argv[i][1] != 'A')
                 && !isdigit(argv[i + 1][0])) {
                 printf
                     ("ERROR: Invaild inputs detected.\nMake sure that every option is follow by a value.\nInvaild argument %c\n",
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
                 }
 
                 switch (argv[i][1]) {
-                case 'A':  
+                case 'A':
                     config.isolateOnAppInform = 1;
                     break;
                 case 'z':      /*how many angents have sympums when infected */
