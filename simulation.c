@@ -659,9 +659,9 @@ void addRecord(agent * recorder, agent * peer, int tick)
 {
     int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
     ContactRecord *record = &(recorder->app->records[recordNr]);
-    
-    if (record->onContactTick != -1){
-        if (tick - record->onContactTick <= recorder->testResponseTime + 2){
+
+    if (record->onContactTick != -1) {
+        if (tick - record->onContactTick <= recorder->testResponseTime + 2) {
             printf("Atempting to overide valid record\n");
             exit(EXIT_FAILURE);
         }
