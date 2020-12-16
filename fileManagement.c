@@ -14,6 +14,7 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t);
 void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events, int yMax);
 DataSet createDataSet(char *name, double *data);
+void writeConfigInput(char * configName, simConfig config);
 
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int absolute, simConfig config)
@@ -184,7 +185,7 @@ void ReadFile(char *file_name, DataSetRead * data, int dataCount)
 
     while (fgets(line, sizeof(line), file)) {
         char *lineToken;
-        lineToken = strtok(line, ",")
+        lineToken = strtok(line, ",");
         while (lineToken != NULL) {
             char *dataToken = strtok(lineToken, "\n");
             if (isdigit(lineToken[0])) {

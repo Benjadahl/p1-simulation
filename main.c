@@ -9,6 +9,7 @@
 #include "export.h"
 #include "allocationTest.h"
 
+/*Declaration of functions*/
 void initStandardConfig(simConfig *config);
 void initConfigWithInputParameters(simConfig *config, double value, char input, int *graph);
 double isValueCorrect(char input, double value, int min, int max);
@@ -21,6 +22,7 @@ void calculateAveragePlot(int run, int events, DataSet * data,
 
 int main(int argc, char *argv[])
 {
+    /*Decalration and initialization of variabels*/
     int i;
     int graph = 0;
     int seedUsed;
@@ -36,20 +38,18 @@ int main(int argc, char *argv[])
 
     simConfig config;
 
+    /*Initializing standard simulation configuration struct*/
     initStandardConfig(&config);
 
     /*party */
-    config.partyChance = 0.16;
-    config.partyRisk = 0.15;
+    /*config.partyChance = 0.16;
+    config.partyRisk = 0.15;*/
 
-    /* indlaeser parametre */
+    /*Reading parameters*/
     for (i = 0; i < argc; i++) {
-        /*grunden til at vi har valgt at der skal være et '-' foran 
-           en parameterinstilling er for at gøre det nemmer at opsamle i vores program */
+        /*The reason for the '-' char, in front of the parameter, is to make it easier to read and know it is an input parameter*/
         if (argv[i][0] == '-') {
-            /*grunden til at vi har denne if statment er fordi at både 'g', 'b' og 'A'
-               skal ikke efterføgles af en værdi, så for at sikre os at det inputs
-               som skal have en værdi tilknyttede til sig har det bruge vi dette */
+            /*the chars 'A' 'b' and 'g', should not be followed by a value*/
             if ((argv[i][1] != 'g' && argv[i][1] != 'b'
                  && argv[i][1] != 'A')
                 && !isdigit(argv[i + 1][0])) {
@@ -58,17 +58,19 @@ int main(int argc, char *argv[])
                      argv[i][1]);
                 return EXIT_FAILURE;
             } else {
-                /*dette sikre os at den ikke prøver at få fat i en værdi som ikke eksistere */
+                /*Makes sure that we do not try to read more than whats inputted*/
                 if (i + 1 < argc) {
                     value = strtod(argv[i + 1], &emPtr);
                 }
             }
 
+            /*Initializing simulation configuration struct with given input parameter*/
             initConfigWithInputParameters(&config, value, argv[i][1],
                                           &graph);
         }
     }
 
+    /*Declaring the data struct arrays fro plotting*/
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
         data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
@@ -81,6 +83,7 @@ int main(int argc, char *argv[])
         isAllocated(avgData[i].absoluteData);
     }
 
+    /*Sets the name of the data struct arrays*/
     data[0].name = "Succeptible";
     data[1].name = "Exposed";
     data[2].name = "Infectious";
@@ -93,6 +96,7 @@ int main(int argc, char *argv[])
         avgData[i].name = data[i].name;
     }
 
+    /*Setting and initializing seed for gsl*/
     runTime = time(NULL);
 
     if (!config.seed) {
@@ -108,6 +112,7 @@ int main(int argc, char *argv[])
     r = gsl_rng_alloc(T);
     gsl_rng_set(r, seedUsed);
 
+    /*Running simulation, and gathering data*/
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
@@ -118,28 +123,35 @@ int main(int argc, char *argv[])
                              PLOT_COUNT);
     }
 
+    /*freeing gsl random number generator*/
     gsl_rng_free(r);
 
     printf("\nSeed used: %d\n", seedUsed);
 
+    /*If a graph is wanted, a graph is plotted*/
     if (graph != 0) {
         printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0, config);
     }
+
+    /*Freeing the data struct arrays*/
     for (i = 0; i < PLOT_COUNT; i++) {
         free(data[i].data);
         free(data[i].absoluteData);
         free(avgData[i].absoluteData);
         free(avgData[i].data);
     }
+
+    /*Terminating program*/
     return EXIT_SUCCESS;
 }
 
+/*Initializing the simulation configuration struct with standard parameters*/
 void initStandardConfig(simConfig * config)
 {
     /*party */
-    config->partyChance = 16;
+    config->partyChance = 0.16;
     config->partyRisk = 0.15;
 
     /*Groups */
@@ -226,6 +238,7 @@ void initStandardConfig(simConfig * config)
     config->dataLabel = 1;
 }
 
+/*Initializing the simulation configuration struct with inputted parameters*/
 void initConfigWithInputParameters(simConfig * config, double value,
                                    char input, int *graph)
 {
@@ -329,6 +342,7 @@ void initConfigWithInputParameters(simConfig * config, double value,
 
 }
 
+/*Checing if the inputted value is correct, depending on the parameter*/
 double isValueCorrect(char input, double value, int min, int max)
 {
     if (value >= min && value <= max)
@@ -337,5 +351,7 @@ double isValueCorrect(char input, double value, int min, int max)
         printf
             ("-%c %f is not accepted, the input value of paramter -%c must be in the interval [%d, %d]\n",
              input, value, input, min, max);
+
+    /*If value was incorrect according to the parameter, the pogram terminates*/
     exit(EXIT_FAILURE);
 }

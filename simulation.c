@@ -61,6 +61,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head);
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
 App *initApp(simConfig config, int testResponseTime);
+void initGroups(simConfig config, group ** head, agent * agents, gsl_rng * r);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, int size);
@@ -175,12 +176,7 @@ int isAllocated(void *check)
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head)
 {
-    int i, j, l, k = 0;
-    int randomID;
-    int isReplica;
-    int thisGroupSize;
-    int agentsLeft;
-    int run;
+    int i;
     agent *theAgent;
 
     for (i = 0; i < config.amountOfAgents; i++) {
@@ -217,62 +213,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         isAllocated((agents + i)->groups);
     }
 
-    /*Initializing groups */
-    for (i = 0; i <= 1; i++) {
-        agentsLeft = config.amountOfAgents;
-        while (agentsLeft) {
-            run =
-                i == 0 ? agentsLeft >
-                config.groupSize[0].upperbound : agentsLeft >
-                config.groupSize[1].upperbound;
-            if (run) {
-                if (i == 0)
-                    thisGroupSize = truncatedGaus(r, config.groupSize[0]);
-                else if (i == 1)
-                    thisGroupSize = truncatedGaus(r, config.groupSize[1]);
-                agentsLeft -= thisGroupSize;
-            } else {
-                thisGroupSize = agentsLeft;
-                agentsLeft = 0;
-            }
-            insertGroupToLinkedList(createGroup
-                                    (agents, config, thisGroupSize, i),
-                                    head);
-        }
-    }
-
-    /*Initializing contacts */
-    for (i = 0; i < config.amountOfAgents; i++, k++) {
-        int contactsPerAgent = truncatedGaus(r, config.groupSize[2]);
-        group *newGroup = malloc(sizeof(group));
-        agent **members = malloc(sizeof(agent *) * contactsPerAgent);
-        newGroup->members = members;
-        newGroup->size = contactsPerAgent;
-        isAllocated(newGroup);
-        isAllocated(members);
-
-        for (j = 0; j < contactsPerAgent; j++) {
-            agent *theAgent;
-            randomID = rand() % config.amountOfAgents;
-
-            do {
-                isReplica = 0;
-                theAgent = agents + randomID;
-                randomID = getNextID(randomID, config.amountOfAgents);
-
-                /* Check if the agent is already in contact group, dont readd */
-                for (l = 0; l < j; l++) {
-                    if (theAgent->ID == (*(members + l))->ID) {
-                        isReplica = 1;
-                    }
-                }
-            } while (isReplica);
-
-            *(members + j) = theAgent;
-        }
-        insertGroupToLinkedList(newGroup, head);
-        (agents + i)->groups[2] = newGroup;
-    }
+    initGroups(config, head, agents, r);
 
     /* Infect random agents */
     for (i = 0; i < config.amountOfStartInfected; i++) {
@@ -365,6 +306,71 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     }
 
     return newGroup;
+}
+
+void initGroups(simConfig config, group ** head, agent * agents, gsl_rng * r){
+	int i, j, k = 0, l;
+	int agentsLeft;
+	int isReplica;
+	int run;
+	int thisGroupSize;
+
+	/*Initializing groups */
+    for (i = 0; i <= 1; i++) {
+        agentsLeft = config.amountOfAgents;
+        while (agentsLeft) {
+            run =
+                i == 0 ? agentsLeft >
+                config.groupSize[0].upperbound : agentsLeft >
+                config.groupSize[1].upperbound;
+            if (run) {
+                if (i == 0)
+                    thisGroupSize = truncatedGaus(r, config.groupSize[0]);
+                else if (i == 1)
+                    thisGroupSize = truncatedGaus(r, config.groupSize[1]);
+                agentsLeft -= thisGroupSize;
+            } else {
+                thisGroupSize = agentsLeft;
+                agentsLeft = 0;
+            }
+            insertGroupToLinkedList(createGroup
+                                    (agents, config, thisGroupSize, i),
+                                    head);
+        }
+    }
+
+    /*Initializing contacts */
+    for (i = 0; i < config.amountOfAgents; i++, k++) {
+        int contactsPerAgent = truncatedGaus(r, config.groupSize[2]);
+        group *newGroup = malloc(sizeof(group));
+        agent **members = malloc(sizeof(agent *) * contactsPerAgent);
+        newGroup->members = members;
+        newGroup->size = contactsPerAgent;
+        isAllocated(newGroup);
+        isAllocated(members);
+
+        for (j = 0; j < contactsPerAgent; j++) {
+            agent *theAgent;
+            int randomID = rand() % config.amountOfAgents;
+
+            do {
+                isReplica = 0;
+                theAgent = agents + randomID;
+                randomID = getNextID(randomID, config.amountOfAgents);
+
+                /* Check if the agent is already in contact group, dont readd */
+                for (l = 0; l < j; l++) {
+                    if (theAgent->ID == (*(members + l))->ID) {
+                        isReplica = 1;
+                    }
+                }
+            } while (isReplica);
+
+            *(members + j) = theAgent;
+        }
+        insertGroupToLinkedList(newGroup, head);
+        (agents + i)->groups[2] = newGroup;
+    }
 }
 
 int getNextID(int currentID, int size)
