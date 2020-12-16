@@ -378,10 +378,16 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head)
 
 App *initApp()
 {
+    int i;
     App *app = malloc(sizeof(App));
     isAllocated(app);
     app->positiveMet = 0;
     (*app).recorded = 0;
+
+    for (i = 0; i < MAX_CONTACTS_IN_APP; i++) {
+        app->records[i].onContactTick = -1;
+    }
+
     return app;
 }
 
@@ -654,6 +660,14 @@ void addRecord(agent * recorder, agent * peer, int tick)
 {
     int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
     ContactRecord *record = &(recorder->app->records[recordNr]);
+
+    if (record->onContactTick != -1) {
+        if (tick - record->onContactTick <= recorder->testResponseTime + 2) {
+            printf("Atempting to overide valid record\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     record->peer = peer;
     record->onContactTick = tick;
     recorder->app->recorded++;
