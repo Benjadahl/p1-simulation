@@ -157,8 +157,10 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
-        free(agents[i].app->records);
-        free(agents[i].app);
+        if (agents[i].app != NULL) {
+            free(agents[i].app->records);
+            free(agents[i].app);
+        }
         free(agents[i].groups);
     }
 
