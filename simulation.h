@@ -40,4 +40,5 @@ typedef struct simConfig {
     struct gaussian groupSize[amountOfGroups];
     struct gaussian passerbys;
     double passerByRisk;
+    int isolateOnAppInform;
 } simConfig;
