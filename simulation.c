@@ -64,7 +64,8 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head);
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
 App *initApp(simConfig config, int testResponseTime);
-void initGroups(simConfig config, group ** head, agent * agents, gsl_rng * r);
+void initGroups(simConfig config, group ** head, agent * agents,
+                gsl_rng * r);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, int size);
@@ -97,7 +98,7 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
 {
-	/*Declaring and initializing variabels*/
+    /*Declaring and initializing variabels */
     double R0 = 0;
     double avgR0 = 0;
 
@@ -312,14 +313,16 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     return newGroup;
 }
 
-void initGroups(simConfig config, group ** head, agent * agents, gsl_rng * r){
-	int i, j, k = 0, l;
-	int agentsLeft;
-	int isReplica;
-	int run;
-	int thisGroupSize;
+void initGroups(simConfig config, group ** head, agent * agents,
+                gsl_rng * r)
+{
+    int i, j, k = 0, l;
+    int agentsLeft;
+    int isReplica;
+    int run;
+    int thisGroupSize;
 
-	/*Initializing groups */
+    /*Initializing groups */
     for (i = 0; i <= 1; i++) {
         agentsLeft = config.amountOfAgents;
         while (agentsLeft) {

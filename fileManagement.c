@@ -14,7 +14,7 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t);
 void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events, int yMax);
 DataSet createDataSet(char *name, double *data);
-void writeConfigInput(char * configName, simConfig config);
+void writeConfigInput(char *configName, simConfig config);
 
 void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
                 int events, int yMax, int absolute, simConfig config)
