@@ -670,7 +670,8 @@ void handleTestRespons(agent * theAgent, simConfig config, gsl_rng * r,
 
                 if (theAgent->app != NULL) {
                     informContacts(*(theAgent->app),
-                                   theAgent->testResponseTime, tick, config.isolateOnAppInform);
+                                   theAgent->testResponseTime, tick,
+                                   config.isolateOnAppInform);
                 }
             }
             theAgent->testedTick = -1;
@@ -688,13 +689,13 @@ void informContacts(App app, int responseTime, int tick, int isolate)
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <= responseTime + 2) {
-            if(!isolate) {
+            if (!isolate) {
                 if (app.records[i].peer->willTest) {
                     testAgent(app.records[i].peer, tick);
                 }
-            }
-            else {
-                if(app.records[i].peer->willTest && app.records[i].peer->willIsolate) {
+            } else {
+                if (app.records[i].peer->willTest
+                    && app.records[i].peer->willIsolate) {
                     app.records[i].peer->isolatedTick = tick;
                     testAgent(app.records[i].peer, tick);
                 }
