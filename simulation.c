@@ -8,8 +8,6 @@
 #include "export.h"
 #include "allocationTest.h"
 
-#define MAX_CONTACTS_IN_APP 500
-
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
 } HealthState;
@@ -25,8 +23,9 @@ typedef struct ContactRecord {
 
 typedef struct App {
     int positiveMet;
-    ContactRecord records[MAX_CONTACTS_IN_APP];
+    ContactRecord *records;
     int recorded;
+    int size;
 } App;
 
 typedef struct agent {
@@ -63,7 +62,7 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
                 double *avgR0);
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head);
-App *initApp();
+App *initApp(simConfig config, int testResponseTime);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, int size);
@@ -154,6 +153,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
+        free(agents[i].app->records);
         free(agents[i].app);
         free(agents[i].groups);
     }
@@ -277,8 +277,10 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         theAgent = (agents + i);
         theAgent->ID = i;
         theAgent->healthState = succeptible;
+        theAgent->testResponseTime =
+            truncatedGaus(r, config.testResponseTime);
         if (gsl_ran_bernoulli(r, config.chanceToHaveApp)) {
-            theAgent->app = initApp();
+            theAgent->app = initApp(config, theAgent->testResponseTime);
         } else {
             theAgent->app = NULL;
         }
@@ -293,8 +295,6 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
         theAgent->isolationDelay = truncatedGaus(r, config.isolationDelay);
         theAgent->groups = malloc(sizeof(group **) * amountOfGroups);
         theAgent->willTest = gsl_ran_bernoulli(r, config.willTestPercent);
-        theAgent->testResponseTime =
-            truncatedGaus(r, config.testResponseTime);
         theAgent->testedTick = -1;
         theAgent->exposedTick = -1;
         theAgent->testResult = 0;
@@ -376,18 +376,23 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head)
     *head = groupToInsert;
 }
 
-App *initApp()
+App *initApp(simConfig config, int testResponseTime)
 {
     int i;
+    int size =
+        (testResponseTime + 2) * (config.toMeet[0].upperbound +
+                                  config.toMeet[1].upperbound +
+                                  config.toMeet[2].upperbound +
+                                  config.toMeet[3].upperbound);
     App *app = malloc(sizeof(App));
     isAllocated(app);
     app->positiveMet = 0;
-    (*app).recorded = 0;
-
-    for (i = 0; i < MAX_CONTACTS_IN_APP; i++) {
+    app->records = malloc(sizeof(ContactRecord) * size);
+    for (i = 0; i < size; i++) {
         app->records[i].onContactTick = -1;
     }
-
+    app->size = size;
+    app->recorded = 0;
     return app;
 }
 
@@ -658,16 +663,30 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
 
 void addRecord(agent * recorder, agent * peer, int tick)
 {
-    int recordNr = recorder->app->recorded % MAX_CONTACTS_IN_APP;
-    ContactRecord *record = &(recorder->app->records[recordNr]);
+    int i = 0, found = 0;
+    int recordNr = recorder->app->recorded;
+    ContactRecord *record;
 
-    if (record->onContactTick != -1) {
-        if (tick - record->onContactTick <= recorder->testResponseTime + 2) {
-            printf("Atempting to overide valid record\n");
-            exit(EXIT_FAILURE);
+    if (recordNr % recorder->app->size == 0
+        && recorder->app->recorded != 0) {
+        while (i < recorder->app->size && !found) {
+            if (tick - recorder->app->records[i].onContactTick >
+                recorder->testResponseTime + 2) {
+                found = 1;
+            }
+            i++;
+        }
+        if (!found) {
+            recorder->app->records =
+                realloc(recorder->app->records,
+                        sizeof(ContactRecord) * recorder->app->size * 2);
+            recorder->app->size *= 2;
+        } else {
+            recorder->app->recorded--;
+            recordNr = i;
         }
     }
-
+    record = &(recorder->app->records[recordNr]);
     record->peer = peer;
     record->onContactTick = tick;
     recorder->app->recorded++;
@@ -676,8 +695,8 @@ void addRecord(agent * recorder, agent * peer, int tick)
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
-    int contacts = MAX_CONTACTS_IN_APP;
-    if (app.recorded < MAX_CONTACTS_IN_APP) {
+    int contacts = app.size;
+    if (app.recorded < app.size) {
         contacts = app.recorded;
     }
 
