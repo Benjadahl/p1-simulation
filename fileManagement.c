@@ -14,6 +14,86 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t);
 void CreatePlotFromCSV(char *file_name, int dataCount, char *output_name,
                        int events, int yMax);
 DataSet createDataSet(char *name, double *data);
+void writeConfigInput(char *configName, simConfig config);
+
+void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
+                int events, int yMax, int absolute, simConfig config)
+{
+    char foldername[90], filename[150], graphname[150], configName[150];
+    struct tm *currentTime;
+
+    currentTime = localtime(&runTime);
+    sprintf(foldername, "output/%d-%02d-%02d-H%02dM%02dS%02d",
+            currentTime->tm_year + 1900, currentTime->tm_mon + 1,
+            currentTime->tm_mday, currentTime->tm_hour,
+            currentTime->tm_min, currentTime->tm_sec);
+
+    if (run == 0) {
+        DIR *dir = opendir("output");
+        if (dir == NULL) {
+            mkdir("output", 0777);
+        }
+        closedir(dir);
+        mkdir(foldername, 0777);
+    }
+
+    if (run == -1) {
+        if (absolute) {
+            sprintf(filename, "%s/absolute-avg.csv", foldername);
+        } else {
+            sprintf(filename, "%s/avg.csv", foldername);
+        }
+    } else {
+        if (absolute) {
+            sprintf(filename, "%s/absolute-%d.csv", foldername, run);
+        } else {
+            sprintf(filename, "%s/%d.csv", foldername, run);
+        }
+    }
+
+    WriteFile(filename, dataSets, absolute, dataCount, events,
+              config.dataLabel);
+
+    if (config.makeConfigFile && run == 0) {
+        sprintf(configName, "%s/config.txt", foldername);
+        writeConfigInput(configName, config);
+    }
+
+    if (run == -1) {
+        if (absolute) {
+            sprintf(graphname, "%s/absolute-avg-graph", foldername);
+        } else {
+            sprintf(graphname, "%s/avg-graph", foldername);
+        }
+        CreatePlotFromCSV(filename, dataCount, graphname, events, yMax);
+    }
+}
+
+void WriteFile(char *fileName, DataSet * dataSets, int absolute,
+               int dataCount, int events, int label)
+{
+    int i, j;
+    FILE *file = fopen(fileName, "w+");
+
+    fprintf(file, ";");
+    for (i = 0; i < dataCount; i++) {
+        fprintf(file, "%s;", dataSets[i].name);
+    }
+
+    for (i = 0; i < events; i++) {
+        fprintf(file, "\n%d;", label);
+        for (j = 0; j < dataCount; j++) {
+            if (absolute) {
+                fprintf(file, "%f;", dataSets[j].absoluteData[i]);
+            } else {
+                fprintf(file, "%f;", dataSets[j].data[i]);
+            }
+        }
+    }
+
+    fclose(file);
+    return;
+}
 
 void writeConfigInput(char *filename, simConfig config)
 {
@@ -93,32 +173,6 @@ void writeConfigInput(char *filename, simConfig config)
     return;
 }
 
-void WriteFile(char *fileName, DataSet * dataSets, int absolute,
-               int dataCount, int events, int label)
-{
-    int i, j;
-    FILE *file = fopen(fileName, "w+");
-
-    fprintf(file, ";");
-    for (i = 0; i < dataCount; i++) {
-        fprintf(file, "%s;", dataSets[i].name);
-    }
-
-    for (i = 0; i < events; i++) {
-        fprintf(file, "\n%d;", label);
-        for (j = 0; j < dataCount; j++) {
-            if (absolute) {
-                fprintf(file, "%f;", dataSets[j].absoluteData[i]);
-            } else {
-                fprintf(file, "%f;", dataSets[j].data[i]);
-            }
-        }
-    }
-
-    fclose(file);
-    return;
-}
-
 void ReadFile(char *file_name, DataSetRead * data, int dataCount)
 {
     FILE *file = fopen(file_name, "r");
@@ -165,59 +219,6 @@ void SplitLine(int dataCount, DataSetRead * data, int dataNum, char *t)
         }
         data_set++;
         token = strtok(NULL, ";");
-    }
-}
-
-void ExportData(int run, time_t runTime, DataSet * dataSets, int dataCount,
-                int events, int yMax, int absolute, simConfig config)
-{
-    char foldername[90], filename[150], graphname[150], configName[150];
-    struct tm *currentTime;
-
-    currentTime = localtime(&runTime);
-    sprintf(foldername, "output/%d-%02d-%02d-H%02dM%02dS%02d",
-            currentTime->tm_year + 1900, currentTime->tm_mon + 1,
-            currentTime->tm_mday, currentTime->tm_hour,
-            currentTime->tm_min, currentTime->tm_sec);
-
-    if (run == 0) {
-        DIR *dir = opendir("output");
-        if (dir == NULL) {
-            mkdir("output", 0777);
-        }
-        closedir(dir);
-        mkdir(foldername, 0777);
-    }
-
-    if (run == -1) {
-        if (absolute) {
-            sprintf(filename, "%s/absolute-avg.csv", foldername);
-        } else {
-            sprintf(filename, "%s/avg.csv", foldername);
-        }
-    } else {
-        if (absolute) {
-            sprintf(filename, "%s/absolute-%d.csv", foldername, run);
-        } else {
-            sprintf(filename, "%s/%d.csv", foldername, run);
-        }
-    }
-
-    WriteFile(filename, dataSets, absolute, dataCount, events,
-              config.dataLabel);
-
-    if (config.makeConfigFile && run == 0) {
-        sprintf(configName, "%s/config.txt", foldername);
-        writeConfigInput(configName, config);
-    }
-
-    if (run == -1) {
-        if (absolute) {
-            sprintf(graphname, "%s/absolute-avg-graph", foldername);
-        } else {
-            sprintf(graphname, "%s/avg-graph", foldername);
-        }
-        CreatePlotFromCSV(filename, dataCount, graphname, events, yMax);
     }
 }
 
