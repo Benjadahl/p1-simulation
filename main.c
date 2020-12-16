@@ -306,35 +306,35 @@ void initConfigWithInputParameters(simConfig * config, double value,
 
     case 'l':
         config->dataLabel = isValueCorrect(input, value, 0, INT_MAX);
-        
+
     case 'm':
         config->toMeet[0].expectedValue =
             isValueCorrect(config->toMeet[0].expectedValue,
-                            value, config->toMeet[0].lowerbound,
-                            config->toMeet[0].upperbound);
+                           value, config->toMeet[0].lowerbound,
+                           config->toMeet[0].upperbound);
         break;
 
     case 'n':
         config->toMeet[1].expectedValue =
             isValueCorrect(config->toMeet[1].expectedValue,
-                            value, config->toMeet[1].lowerbound,
-                            config->toMeet[1].upperbound);
+                           value, config->toMeet[1].lowerbound,
+                           config->toMeet[1].upperbound);
         break;
 
     case 'o':
         config->toMeet[2].expectedValue =
             isValueCorrect(config->toMeet[2].expectedValue,
-                            value, config->toMeet[2].lowerbound,
-                            config->toMeet[2].upperbound);
+                           value, config->toMeet[2].lowerbound,
+                           config->toMeet[2].upperbound);
         break;
 
     case 'u':
         config->toMeet[3].expectedValue =
             isValueCorrect(config->toMeet[3].expectedValue,
-                            value, config->toMeet[3].lowerbound,
-                            config->toMeet[3].upperbound);
+                           value, config->toMeet[3].lowerbound,
+                           config->toMeet[3].upperbound);
         break;
-                
+
     }
 
 }
