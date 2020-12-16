@@ -333,6 +333,8 @@ int main(int argc, char *argv[])
         seedUsed = config.seed;
     }
 
+    printf("\nSeed used: %d\n", seedUsed);
+
     /* Setup GSL */
     gsl_rng_env_setup();
 

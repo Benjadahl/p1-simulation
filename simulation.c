@@ -379,7 +379,7 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head)
 App *initApp(simConfig config, int testResponseTime)
 {
 	int i;
-	int size = (testResponseTime + 2) * (config.toMeet[0].upperbound + config.toMeet[1].upperbound + config.toMeet[2].upperbound + config.toMeet[3].upperbound);
+	int size = 500;/*(testResponseTime + 2) * (config.toMeet[0].upperbound + config.toMeet[1].upperbound + config.toMeet[2].upperbound + config.toMeet[3].upperbound);*/
     /*printf("%d = (%d + 2) * (%d + %d + %d + %d)\n", size, testResponseTime, config.toMeet[0].upperbound, config.toMeet[1].upperbound, config.toMeet[2].upperbound, config.toMeet[3].upperbound);*/
     App *app = malloc(sizeof(App));
     isAllocated(app);
@@ -660,10 +660,18 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
 void addRecord(agent * recorder, agent * peer, int tick)
 {
 	int i = 0, found = 0;
-    int recordNr = recorder->app->recorded;
-    ContactRecord *record;
+    int recordNr = recorder->app->recorded % recorder->app->size;
+    ContactRecord *record = &(recorder->app->records[recordNr]);
+    if(record->onContactTick != -1){
+    	if (tick - record->onContactTick <= recorder->testResponseTime + 2){
+    		printf("Atempting to overide valid record\n");
+    		exit(EXIT_FAILURE);
+    	} else{
+    		recorder->app->recorded--;
+    	}
+    }
 
-    if (recordNr % recorder->app->size == 0){
+    /*if (recordNr % recorder->app->size == 0){
     	while (i < recorder->app->size && !found){
     		if (tick - recorder->app->records[i].onContactTick > recorder->testResponseTime + 2){
     			found = 1;
@@ -677,8 +685,9 @@ void addRecord(agent * recorder, agent * peer, int tick)
     		recorder->app->recorded--;
     		recordNr = i;
     	}
-    }
-    record = &(recorder->app->records[recordNr]);
+    }*/
+
+    /*record = &(recorder->app->records[recordNr]);*/
     record->peer = peer;
     record->onContactTick = tick;
     recorder->app->recorded++;
