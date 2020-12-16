@@ -57,13 +57,8 @@ typedef struct group {
     struct group *next;
 } group;
 
-<<<<<<< HEAD
 int isAllocated(void *check);
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
-=======
-void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
-                group ** head);
->>>>>>> c1cff460cdf8c36a39cd1723bee3d37d3a2c701b
 App *initApp();
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
 group *createGroup(agent * agents, simConfig config, int groupSize,
