@@ -19,7 +19,7 @@ int main()
     int i;
     int failures = 0;
     double results[2] = { 0, 0 };
-    double expectedValue[2] = { 59.40, 22.92 };
+    double expectedValue[2] = { 55.50, 17.22 };
 
     const gsl_rng_type *T;
     gsl_rng *r;
@@ -110,6 +110,7 @@ int main()
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 0.95;
     config.passerByRisk = 0.0048;
+    config.isolateOnAppInform = 0;
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];

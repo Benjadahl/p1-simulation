@@ -8,8 +8,6 @@
 #include "export.h"
 #include "allocationTest.h"
 
-#define MAX_CONTACTS_IN_APP 200
-
 typedef enum HealthState { succeptible, exposed, infectious,
     recovered
 } HealthState;
@@ -25,8 +23,9 @@ typedef struct ContactRecord {
 
 typedef struct App {
     int positiveMet;
-    ContactRecord records[MAX_CONTACTS_IN_APP];
+    ContactRecord *records;
     int recorded;
+    int size;
 } App;
 
 typedef struct agent {
@@ -58,9 +57,10 @@ typedef struct group {
 } group;
 
 int isAllocated(void *check);
-void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick, group ** head);
-App *initApp();
 int truncatedGaus(gsl_rng * r, struct gaussian settings);
+void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
+                group ** head);
+App *initApp(simConfig config, int testResponseTime);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
 int getNextID(int currentID, int size);
@@ -84,8 +84,9 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
                   int agentID, int *recoveredInTick,
                   int *infectedDuringInfection);
+void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
-void informContacts(App app, int responseTime, int tick);
+void informContacts(App app, int responseTime, int tick, int isolate);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
                      agent * theAgent, int tick, simConfig config);
 void addRecord(agent * recorder, agent * peer, int tick);
@@ -151,6 +152,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     } while (tempGroup != NULL);
 
     for (i = 0; i < config.amountOfAgents; i++) {
+        free(agents[i].app->records);
         free(agents[i].app);
         free(agents[i].groups);
     }
@@ -180,40 +182,38 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     int thisGroupSize;
     int agentsLeft;
     int run;
+    agent *theAgent;
 
     for (i = 0; i < config.amountOfAgents; i++) {
-        (agents + i)->ID = i;
-        (agents + i)->healthState = succeptible;
-        if (gsl_ran_bernoulli(r, config.chanceToHaveApp)) {
-            (agents + i)->app = initApp();
-        } else {
-            (agents + i)->app = NULL;
-        }
-        (agents + i)->infectedTick = -1;
-        (agents + i)->infectedPeriod =
-            truncatedGaus(r, config.infectionTime);
-        (agents + i)->symptomatic =
-            gsl_ran_bernoulli(r, config.symptomaticPercent);
-        (agents + i)->incubationTime =
-            truncatedGaus(r, config.incubationTime);
-        (agents + i)->willIsolate =
-            gsl_ran_bernoulli(r, config.willIsolatePercent);
-        (agents + i)->isolatedTick = -1;
-        (agents + i)->isolationDelay =
-            truncatedGaus(r, config.isolationDelay);
-        (agents + i)->groups = malloc(sizeof(group **) * amountOfGroups);
-        (agents + i)->willTest =
-            gsl_ran_bernoulli(r, config.willTestPercent);
-        (agents + i)->testResponseTime =
+        theAgent = (agents + i);
+        theAgent->ID = i;
+        theAgent->healthState = succeptible;
+        theAgent->testResponseTime =
             truncatedGaus(r, config.testResponseTime);
-        (agents + i)->testedTick = -1;
-        (agents + i)->exposedTick = -1;
-        (agents + i)->testResult = 0;
-        (agents + i)->groups[0] = NULL;
-        (agents + i)->groups[1] = NULL;
-        (agents + i)->groups[2] = NULL;
-        (agents + i)->groups[3] = NULL;
-        (agents + i)->amountAgentHasInfected = 0;
+        if (gsl_ran_bernoulli(r, config.chanceToHaveApp)) {
+            theAgent->app = initApp(config, theAgent->testResponseTime);
+        } else {
+            theAgent->app = NULL;
+        }
+        theAgent->infectedTick = -1;
+        theAgent->infectedPeriod = truncatedGaus(r, config.infectionTime);
+        theAgent->symptomatic =
+            gsl_ran_bernoulli(r, config.symptomaticPercent);
+        theAgent->incubationTime = truncatedGaus(r, config.incubationTime);
+        theAgent->willIsolate =
+            gsl_ran_bernoulli(r, config.willIsolatePercent);
+        theAgent->isolatedTick = -1;
+        theAgent->isolationDelay = truncatedGaus(r, config.isolationDelay);
+        theAgent->groups = malloc(sizeof(group **) * amountOfGroups);
+        theAgent->willTest = gsl_ran_bernoulli(r, config.willTestPercent);
+        theAgent->testedTick = -1;
+        theAgent->exposedTick = -1;
+        theAgent->testResult = 0;
+        theAgent->groups[0] = NULL;
+        theAgent->groups[1] = NULL;
+        theAgent->groups[2] = NULL;
+        theAgent->groups[3] = NULL;
+        theAgent->amountAgentHasInfected = 0;
 
         isAllocated((agents + i)->groups);
     }
@@ -281,12 +281,29 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     }
 }
 
-App *initApp()
+void insertGroupToLinkedList(group * groupToInsert, group ** head)
 {
+    groupToInsert->next = *head;
+    *head = groupToInsert;
+}
+
+App *initApp(simConfig config, int testResponseTime)
+{
+    int i;
+    int size =
+        (testResponseTime + 2) * (config.toMeet[0].upperbound +
+                                  config.toMeet[1].upperbound +
+                                  config.toMeet[2].upperbound +
+                                  config.toMeet[3].upperbound);
     App *app = malloc(sizeof(App));
     isAllocated(app);
     app->positiveMet = 0;
-    (*app).recorded = 0;
+    app->records = malloc(sizeof(ContactRecord) * size);
+    for (i = 0; i < size; i++) {
+        app->records[i].onContactTick = -1;
+    }
+    app->size = size;
+    app->recorded = 0;
     return app;
 }
 
@@ -611,13 +628,14 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         if (theAgent->testedTick + theAgent->testResponseTime == tick) {
             if (theAgent->testResult
                 && gsl_ran_bernoulli(r, config.chanceOfCorrectTest)) {
-                if (theAgent->willIsolate) {
+                if (theAgent->willIsolate && theAgent->isolatedTick != -1) {
                     theAgent->isolatedTick = tick;
                 }
 
                 if (theAgent->app != NULL) {
                     informContacts(*(theAgent->app),
-                                   theAgent->testResponseTime, tick);
+                                   theAgent->testResponseTime, tick,
+                                   config.isolateOnAppInform);
                 }
             }
             theAgent->testedTick = -1;
@@ -691,19 +709,61 @@ void calculateAveragePlot(int run, int events, DataSet * data,
     }
 }
 
-void informContacts(App app, int responseTime, int tick)
+void addRecord(agent * recorder, agent * peer, int tick)
+{
+    int i = 0, found = 0;
+    int recordNr = recorder->app->recorded;
+    ContactRecord *record;
+
+    if (recordNr % recorder->app->size == 0
+        && recorder->app->recorded != 0) {
+        while (i < recorder->app->size && !found) {
+            if (tick - recorder->app->records[i].onContactTick >
+                recorder->testResponseTime + 2) {
+                found = 1;
+            }
+            i++;
+        }
+        if (!found) {
+            recorder->app->records =
+                realloc(recorder->app->records,
+                        sizeof(ContactRecord) * recorder->app->size * 2);
+            recorder->app->size *= 2;
+        } else {
+            recorder->app->recorded--;
+            recordNr = i;
+        }
+    }
+    record = &(recorder->app->records[recordNr]);
+    record->peer = peer;
+    record->onContactTick = tick;
+    recorder->app->recorded++;
+}
+
+void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
-    int contacts = MAX_CONTACTS_IN_APP;
-    if (app.recorded < MAX_CONTACTS_IN_APP) {
+    int contacts = app.size;
+    if (app.recorded < app.size) {
         contacts = app.recorded;
     }
 
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <= responseTime + 2) {
-            if (app.records[i].peer->willTest) {
-                testAgent(app.records[i].peer, tick);
+            if (!isolate) {
+                if (app.records[i].peer->willTest) {
+                    testAgent(app.records[i].peer, tick);
+                }
+            } else {
+                if (app.records[i].peer->willIsolate
+                    && app.records[i].peer->willTest) {
+                    app.records[i].peer->isolatedTick = tick;
+                    testAgent(app.records[i].peer, tick);
+                } else if (app.records[i].peer->willTest) {
+                    testAgent(app.records[i].peer, tick);
+                }
             }
+
             app.records[i].peer->app->positiveMet++;
         }
     }
