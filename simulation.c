@@ -384,7 +384,6 @@ App *initApp(simConfig config, int testResponseTime)
                                   config.toMeet[1].upperbound +
                                   config.toMeet[2].upperbound +
                                   config.toMeet[3].upperbound);
-    /*printf("%d = (%d + 2) * (%d + %d + %d + %d)\n", size, testResponseTime, config.toMeet[0].upperbound, config.toMeet[1].upperbound, config.toMeet[2].upperbound, config.toMeet[3].upperbound); */
     App *app = malloc(sizeof(App));
     isAllocated(app);
     app->positiveMet = 0;
