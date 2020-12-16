@@ -57,9 +57,9 @@ typedef struct group {
 } group;
 
 int isAllocated(void *check);
-int truncatedGaus(gsl_rng * r, struct gaussian settings);
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head);
+int truncatedGaus(gsl_rng * r, struct gaussian settings);
 App *initApp(simConfig config, int testResponseTime);
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr);
@@ -81,15 +81,14 @@ void meetGroup(gsl_rng * r, group * group, double infectionRisk,
                int amountToMeet, int tick, agent * theAgent);
 void meeting(gsl_rng * r, agent * theAgent, agent * peer,
              double infectionRisk, int tick, int recordInApp);
+void addRecord(agent * recorder, agent * peer, int tick);
 void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
                   int agentID, int *recoveredInTick,
                   int *infectedDuringInfection);
-void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 void informContacts(App app, int responseTime, int tick, int isolate);
 void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
                      agent * theAgent, int tick, simConfig config);
-void addRecord(agent * recorder, agent * peer, int tick);
 
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
@@ -281,10 +280,36 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     }
 }
 
-void insertGroupToLinkedList(group * groupToInsert, group ** head)
+void infectRandomAgent(agent agents[], simConfig config, int tick)
 {
-    groupToInsert->next = *head;
-    *head = groupToInsert;
+    int randomID;
+
+    do {
+        randomID = rndInt(config.amountOfAgents);
+    } while (agents[randomID].healthState == infectious);
+
+    infectAgent(tick, &agents[randomID]);
+}
+
+void infectAgent(int tick, agent * theAgent)
+{
+    if (theAgent->healthState == succeptible) {
+        theAgent->healthState = exposed;
+        theAgent->exposedTick = tick;
+    }
+}
+
+int truncatedGaus(gsl_rng * r, struct gaussian settings)
+{
+    double result;
+
+    do {
+        result =
+            gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
+        result = round(result);
+    } while (result < settings.lowerbound || result > settings.upperbound);
+
+    return result;
 }
 
 App *initApp(simConfig config, int testResponseTime)
@@ -305,19 +330,6 @@ App *initApp(simConfig config, int testResponseTime)
     app->size = size;
     app->recorded = 0;
     return app;
-}
-
-int truncatedGaus(gsl_rng * r, struct gaussian settings)
-{
-    double result;
-
-    do {
-        result =
-            gsl_ran_gaussian(r, settings.varians) + settings.expectedValue;
-        result = round(result);
-    } while (result < settings.lowerbound || result > settings.upperbound);
-
-    return result;
 }
 
 group *createGroup(agent * agents, simConfig config, int groupSize,
@@ -365,23 +377,10 @@ int rndInt(int max)
     return rand() % max;
 }
 
-void infectRandomAgent(agent agents[], simConfig config, int tick)
+void insertGroupToLinkedList(group * groupToInsert, group ** head)
 {
-    int randomID;
-
-    do {
-        randomID = rndInt(config.amountOfAgents);
-    } while (agents[randomID].healthState == infectious);
-
-    infectAgent(tick, &agents[randomID]);
-}
-
-void infectAgent(int tick, agent * theAgent)
-{
-    if (theAgent->healthState == succeptible) {
-        theAgent->healthState = exposed;
-        theAgent->exposedTick = tick;
-    }
+    groupToInsert->next = *head;
+    *head = groupToInsert;
 }
 
 void PlotData(agent * agents, DataSet * data, int dataCount, int tick,
@@ -560,6 +559,37 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
     }
 }
 
+void addRecord(agent * recorder, agent * peer, int tick)
+{
+    int i = 0, found = 0;
+    int recordNr = recorder->app->recorded;
+    ContactRecord *record;
+
+    if (recordNr % recorder->app->size == 0
+        && recorder->app->recorded != 0) {
+        while (i < recorder->app->size && !found) {
+            if (tick - recorder->app->records[i].onContactTick >
+                recorder->testResponseTime + 2) {
+                found = 1;
+            }
+            i++;
+        }
+        if (!found) {
+            recorder->app->records =
+                realloc(recorder->app->records,
+                        sizeof(ContactRecord) * recorder->app->size * 2);
+            recorder->app->size *= 2;
+        } else {
+            recorder->app->recorded--;
+            recordNr = i;
+        }
+    }
+    record = &(recorder->app->records[recordNr]);
+    record->peer = peer;
+    record->onContactTick = tick;
+    recorder->app->recorded++;
+}
+
 void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
                   int agentID, int *recoveredInTick,
                   int *infectedDuringInfection)
@@ -679,30 +709,6 @@ void testAgent(agent * theAgent, int tick)
     }
 }
 
-void calculateAveragePlot(int run, int events, DataSet * data,
-                          DataSet * avgData, int dataCount)
-{
-    int e, d;
-    if (run == 0) {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] = data[d].data[e];
-                avgData[d].absoluteData[e] = data[d].absoluteData[e];
-            }
-        }
-    } else {
-        for (e = 0; e < events; e++) {
-            for (d = 0; d < dataCount; d++) {
-                avgData[d].data[e] =
-                    (avgData[d].data[e] + data[d].data[e]) / 2;
-                avgData[d].absoluteData[e] =
-                    (avgData[d].absoluteData[e] +
-                     data[d].absoluteData[e]) / 2;
-            }
-        }
-    }
-}
-
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
@@ -750,33 +756,26 @@ void handlePasserBys(gsl_rng * r, agent agents[], int toMeet,
     }
 }
 
-void addRecord(agent * recorder, agent * peer, int tick)
+void calculateAveragePlot(int run, int events, DataSet * data,
+                          DataSet * avgData, int dataCount)
 {
-    int i = 0, found = 0;
-    int recordNr = recorder->app->recorded;
-    ContactRecord *record;
-
-    if (recordNr % recorder->app->size == 0
-        && recorder->app->recorded != 0) {
-        while (i < recorder->app->size && !found) {
-            if (tick - recorder->app->records[i].onContactTick >
-                recorder->testResponseTime + 2) {
-                found = 1;
+    int e, d;
+    if (run == 0) {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] = data[d].data[e];
+                avgData[d].absoluteData[e] = data[d].absoluteData[e];
             }
-            i++;
         }
-        if (!found) {
-            recorder->app->records =
-                realloc(recorder->app->records,
-                        sizeof(ContactRecord) * recorder->app->size * 2);
-            recorder->app->size *= 2;
-        } else {
-            recorder->app->recorded--;
-            recordNr = i;
+    } else {
+        for (e = 0; e < events; e++) {
+            for (d = 0; d < dataCount; d++) {
+                avgData[d].data[e] =
+                    (avgData[d].data[e] + data[d].data[e]) / 2;
+                avgData[d].absoluteData[e] =
+                    (avgData[d].absoluteData[e] +
+                     data[d].absoluteData[e]) / 2;
+            }
         }
     }
-    record = &(recorder->app->records[recordNr]);
-    record->peer = peer;
-    record->onContactTick = tick;
-    recorder->app->recorded++;
 }
