@@ -81,7 +81,11 @@ void meeting(gsl_rng * r, agent * theAgent, agent * peer,
 void meetGroup(gsl_rng * r, group * group, double infectionRisk,
                int amountToMeet, int tick, agent * theAgent);
 void addRecord(agent * recorder, agent * peer, int tick);
+<<<<<<< HEAD
 void informContacts(App * app, int responseTime, int tick);
+=======
+void informContacts(App app, int responseTime, int tick, int isolate);
+>>>>>>> newMain
 void isolate(agent * agent);
 void testAgent(agent * theAgent, int tick);
 int rndInt(int max);
@@ -572,13 +576,14 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         if (theAgent->testedTick + theAgent->testResponseTime == tick) {
             if (theAgent->testResult
                 && gsl_ran_bernoulli(r, config.chanceOfCorrectTest)) {
-                if (theAgent->willIsolate) {
+                if (theAgent->willIsolate && theAgent->isolatedTick != -1) {
                     theAgent->isolatedTick = tick;
                 }
 
                 if (theAgent->app != NULL) {
-                    informContacts(theAgent->app,
-                                   theAgent->testResponseTime, tick);
+                    informContacts(*(theAgent->app),
+                                   theAgent->testResponseTime, tick,
+                                   config.isolateOnAppInform);
                 }
             }
             theAgent->testedTick = -1;
@@ -691,7 +696,7 @@ void addRecord(agent * recorder, agent * peer, int tick)
     recorder->app->recorded++;
 }
 
-void informContacts(App * app, int responseTime, int tick)
+void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
     int contacts = app->size;
@@ -700,11 +705,22 @@ void informContacts(App * app, int responseTime, int tick)
     }
 
     for (i = 0; i < contacts; i++) {
-        if (tick - app->records[i].onContactTick <= responseTime + 2) {
-            if (app->records[i].peer->willTest) {
-                testAgent(app->records[i].peer, tick);
+        if (tick - app.records[i].onContactTick <= responseTime + 2) {
+            if (!isolate) {
+                if (app.records[i].peer->willTest) {
+                    testAgent(app.records[i].peer, tick);
+                }
+            } else {
+                if (app.records[i].peer->willIsolate
+                    && app.records[i].peer->willTest) {
+                    app.records[i].peer->isolatedTick = tick;
+                    testAgent(app.records[i].peer, tick);
+                } else if (app.records[i].peer->willTest) {
+                    testAgent(app.records[i].peer, tick);
+                }
             }
-            app->records[i].peer->app->positiveMet++;
+
+            app.records[i].peer->app->positiveMet++;
         }
     }
 }
