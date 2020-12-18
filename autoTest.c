@@ -110,6 +110,7 @@ int main()
     config.testResponseTime.varians = 1;
     config.chanceOfCorrectTest = 0.95;
     config.passerByRisk = 0.0048;
+    config.isolateOnAppInform = 0;
 
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];

@@ -9,6 +9,7 @@
 #include "export.h"
 #include "allocationTest.h"
 
+/*Declaration of functions*/
 double isValueCorrect(char input, double value, int min, int max);
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount);
@@ -20,6 +21,7 @@ void calculateAveragePlot(int run, int events, DataSet * data,
 
 int main(int argc, char *argv[])
 {
+    /*Declarations and initialization of variabels*/
     int i;
     int graph = 0;
     int seedUsed;
@@ -30,9 +32,12 @@ int main(int argc, char *argv[])
     DataSet data[PLOT_COUNT];
     DataSet avgData[PLOT_COUNT];
 
+    /*Declaring GSL*/
     const gsl_rng_type *T;
     gsl_rng *r;
 
+
+    /*Initializing the config struct with standard values*/
     simConfig config;
 
     /*party */
@@ -123,14 +128,11 @@ int main(int argc, char *argv[])
     config.dataLabel = 1;
     config.isolateOnAppInform = 0;
 
-    /* indlaeser parametre */
+    /*Reading the input parameters*/
     for (i = 0; i < argc; i++) {
-        /*grunden til at vi har valgt at der skal være et '-' foran 
-           en parameterinstilling er for at gøre det nemmer at opsamle i vores program */
+         /*Checking if the read char is '-' because that is the start of an input parameter*/
         if (argv[i][0] == '-') {
-            /*grunden til at vi har denne if statment er fordi at både 'g', 'b' og 'A'
-               skal ikke efterføgles af en værdi, så for at sikre os at det inputs
-               som skal have en værdi tilknyttede til sig har det bruge vi dette */
+            /*This if statement ensures that the chars 'b' and 'g', cannot be followed by a value, since a value to those parameters are not needed*/
             if ((argv[i][1] != 'g' && argv[i][1] != 'b'
                  && argv[i][1] != 'A')
                 && !isdigit(argv[i + 1][0])) {
@@ -139,11 +141,12 @@ int main(int argc, char *argv[])
                      argv[i][1]);
                 return EXIT_FAILURE;
             } else {
-                /*dette sikre os at den ikke prøver at få fat i en værdi som ikke eksistere */
+                /*Ensuring that we do not try to read a value, that do not exist*/
                 if (i + 1 < argc) {
                     value = strtod(argv[i + 1], &emPtr);
                 }
 
+                /*Initialize config struct with the current input parameter*/
                 switch (argv[i][1]) {
                 case 'A':
                     config.isolateOnAppInform = 1;
@@ -306,6 +309,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    /*Initializing data array structs for plotting graphs*/
     for (i = 0; i < PLOT_COUNT; i++) {
         data[i].data = calloc(config.maxEvents, sizeof(double));
         data[i].absoluteData = calloc(config.maxEvents, sizeof(double));
@@ -330,6 +334,7 @@ int main(int argc, char *argv[])
         avgData[i].name = data[i].name;
     }
 
+    /*Getting seed for GSL*/
     runTime = time(NULL);
 
     if (!config.seed) {
@@ -345,6 +350,7 @@ int main(int argc, char *argv[])
     r = gsl_rng_alloc(T);
     gsl_rng_set(r, seedUsed);
 
+    /*Running the simulation*/
     for (i = 0; i < config.simulationRuns; i++) {
         run_simulation(r, config, data, PLOT_COUNT);
         ExportData(i, runTime, data, PLOT_COUNT, config.maxEvents,
@@ -355,24 +361,31 @@ int main(int argc, char *argv[])
                              PLOT_COUNT);
     }
 
+    /*Freeing GSL*/
     gsl_rng_free(r);
 
     printf("\nSeed used: %d\n", seedUsed);
 
+    /*Plotting graph*/
     if (graph != 0) {
         printf("\nPlotting graph...\n");
         ExportData(-1, runTime, avgData, PLOT_COUNT, config.maxEvents, 100,
                    0, config);
     }
+
+    /*Freeing data array structs from the heap*/
     for (i = 0; i < PLOT_COUNT; i++) {
         free(data[i].data);
         free(data[i].absoluteData);
         free(avgData[i].absoluteData);
         free(avgData[i].data);
     }
+
+    /*Terminates program*/
     return EXIT_SUCCESS;
 }
 
+/*Checking wheter the inputtet parameter is correct, meening between min and max*/
 double isValueCorrect(char input, double value, int min, int max)
 {
     if (value >= min && value <= max)
