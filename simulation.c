@@ -99,7 +99,7 @@ void insertGroupToLinkedList(group * groupToInsert, group ** head);
 void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
                     int dataCount)
 {
-	/*Declarations and initialization of variabels*/
+    /*Declarations and initialization of variabels */
     double R0 = 0;
     double avgR0 = 0;
 
@@ -107,7 +107,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     int tick = 1;
     agent *agents;
 
-    /*For group linked list*/
+    /*For group linked list */
     group *head = NULL;
     group *current = head;
     group *tempGroup;
@@ -118,7 +118,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
     initAgents(r, agents, config, tick, &head);
     current = head;
 
-    /*Resseting the data struct arrays*/
+    /*Resseting the data struct arrays */
     for (i = 0; i < dataCount; i++) {
         for (j = 0; j < config.maxEvents; j++) {
             data[i].absoluteData[j] = 0;
@@ -126,7 +126,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
         }
     }
 
-    /*prints stats and runs simulations*/
+    /*prints stats and runs simulations */
     for (tick = 1; tick <= config.maxEvents; tick++) {
         int prevTick;
 
@@ -159,7 +159,7 @@ void run_simulation(gsl_rng * r, simConfig config, DataSet * data,
             current = tempGroup;
     } while (tempGroup != NULL);
 
-    /*Freeing agent app and groups*/
+    /*Freeing agent app and groups */
     for (i = 0; i < config.amountOfAgents; i++) {
         free(agents[i].app);
         free(agents[i].groups);
@@ -277,7 +277,7 @@ void printStats(DataSet * data, int dataCount, int tick, double *R0,
 void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
                 group ** head)
 {
-	/*Declaring and initialization of variabels*/
+    /*Declaring and initialization of variabels */
     int i, j, l, k = 0;
     int randomID;
     int isReplica;
@@ -286,7 +286,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     int run;
     agent *theAgent;
 
-    /*Initialize agents with stadard values*/
+    /*Initialize agents with stadard values */
     for (i = 0; i < config.amountOfAgents; i++) {
         theAgent = (agents + i);
         theAgent->ID = i;
@@ -325,7 +325,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
     for (i = 0; i <= 1; i++) {
         agentsLeft = config.amountOfAgents;
         while (agentsLeft) {
-        	/*The groupsize should only be calculated if agentsLeft > max amount of agent in current group*/
+            /*The groupsize should only be calculated if agentsLeft > max amount of agent in current group */
             run =
                 i == 0 ? agentsLeft >
                 config.groupSize[0].upperbound : agentsLeft >
@@ -348,7 +348,7 @@ void initAgents(gsl_rng * r, agent * agents, simConfig config, int tick,
 
     /*Initializing contacts */
     for (i = 0; i < config.amountOfAgents; i++, k++) {
-    	/*Declaring and initialization of variabels*/
+        /*Declaring and initialization of variabels */
         int contactsPerAgent = truncatedGaus(r, config.groupSize[2]);
         group *newGroup = malloc(sizeof(group));
         agent **members = malloc(sizeof(agent *) * contactsPerAgent);
@@ -413,7 +413,7 @@ App *initApp()
 group *createGroup(agent * agents, simConfig config, int groupSize,
                    int groupNr)
 {
-	/*Declaring and initialization of variabels*/
+    /*Declaring and initialization of variabels */
     group *newGroup = malloc(sizeof(group));
     agent **members = malloc(sizeof(agent *) * groupSize);
     agent *theAgent;
@@ -424,7 +424,7 @@ group *createGroup(agent * agents, simConfig config, int groupSize,
     isAllocated(newGroup);
     isAllocated(members);
 
-    /*Finds agent not i the particullar group*/
+    /*Finds agent not i the particullar group */
     for (i = 0; i < groupSize; i++) {
         int randomID = rand() % config.amountOfAgents;
 
@@ -483,7 +483,7 @@ Day isDay(int tick)
 /*Creates and handles party*/
 void handleParties(gsl_rng * r, agent agents[], simConfig config, int tick)
 {
-	/*Declaring and initialization of variabels*/
+    /*Declaring and initialization of variabels */
     int i;
     int agentsBeenToParty = 0;
     int agentShouldParty =
@@ -591,7 +591,7 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
         }
     }
 
-    /*Handle test response*/
+    /*Handle test response */
     if (theAgent->testedTick != -1) {
         if (theAgent->testedTick + theAgent->testResponseTime == tick) {
             if (theAgent->testResult
@@ -619,26 +619,26 @@ void computeAgent(gsl_rng * r, agent agents[], simConfig config, int tick,
     }
 
     if (theAgent->isolatedTick == -1) {
-    	/*Meet with primary group*/
+        /*Meet with primary group */
         if (isDay(tick) != Saturday || isDay(tick) != Sunday) {
             meetGroup(r, theAgent->groups[0],
                       config.primaryGroupRisk,
                       truncatedGaus(r, config.toMeet[0]), tick, theAgent);
         }
 
-        /*Meet with secondary group*/
+        /*Meet with secondary group */
         if (isDay(tick) == theAgent->groups[1]->meetingDayOne
             || isDay(tick) == theAgent->groups[1]->meetingDayTwo) {
             meetGroup(r, theAgent->groups[1], config.secondaryGroupRisk,
                       truncatedGaus(r, config.toMeet[1]), tick, theAgent);
         }
 
-        /*Meet with contacts*/
+        /*Meet with contacts */
         meetGroup(r, theAgent->groups[2],
                   config.contactsRisk,
                   truncatedGaus(r, config.toMeet[2]), tick, theAgent);
 
-        /*Meet with random people, e.g. on the street*/
+        /*Meet with random people, e.g. on the street */
         handlePasserBys(r, agents,
                         truncatedGaus(r, config.passerbys),
                         theAgent, tick, config);
@@ -714,13 +714,13 @@ void addRecord(agent * recorder, agent * peer, int tick)
 void informContacts(App app, int responseTime, int tick, int isolate)
 {
     int i;
-    /*Gets amount of contacts*/
+    /*Gets amount of contacts */
     int contacts = MAX_CONTACTS_IN_APP;
     if (app.recorded < MAX_CONTACTS_IN_APP) {
         contacts = app.recorded;
     }
 
-    /*Inform the contacts and lets them test, if they want to*/
+    /*Inform the contacts and lets them test, if they want to */
     for (i = 0; i < contacts; i++) {
         if (tick - app.records[i].onContactTick <= responseTime + 2) {
             if (!isolate) {
@@ -779,24 +779,24 @@ int truncatedGaus(gsl_rng * r, struct gaussian settings)
 void runEvent(gsl_rng * r, agent agents[], simConfig config, int tick,
               double *R0, double *avgR0)
 {
-	/*Declaring and initialization of variabels*/
+    /*Declaring and initialization of variabels */
     int recoveredInTick = 0;
     int infectedDuringInfection = 0;
 
     int a = 0;
 
-    /*If day of week alows party, then party*/
+    /*If day of week alows party, then party */
     if (isDay(tick) == Saturday || isDay(tick) == Sunday) { /*party */
         handleParties(r, agents, config, tick);
     }
 
-    /*Compute, and if necessary change, the healthstate of the agents*/
+    /*Compute, and if necessary change, the healthstate of the agents */
     for (a = 0; a < config.amountOfAgents; a++) {
         computeAgent(r, agents, config, tick, a,
                      &recoveredInTick, &infectedDuringInfection);
     }
 
-    /*Calculates contact number*/
+    /*Calculates contact number */
     if (infectedDuringInfection == 0) {
         *R0 = 0;
     } else if (recoveredInTick != 0) {
